@@ -1,0 +1,5 @@
+bin/
+build/
+lib/
+doc/
+compile_commands.json
