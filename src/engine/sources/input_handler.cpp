@@ -64,35 +64,6 @@ void levi::input_handler::read_input() {
 
   ::SDL_Event sdl_event;
   levi::event event{};
-
-  // while (::SDL_PollEvent(&sdl_event)) {
-  //  switch (sdl_event.type) {
-  //  case SDL_QUIT:
-  //    event.quit = quit_event{};
-  //    event_list_.push_back(event);
-  //    break;
-  //  case SDL_KEYDOWN:
-  //  case SDL_KEYUP:
-  //    try {
-  //      event = key_event_map.at(sdl_event.key.keysym.scancode);
-  //    } catch (std::out_of_range &) {
-  //      break;
-  //    }
-  //    if (event.type == event_type::button_event) {
-  //      event.button.state = (sdl_event.key.state == SDL_PRESSED)
-  //                               ? button_state::pressed
-  //                               : button_state::released;
-  //      event_list_.push_back(event);
-  //    }
-  //    if (event.type == event_type::pause_event &&
-  //        sdl_event.key.state == SDL_PRESSED) {
-  //      event_list_.push_back(event);
-  //    }
-  //    break;
-  //  default:
-  //    break;
-  //  }
-  //}
   auto keys = ::SDL_GetKeyboardState(nullptr);
   while (::SDL_PollEvent(&sdl_event)) {
     if (sdl_event.type == SDL_QUIT) {
