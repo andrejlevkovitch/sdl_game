@@ -27,6 +27,5 @@ private:
 private:
   std::list<event> event_list_;
   std::list<event> next_iter_events_;
-  size_t last_time_;
 };
 }; // namespace levi

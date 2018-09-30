@@ -17,6 +17,7 @@ public:
 private:
   float breaking_;
   float acceleration_;
+  float rotation_;
   levi::vector2d velocity_;
   /**\brief normilize vector*/
   levi::vector2d direction_;
