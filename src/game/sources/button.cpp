@@ -4,12 +4,7 @@
 
 #include "input_handler.hpp"
 
-deep_space::button::button(const std::string &file_name,
-                           std::function<void(void)> callback)
-    : levi::abstract_object{file_name}, callback_{callback}, state_{false} {}
-
-deep_space::button::button(levi::params params,
-                           std::function<void(void)> callback)
+deep_space::button::button(levi::params params, callback callback)
     : levi::abstract_object{params}, callback_{callback}, state_{false} {}
 
 void deep_space::button::hover(bool state) {
