@@ -6,9 +6,9 @@
 #include "config.hpp"
 #include "engine.hpp"
 #include "input_handler.hpp"
+#include "object_factory.hpp"
 #include "playing_state.hpp"
 #include "state_machine.hpp"
-#include "state_parser.hpp"
 
 deep_space::menu_state::menu_state() : levi::scene{} {
   auto callback_play = []() {
@@ -27,9 +27,8 @@ deep_space::menu_state::menu_state() : levi::scene{} {
   callback_map["play"] = callback_play;
   callback_map["exit"] = callback_exit;
 
-  state_parser state_parser{};
-  state_parser.parse_state(levi::way_to_collection + "collection.xml", "menu",
-                           item_list_, &callback_map);
+  parse_state(levi::way_to_collection + "collection.xml", "menu", item_list_,
+              &callback_map);
 
   current_ = item_list_.begin();
   reinterpret_cast<button *>((*current_).get())->hover(true);

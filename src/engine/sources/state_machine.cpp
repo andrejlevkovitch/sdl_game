@@ -8,8 +8,7 @@ levi::state_machine::state_machine() { current_state_ = states_list_.begin(); }
 levi::state_machine::~state_machine(){};
 
 void levi::state_machine::push_state(std::shared_ptr<scene> state) {
-  states_list_.push_front(state);
-  current_state_ = states_list_.begin();
+  current_state_ = states_list_.insert(current_state_, state);
 }
 
 void levi::state_machine::pop_state() {

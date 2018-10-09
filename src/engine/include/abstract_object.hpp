@@ -17,14 +17,13 @@ namespace levi {
 enum object_type { unknown, user_type = 100 };
 enum class flip { none, horizontal, vertical };
 
-using params = std::tuple<std::string, levi::size, vector2d>;
-
 /**\brief abstract base class for all objects*/
 class abstract_object {
 public:
-  abstract_object(params params);
-  /**\param file_name name of file with path*/
-  abstract_object(const std::string &file_name);
+  /**\param file_name file name with path to it
+   * \param size frame size
+   * \param pos begin pos of top-left corner*/
+  abstract_object(const std::string &file_name, levi::size size, vector2d pos);
   abstract_object(const abstract_object &) = delete;
   abstract_object &operator=(const abstract_object &) = delete;
   virtual ~abstract_object();

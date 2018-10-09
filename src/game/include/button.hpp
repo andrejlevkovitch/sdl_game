@@ -11,7 +11,8 @@ using callback = std::function<void(void)>;
 
 class button : public levi::abstract_object {
 public:
-  button(levi::params params, callback callback);
+  button(const std::string &file_name, levi::size, levi::vector2d pos,
+         callback callback);
   void hover(bool state);
   void push();
   void update() override;

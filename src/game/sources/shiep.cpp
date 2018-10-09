@@ -6,30 +6,22 @@
 
 static const int max_speed{30};
 
-deep_space::shiep::shiep()
-    : abstract_object{levi::way_to_images + "shiep.png"}, breaking_{0.3},
-      acceleration_{2}, direction_{1, 0} {
-  this->set_size(levi::size{64, 64});
-  this->set_pos(levi::vector2d{100, 0});
-}
-
-deep_space::shiep::shiep(levi::params params)
-    : levi::abstract_object{params}, breaking_{0.3}, acceleration_{2},
-      direction_{1, 0} {}
+deep_space::shiep::shiep(const std::string &file_name, levi::size size,
+                         levi::vector2d pos)
+    : levi::abstract_object{file_name, size, pos}, breaking_{0.3},
+      acceleration_{}, direction_{1, 0} {}
 
 void deep_space::shiep::update() {
-  set_frame(0);
   auto &event_list = levi::input_handler::instance().get_event_list();
   for (auto &i : event_list) {
     if (i.type == levi::event_type::button_event) {
       switch (i.button.code) {
       case levi::button_code::up:
         if (i.button.state == levi::button_state::pressed) {
+          acceleration_ = 2;
           set_frame(1);
-          if (velocity_.get_length() < max_speed) {
-            velocity_ += acceleration_ * direction_;
-          }
         } else {
+          acceleration_ = 0;
           set_frame(0);
         }
         break;
@@ -37,12 +29,16 @@ void deep_space::shiep::update() {
         break;
       case levi::button_code::left:
         if (i.button.state == levi::button_state::pressed) {
-          this->rotate(-5);
+          rotation_ = -5;
+        } else {
+          rotation_ = 0;
         }
         break;
       case levi::button_code::right:
         if (i.button.state == levi::button_state::pressed) {
-          this->rotate(5);
+          rotation_ = 5;
+        } else {
+          rotation_ = 0;
         }
         break;
       default:
@@ -54,6 +50,12 @@ void deep_space::shiep::update() {
 }
 
 void deep_space::shiep::motion() {
+  if (velocity_.get_length() < max_speed) {
+    velocity_ += acceleration_ * direction_;
+  }
+  if (rotation_) {
+    this->rotate(rotation_);
+  }
   this->set_pos(this->get_pos() + velocity_);
   auto distance = velocity_.get_length();
   if (distance > breaking_) {

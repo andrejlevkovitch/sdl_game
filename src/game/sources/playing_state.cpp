@@ -5,19 +5,17 @@
 #include "config.hpp"
 #include "engine.hpp"
 #include "input_handler.hpp"
+#include "object_factory.hpp"
 #include "pause_state.hpp"
 #include "shiep.hpp"
 #include "state_machine.hpp"
-#include "state_parser.hpp"
 
 const int dop_height{40};
 const int dop_width{40};
 
 deep_space::playing_state::playing_state() {
-  // this->add_item(std::make_shared<shiep>());
-  state_parser state_parser{};
-  state_parser.parse_state(levi::way_to_collection + "collection.xml",
-                           "playing", item_list_);
+  parse_state(levi::way_to_collection + "collection.xml", "playing",
+              item_list_);
 }
 
 void deep_space::playing_state::update() {

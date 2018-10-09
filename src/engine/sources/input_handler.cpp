@@ -100,4 +100,4 @@ void levi::input_handler::add_event(levi::event event) {
   next_iter_events_.push_back(event);
 }
 
-levi::input_handler::input_handler() : last_time_{} {}
+levi::input_handler::input_handler() {}
