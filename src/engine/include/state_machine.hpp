@@ -19,6 +19,7 @@ public:
   /**\brief this method safely delete current state, when it not used*/
   void pop_state();
   void update();
+  std::shared_ptr<scene> current_state();
   friend void render(::SDL_Renderer *renderer, state_machine *s_m);
 
 private:

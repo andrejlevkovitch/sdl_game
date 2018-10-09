@@ -22,6 +22,10 @@ void deep_space::playing_state::update() {
   auto events = levi::input_handler::instance().get_event_list();
   for (auto &i : events) {
     if (i.type == levi::event_type::pause_event) {
+      levi::engine::instance()
+          .state_machine()
+          .current_state()
+          ->set_updatebility(false);
       levi::engine::instance().state_machine().push_state(
           std::make_shared<pause_state>());
       return;

@@ -10,16 +10,24 @@
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
+#include <iostream>
+
 deep_space::menu_state::menu_state() : levi::scene{} {
   auto callback_play = []() {
-    levi::engine::instance().state_machine().push_state(
-        std::make_shared<playing_state>());
+    auto cur_scene = levi::engine::instance().state_machine().current_state();
+    cur_scene->set_visibility(false);
+    cur_scene->set_updatebility(false);
+
+    auto new_scene = std::make_shared<playing_state>();
+    levi::engine::instance().state_machine().push_state(new_scene);
+    std::cerr << "play\n";
   };
 
   auto callback_exit = []() {
     levi::event event{};
     event.type = levi::event_type::quit_event;
     levi::input_handler::instance().add_event(event);
+    std::cerr << "exit\n";
   };
 
   callback_map callback_map;

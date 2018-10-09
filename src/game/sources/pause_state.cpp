@@ -10,19 +10,30 @@
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
+#include <iostream>
+
 deep_space::pause_state::pause_state() : scene{} {
   auto resume_callback = []() {
     levi::engine::instance().state_machine().pop_state();
+    levi::engine::instance().state_machine().current_state()->set_updatebility(
+        true);
+    std::cerr << "resume\n";
   };
   auto to_menu_callback = []() {
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().pop_state();
+    levi::engine::instance().state_machine().current_state()->set_updatebility(
+        true);
+    levi::engine::instance().state_machine().current_state()->set_visibility(
+        true);
+    std::cerr << "to_menu\n";
   };
   auto restart_callback = []() {
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().push_state(
         std::make_shared<playing_state>());
+    std::cerr << "restart\n";
   };
 
   callback_map callback_map{};

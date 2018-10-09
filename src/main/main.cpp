@@ -17,7 +17,8 @@ int main(int argc, char *argv[]) {
   auto &engine = levi::engine::instance();
   auto &input_handler = levi::input_handler::instance();
 
-  engine.state_machine().push_state(std::make_shared<deep_space::menu_state>());
+  auto menu = std::make_shared<deep_space::menu_state>();
+  engine.state_machine().push_state(menu);
 
   bool game_stop = false;
 

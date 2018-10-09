@@ -1,6 +1,9 @@
 // state_machine.cpp
 
 #include "state_machine.hpp"
+
+#include <algorithm>
+
 #include "scene.hpp"
 
 levi::state_machine::state_machine() { current_state_ = states_list_.begin(); }
@@ -18,16 +21,26 @@ void levi::state_machine::pop_state() {
 }
 
 void levi::state_machine::update() {
-  while (current_state_ != states_list_.begin()) {
-    states_list_.pop_front();
+  if (current_state_ != states_list_.begin()) {
+    states_list_.erase(states_list_.begin(), current_state_);
   }
-  if (!states_list_.empty()) {
-    states_list_.front()->update();
-  }
+  std::for_each(states_list_.rbegin(), states_list_.rend(),
+                [](std::shared_ptr<scene> item) {
+                  if (item->is_updateble()) {
+                    item->update();
+                  }
+                });
+}
+
+std::shared_ptr<levi::scene> levi::state_machine::current_state() {
+  return *current_state_;
 }
 
 void levi::render(::SDL_Renderer *renderer, state_machine *s_m) {
-  if (!s_m->states_list_.empty()) {
-    render(renderer, s_m->states_list_.front().get());
-  }
+  std::for_each(s_m->states_list_.rbegin(), s_m->states_list_.rend(),
+                [=](std::shared_ptr<scene> item) {
+                  if (item->is_visible()) {
+                    render(renderer, item.get());
+                  }
+                });
 }

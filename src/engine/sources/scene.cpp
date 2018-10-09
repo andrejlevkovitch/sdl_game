@@ -4,7 +4,7 @@
 
 #include "abstract_object.hpp"
 
-levi::scene::scene() {}
+levi::scene::scene() : is_visible_{true}, is_updateble_{true} {}
 
 levi::scene::~scene() {}
 
@@ -33,3 +33,8 @@ void levi::render(::SDL_Renderer *renderer, scene *scene) {
     levi::draw(renderer, item.get());
   }
 }
+
+void levi::scene::set_visibility(bool value) { is_visible_ = value; }
+bool levi::scene::is_visible() { return is_visible_; }
+void levi::scene::set_updatebility(bool value) { is_updateble_ = value; }
+bool levi::scene::is_updateble() { return is_updateble_; }

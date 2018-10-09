@@ -18,10 +18,9 @@ void deep_space::parse_state(
   }
 
   std::string way{state_file};
-  /// todo this cikle is danger!
-  for (auto i = way.end() - 1; i != way.begin(); --i) {
+  for (auto i = way.rbegin(); i != way.rend(); ++i) {
     if (*i == '/' || *i == '\\') {
-      way.erase(i + 1, way.end());
+      way.erase(i.base(), way.rbegin().base());
       break;
     }
   }
