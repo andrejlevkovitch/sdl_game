@@ -3,8 +3,6 @@
 #include "state_machine.hpp"
 #include "scene.hpp"
 
-#include <iostream>
-
 levi::state_machine::state_machine() { current_state_ = states_list_.begin(); }
 
 levi::state_machine::~state_machine(){};

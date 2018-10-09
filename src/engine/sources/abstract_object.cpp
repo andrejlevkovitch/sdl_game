@@ -7,10 +7,22 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+levi::abstract_object::abstract_object(params params)
+    : file_name_{std::get<0>(params)},
+      wait_delete_{false}, texture_{nullptr}, src_rect_{new ::SDL_Rect},
+      dst_rect_{new ::SDL_Rect}, frame_{}, angle_{}, flip_{flip::none} {
+  src_rect_->w = dst_rect_->w = std::get<1>(params).get_width();
+  src_rect_->h = dst_rect_->h = std::get<1>(params).get_height();
+  src_rect_->x = 0;
+  src_rect_->y = 0;
+  dst_rect_->x = std::get<2>(params).get_x();
+  dst_rect_->y = std::get<2>(params).get_y();
+}
+
 levi::abstract_object::abstract_object(const std::string &file_name)
-    : file_name_{file_name}, wait_delete_{false}, texture_{nullptr},
-      src_rect_{new ::SDL_Rect}, dst_rect_{new ::SDL_Rect}, frame_{},
-      angle_{} /*, flip_{SDL_FLIP_NONE} */ {
+    : file_name_{file_name},
+      wait_delete_{false}, texture_{nullptr}, src_rect_{new ::SDL_Rect},
+      dst_rect_{new ::SDL_Rect}, frame_{}, angle_{}, flip_{flip::none} {
   dst_rect_->x = src_rect_->x = 0;
   dst_rect_->y = src_rect_->y = 0;
   dst_rect_->w = src_rect_->w = 0;

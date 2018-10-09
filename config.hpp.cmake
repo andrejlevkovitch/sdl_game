@@ -3,4 +3,5 @@
 
 namespace levi {
 const std::string way_to_images{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/images/"};
+const std::string way_to_collection{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/"};
 }

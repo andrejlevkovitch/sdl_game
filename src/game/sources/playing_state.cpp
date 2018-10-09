@@ -2,14 +2,22 @@
 
 #include "playing_state.hpp"
 
+#include "config.hpp"
 #include "engine.hpp"
 #include "input_handler.hpp"
 #include "pause_state.hpp"
 #include "shiep.hpp"
 #include "state_machine.hpp"
+#include "state_parser.hpp"
+
+const int dop_height{40};
+const int dop_width{40};
 
 deep_space::playing_state::playing_state() {
-  this->add_item(std::make_shared<shiep>());
+  // this->add_item(std::make_shared<shiep>());
+  state_parser state_parser{};
+  state_parser.parse_state(levi::way_to_collection + "collection.xml",
+                           "playing", item_list_);
 }
 
 void deep_space::playing_state::update() {
@@ -27,17 +35,19 @@ void deep_space::playing_state::update() {
   auto win_size = levi::engine::instance().get_window_size();
   for (auto &i : item_list_) {
     auto item_pos = i->get_pos();
-    if (item_pos.get_x() < -40) {
-      i->set_pos(levi::vector2d(win_size.get_width() + 40, item_pos.get_y()));
+    if (item_pos.get_x() < -dop_width) {
+      i->set_pos(
+          levi::vector2d(win_size.get_width() + dop_width, item_pos.get_y()));
     }
-    if (item_pos.get_y() < -40) {
-      i->set_pos(levi::vector2d(item_pos.get_x(), win_size.get_height() + 40));
+    if (item_pos.get_y() < -dop_height) {
+      i->set_pos(
+          levi::vector2d(item_pos.get_x(), win_size.get_height() + dop_height));
     }
-    if (item_pos.get_x() > win_size.get_width() + 40) {
-      i->set_pos(levi::vector2d(-40, item_pos.get_y()));
+    if (item_pos.get_x() > win_size.get_width() + dop_width) {
+      i->set_pos(levi::vector2d(-dop_width, item_pos.get_y()));
     }
-    if (item_pos.get_y() > win_size.get_height() + 40) {
-      i->set_pos(levi::vector2d(item_pos.get_x(), -40));
+    if (item_pos.get_y() > win_size.get_height() + dop_height) {
+      i->set_pos(levi::vector2d(item_pos.get_x(), -dop_width));
     }
   }
 }

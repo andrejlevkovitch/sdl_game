@@ -9,6 +9,7 @@ namespace deep_space {
 class shiep : public levi::abstract_object {
 public:
   shiep();
+  shiep(levi::params params);
   void update() override;
   void motion();
   float rotate(float value) override;

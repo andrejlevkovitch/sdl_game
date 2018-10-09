@@ -3,7 +3,7 @@
 #pragma once
 
 #include <cstdint>
-#include <iostream>
+#include <ostream>
 
 namespace levi {
 enum class event_type : uint8_t { none, quit_event, button_event, pause_event };

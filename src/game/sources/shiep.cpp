@@ -13,6 +13,10 @@ deep_space::shiep::shiep()
   this->set_pos(levi::vector2d{100, 0});
 }
 
+deep_space::shiep::shiep(levi::params params)
+    : levi::abstract_object{params}, breaking_{0.3}, acceleration_{2},
+      direction_{1, 0} {}
+
 void deep_space::shiep::update() {
   set_frame(0);
   auto &event_list = levi::input_handler::instance().get_event_list();

@@ -4,6 +4,7 @@
 
 #include <cstdint>
 #include <string>
+#include <tuple>
 
 #include "size.hpp"
 #include "vector2d.hpp"
@@ -15,9 +16,13 @@ struct SDL_Rect;
 namespace levi {
 enum object_type { unknown, user_type = 100 };
 enum class flip { none, horizontal, vertical };
+
+using params = std::tuple<std::string, levi::size, vector2d>;
+
 /**\brief abstract base class for all objects*/
 class abstract_object {
 public:
+  abstract_object(params params);
   /**\param file_name name of file with path*/
   abstract_object(const std::string &file_name);
   abstract_object(const abstract_object &) = delete;
