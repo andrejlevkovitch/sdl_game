@@ -13,6 +13,7 @@ public:
   static input_handler &instance();
   bool is_quit() const;
   const std::list<event> &get_event_list() const;
+  /**\brief read sdl event and made from they levi::event(s)*/
   void read_input();
   void update();
   /**\brief add event, which will be avaliable at next iteration of game

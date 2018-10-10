@@ -19,7 +19,7 @@ enum class flip { none, horizontal, vertical };
 /**\brief abstract base class for all objects*/
 class abstract_object {
 public:
-  /**\param file_name file name with path to it
+  /**\param texture_id id of texture which use in the object
    * \param size frame size
    * \param pos begin pos of top-left corner*/
   abstract_object(const std::string &texture_id, levi::size size, vector2d pos);

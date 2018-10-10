@@ -30,6 +30,7 @@ public:
   void render();
   /**\return size of the window in pixels*/
   levi::size get_window_size() const;
+  /**\brief create texture from file*/
   SDL_Texture *create_texture(const std::string &file_name);
   friend void draw(engine &engine, abstract_object *obj);
 

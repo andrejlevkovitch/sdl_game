@@ -2,6 +2,7 @@
 
 #include "texture_manager.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 
 #include <SDL2/SDL.h>
@@ -30,11 +31,11 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
   }
 
   std::string way_to_files = texture_file;
-  for (auto i = way_to_files.rbegin(); i != way_to_files.rend(); ++i) {
-    if (*i == '\\' || *i == '/') {
-      way_to_files.erase(i.base(), way_to_files.rbegin().base());
-      break;
-    }
+  auto last_slesh = std::find(way_to_files.rbegin(), way_to_files.rend(), '/');
+  if (last_slesh == way_to_files.rend()) {
+    way_to_files.clear();
+  } else {
+    way_to_files.erase(last_slesh.base(), way_to_files.rbegin().base());
   }
 
   size_t capacity{};

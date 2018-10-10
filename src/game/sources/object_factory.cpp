@@ -2,6 +2,7 @@
 
 #include "object_factory.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 #include <tinyxml.h>
 
@@ -17,12 +18,12 @@ void deep_space::parse_state(
     throw std::runtime_error{"xml file " + state_file + " not load"};
   }
 
-  std::string way{state_file};
-  for (auto i = way.rbegin(); i != way.rend(); ++i) {
-    if (*i == '/' || *i == '\\') {
-      way.erase(i.base(), way.rbegin().base());
-      break;
-    }
+  std::string way_to_files{state_file};
+  auto last_slesh = std::find(way_to_files.rbegin(), way_to_files.rend(), '/');
+  if (last_slesh == way_to_files.rend()) {
+    way_to_files.clear();
+  } else {
+    way_to_files.erase(last_slesh.base(), way_to_files.rbegin().base());
   }
 
   auto root_element = xml_doc.RootElement();
