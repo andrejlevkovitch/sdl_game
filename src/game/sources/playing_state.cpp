@@ -14,7 +14,7 @@ const int dop_height{40};
 const int dop_width{40};
 
 deep_space::playing_state::playing_state() {
-  parse_state(levi::way_to_collection + "collection.xml", "playing",
+  parse_state(deep_space::way_to_objects + "objects.xml", "playing",
               item_list_);
 }
 

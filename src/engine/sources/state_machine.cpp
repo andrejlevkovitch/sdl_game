@@ -4,6 +4,7 @@
 
 #include <algorithm>
 
+#include "engine.hpp"
 #include "scene.hpp"
 
 levi::state_machine::state_machine() { current_state_ = states_list_.begin(); }
@@ -36,11 +37,11 @@ std::shared_ptr<levi::scene> levi::state_machine::current_state() {
   return *current_state_;
 }
 
-void levi::render(::SDL_Renderer *renderer, state_machine *s_m) {
+void levi::render(engine &engine, state_machine *s_m) {
   std::for_each(s_m->states_list_.rbegin(), s_m->states_list_.rend(),
-                [=](std::shared_ptr<scene> item) {
+                [&](std::shared_ptr<scene> item) {
                   if (item->is_visible()) {
-                    render(renderer, item.get());
+                    render(engine, item.get());
                   }
                 });
 }

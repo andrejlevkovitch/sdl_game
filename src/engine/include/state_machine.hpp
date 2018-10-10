@@ -8,8 +8,9 @@
 struct SDL_Renderer;
 
 namespace levi {
+class engine;
 class scene;
-void render(::SDL_Renderer *renderer, scene *a_s);
+void render(engine &engine, scene *a_s);
 
 class state_machine {
 public:
@@ -20,7 +21,7 @@ public:
   void pop_state();
   void update();
   std::shared_ptr<scene> current_state();
-  friend void render(::SDL_Renderer *renderer, state_machine *s_m);
+  friend void render(engine &engine, state_machine *s_m);
 
 private:
   std::list<std::shared_ptr<scene>> states_list_;

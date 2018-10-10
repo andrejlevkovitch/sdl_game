@@ -9,11 +9,10 @@
 #include "size.hpp"
 #include "vector2d.hpp"
 
-struct SDL_Texture;
-struct SDL_Renderer;
 struct SDL_Rect;
 
 namespace levi {
+class engine;
 enum object_type { unknown, user_type = 100 };
 enum class flip { none, horizontal, vertical };
 
@@ -23,7 +22,7 @@ public:
   /**\param file_name file name with path to it
    * \param size frame size
    * \param pos begin pos of top-left corner*/
-  abstract_object(const std::string &file_name, levi::size size, vector2d pos);
+  abstract_object(const std::string &texture_id, levi::size size, vector2d pos);
   abstract_object(const abstract_object &) = delete;
   abstract_object &operator=(const abstract_object &) = delete;
   virtual ~abstract_object();
@@ -51,13 +50,11 @@ public:
   float get_angle() const;
   void set_flip(flip f);
   flip get_flip() const;
-  friend bool load(::SDL_Renderer *renderer, abstract_object *obj);
-  friend void draw(::SDL_Renderer *renderer, abstract_object *obj);
+  friend void draw(engine &engine, abstract_object *obj);
 
 private:
-  std::string file_name_;
+  std::string texture_id_;
   bool wait_delete_;
-  ::SDL_Texture *texture_;
   ::SDL_Rect *src_rect_;
   ::SDL_Rect *dst_rect_;
   unsigned frame_;

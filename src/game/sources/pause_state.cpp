@@ -17,7 +17,6 @@ deep_space::pause_state::pause_state() : scene{} {
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().current_state()->set_updatebility(
         true);
-    std::cerr << "resume\n";
   };
   auto to_menu_callback = []() {
     levi::engine::instance().state_machine().pop_state();
@@ -26,14 +25,12 @@ deep_space::pause_state::pause_state() : scene{} {
         true);
     levi::engine::instance().state_machine().current_state()->set_visibility(
         true);
-    std::cerr << "to_menu\n";
   };
   auto restart_callback = []() {
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().push_state(
         std::make_shared<playing_state>());
-    std::cerr << "restart\n";
   };
 
   callback_map callback_map{};
@@ -41,7 +38,7 @@ deep_space::pause_state::pause_state() : scene{} {
   callback_map["to_menu"] = to_menu_callback;
   callback_map["restart"] = restart_callback;
 
-  parse_state(levi::way_to_collection + "collection.xml", "pause", item_list_,
+  parse_state(deep_space::way_to_objects + "objects.xml", "pause", item_list_,
               &callback_map);
 
   current_ = item_list_.begin();

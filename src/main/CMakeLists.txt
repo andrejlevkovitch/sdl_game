@@ -11,3 +11,4 @@ foreach(SOME_TARGET ${LIST_TARGETS})
 endforeach()
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_IMAGE_LIBRARY} ${SDL2_LIBRARY})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR})

@@ -8,8 +8,9 @@
 struct SDL_Renderer;
 
 namespace levi {
+class engine;
 class abstract_object;
-void draw(::SDL_Renderer *renderer, abstract_object *obj);
+void draw(engine &engine, abstract_object *obj);
 
 enum class id_state { none, menu, playing, pause, over, user_id = 100 };
 
@@ -22,7 +23,7 @@ public:
   const levi::item_list &get_item_list();
   virtual void update();
   virtual id_state get_id() const;
-  friend void render(::SDL_Renderer *renderer, scene *scene);
+  friend void render(engine &engine, scene *scene);
   /**\brief hides or shows scene
    * \param value false if you want hide, true if show. By default scene is
    * visible*/

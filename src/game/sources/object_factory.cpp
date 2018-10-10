@@ -68,11 +68,11 @@ void deep_space::parse_state(
     i->Attribute("width", &width);
     i->Attribute("height", &height);
 
-    std::string texture = way;
-    if ((attribute_pointer = i->Attribute("texture"))) {
-      texture += attribute_pointer;
+    std::string texture_id;
+    if ((attribute_pointer = i->Attribute("texture_id"))) {
+      texture_id = attribute_pointer;
     } else {
-      throw std::domain_error{"attribute texture for object in state " +
+      throw std::domain_error{"attribute texture_id for object in state " +
                               state_name + " not founded"};
     }
 
@@ -92,7 +92,7 @@ void deep_space::parse_state(
     }
 
     try {
-      auto object = create_object(type, texture, levi::size{width, height},
+      auto object = create_object(type, texture_id, levi::size{width, height},
                                   levi::vector2d(x, y), callback);
       item_list.push_back(object);
     } catch (std::exception) {

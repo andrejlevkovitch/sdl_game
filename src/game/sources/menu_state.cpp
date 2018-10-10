@@ -20,14 +20,12 @@ deep_space::menu_state::menu_state() : levi::scene{} {
 
     auto new_scene = std::make_shared<playing_state>();
     levi::engine::instance().state_machine().push_state(new_scene);
-    std::cerr << "play\n";
   };
 
   auto callback_exit = []() {
     levi::event event{};
     event.type = levi::event_type::quit_event;
     levi::input_handler::instance().add_event(event);
-    std::cerr << "exit\n";
   };
 
   callback_map callback_map;
@@ -35,7 +33,7 @@ deep_space::menu_state::menu_state() : levi::scene{} {
   callback_map["play"] = callback_play;
   callback_map["exit"] = callback_exit;
 
-  parse_state(levi::way_to_collection + "collection.xml", "menu", item_list_,
+  parse_state(deep_space::way_to_objects + "objects.xml", "menu", item_list_,
               &callback_map);
 
   current_ = item_list_.begin();

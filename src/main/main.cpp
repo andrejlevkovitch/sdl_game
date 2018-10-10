@@ -4,17 +4,20 @@
 #include <iostream>
 #include <memory>
 
+#include "config.hpp"
 #include "engine.hpp"
 #include "input_handler.hpp"
-#include "state_machine.hpp"
-#include "time.hpp"
-
 #include "menu_state.hpp"
+#include "state_machine.hpp"
+#include "texture_manager.hpp"
+#include "time.hpp"
 
 const int fixedFPS{20};
 
 int main(int argc, char *argv[]) {
   auto &engine = levi::engine::instance();
+  engine.texture_manager().parse_textures(deep_space::way_to_files +
+                                          "textures.xml");
   auto &input_handler = levi::input_handler::instance();
 
   auto menu = std::make_shared<deep_space::menu_state>();
@@ -27,9 +30,9 @@ int main(int argc, char *argv[]) {
 
     input_handler.update();
     game_stop = input_handler.is_quit();
-    for (auto &i : input_handler.get_event_list()) {
-      std::cerr << i << std::endl;
-    }
+    //  for (auto &i : input_handler.get_event_list()) {
+    //    std::cerr << i << std::endl;
+    //  }
     engine.update();
     engine.render();
 

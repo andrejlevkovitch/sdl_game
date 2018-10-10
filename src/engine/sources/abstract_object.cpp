@@ -5,12 +5,15 @@
 #include <cmath>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 
-levi::abstract_object::abstract_object(const std::string &file_name, size size,
+#include "engine.hpp"
+#include "texture_manager.hpp"
+
+#include <iostream>
+
+levi::abstract_object::abstract_object(const std::string &texture_id, size size,
                                        vector2d pos)
-    : file_name_{file_name},
-      wait_delete_{false}, texture_{nullptr}, src_rect_{new ::SDL_Rect},
+    : texture_id_{texture_id}, wait_delete_{false}, src_rect_{new ::SDL_Rect},
       dst_rect_{new ::SDL_Rect}, frame_{}, angle_{}, flip_{flip::none} {
   src_rect_->x = 0;
   src_rect_->y = 0;
@@ -21,7 +24,6 @@ levi::abstract_object::abstract_object(const std::string &file_name, size size,
 }
 
 levi::abstract_object::~abstract_object() {
-  ::SDL_DestroyTexture(texture_);
   delete src_rect_;
   delete dst_rect_;
 }
@@ -73,27 +75,11 @@ void levi::abstract_object::set_flip(flip f) { flip_ = f; }
 
 levi::flip levi::abstract_object::get_flip() const { return flip_; }
 
-bool levi::load(::SDL_Renderer *renderer, abstract_object *obj) {
-  if (obj->texture_) {
-    ::SDL_DestroyTexture(obj->texture_);
-  }
-  auto surface = ::IMG_Load(obj->file_name_.c_str());
-  if (surface) {
-    obj->texture_ = ::SDL_CreateTextureFromSurface(renderer, surface);
-    ::SDL_FreeSurface(surface);
-    if (obj->texture_) {
-      return true;
-    }
-  }
-  return false;
-}
-
-void levi::draw(::SDL_Renderer *renderer, abstract_object *obj) {
-  if (!obj->texture_) {
-    if (!load(renderer, obj)) {
-      obj->delete_later();
-      return;
-    }
+void levi::draw(levi::engine &engine, abstract_object *obj) {
+  ::SDL_Texture *texture{nullptr};
+  texture = engine.texture_manager().get_texture(obj->texture_id_);
+  if (!texture) {
+    return;
   }
   ::SDL_RendererFlip f;
   switch (obj->flip_) {
@@ -107,6 +93,6 @@ void levi::draw(::SDL_Renderer *renderer, abstract_object *obj) {
     f = ::SDL_FLIP_NONE;
     break;
   }
-  ::SDL_RenderCopyEx(renderer, obj->texture_, obj->src_rect_, obj->dst_rect_,
+  ::SDL_RenderCopyEx(engine.renderer_, texture, obj->src_rect_, obj->dst_rect_,
                      obj->angle_, nullptr, f);
 }

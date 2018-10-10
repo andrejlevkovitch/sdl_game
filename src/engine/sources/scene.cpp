@@ -27,10 +27,10 @@ void levi::scene::update() {
 
 levi::id_state levi::scene::get_id() const { return id_state::none; }
 
-void levi::render(::SDL_Renderer *renderer, scene *scene) {
+void levi::render(engine &engine, scene *scene) {
   auto &item_list = scene->get_item_list();
   for (auto &item : item_list) {
-    levi::draw(renderer, item.get());
+    levi::draw(engine, item.get());
   }
 }
 

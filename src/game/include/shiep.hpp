@@ -8,7 +8,7 @@
 namespace deep_space {
 class shiep : public levi::abstract_object {
 public:
-  shiep(const std::string &file_name, levi::size size, levi::vector2d pos);
+  shiep(const std::string &texture_id, levi::size size, levi::vector2d pos);
   void update() override;
   void motion();
   float rotate(float value) override;

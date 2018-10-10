@@ -4,9 +4,9 @@
 
 #include "input_handler.hpp"
 
-deep_space::button::button(const std::string &file_name, levi::size size,
+deep_space::button::button(const std::string &texture_id, levi::size size,
                            levi::vector2d pos, callback callback)
-    : levi::abstract_object{file_name, size, pos}, callback_{callback},
+    : levi::abstract_object{texture_id, size, pos}, callback_{callback},
       state_{false} {}
 
 void deep_space::button::hover(bool state) {

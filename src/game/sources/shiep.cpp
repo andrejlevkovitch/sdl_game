@@ -6,9 +6,9 @@
 
 static const int max_speed{30};
 
-deep_space::shiep::shiep(const std::string &file_name, levi::size size,
+deep_space::shiep::shiep(const std::string &texture_id, levi::size size,
                          levi::vector2d pos)
-    : levi::abstract_object{file_name, size, pos}, breaking_{0.3},
+    : levi::abstract_object{texture_id, size, pos}, breaking_{0.3},
       acceleration_{}, direction_{1, 0} {}
 
 void deep_space::shiep::update() {
