@@ -5,3 +5,5 @@ namespace deep_space {
 const std::string way_to_files{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/"};
 const std::string way_to_objects{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/"};
 }
+
+const std::string triangles_xml{"${CMAKE_CURRENT_SOURCE_DIR}/src/triangles.xml"};

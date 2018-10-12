@@ -36,5 +36,6 @@ private:
   uint32_t v_shader_;
   uint32_t f_shader_;
   uint32_t program_;
+  uint32_t vao_;
 };
 }; // namespace levi
