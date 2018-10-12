@@ -20,7 +20,7 @@ public:
   static engine &instance();
   ~engine();
   void update();
-  void render();
+  void render(size_t n_vertex);
   /**\return size of the window in pixels*/
   levi::size get_window_size() const;
 

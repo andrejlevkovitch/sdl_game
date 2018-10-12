@@ -173,7 +173,7 @@ levi::engine::~engine() {
 
 void levi::engine::update() {}
 
-void levi::engine::render() {
+void levi::engine::render(size_t n_vertex) {
   ::glClear(GL_COLOR_BUFFER_BIT);
 
   auto &gl_func = gl_loader::instance();
@@ -201,7 +201,7 @@ void levi::engine::render() {
   gl_func.glEnableVertexAttribArray(color_attribute);
   LEVI_CHECK();
 
-  ::glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+  ::glDrawElements(GL_TRIANGLES, n_vertex, GL_UNSIGNED_INT, 0);
   LEVI_CHECK();
 
   ::SDL_GL_SwapWindow(window_);

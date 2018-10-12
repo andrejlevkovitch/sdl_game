@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
                          &elements[0], GL_STATIC_DRAW);
     LEVI_CHECK();
 
-    engine.render();
+    engine.render(elements.size());
 
     auto dif_time = levi::get_time() - last_tick;
     if (dif_time < 1000 / fixedFPS) {

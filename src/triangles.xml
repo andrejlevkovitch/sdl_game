@@ -1,10 +1,11 @@
 <?xml verion=1.0?>
 <data>
   <vertices>
+    <vertex/>
     <vertex x="-0.5" y="0.5" r="1" g="1" b="1"/>
     <vertex x="-0.5" y="-0.5" r="1" g="0" b="0"/>
     <vertex x="0.5" y="-0.5" r="0" g="1" b="0"/>
     <vertex x="0.5" y="0.5" r="0" g="0" b="1"/>
   </vertices>
-  <indexes array="0 1 2 0 2 3"/>
+  <indexes array="0 1 2 0 2 3 0 3 4 0 4 1"/>
 </data>
