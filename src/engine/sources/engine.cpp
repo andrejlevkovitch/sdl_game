@@ -249,9 +249,16 @@ void levi::engine::update() {}
 void levi::engine::render() {
   ::glClear(GL_COLOR_BUFFER_BIT);
 
-  vertex vertices[]{vertex{.0f, .5f, 1.0f, .0f, .0f},
-                    vertex{-.5f, -.5f, .0f, 1.0f, .0f},
-                    vertex{.5, -.5, .0f, .0f, 1.0f}};
+  GLuint vao{};
+  glGenVertexArrays(1, &vao);
+  LEVI_CHECK();
+  glBindVertexArray(vao);
+  LEVI_CHECK();
+
+  vertex vertices[]{
+      vertex{.0f, .5f, 1.0f, .0f, .0f}, vertex{-.5f, -.5f, .0f, 1.0f, .0f},
+      vertex{.5, -.5, .0f, .0f, 1.0f}, vertex{-.5f, .5f, .0f, .0f, .0f},
+      vertex{.5f, .5f, 1.0f, 1.0f, 1.0f}};
   GLuint vbo{};
   glGenBuffers(1, &vbo);
   LEVI_CHECK();
@@ -260,10 +267,15 @@ void levi::engine::render() {
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   LEVI_CHECK();
 
-  GLuint vao{};
-  glGenVertexArrays(1, &vao);
+  GLuint elements[]{0, 1, 2, 0, 3, 1, 0, 2, 4};
+
+  GLuint ebo{};
+  glGenBuffers(1, &ebo);
   LEVI_CHECK();
-  glBindVertexArray(vao);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  LEVI_CHECK();
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements,
+               GL_STATIC_DRAW);
   LEVI_CHECK();
 
   auto pos_attribute = glGetAttribLocation(program_, "position");
@@ -288,12 +300,16 @@ void levi::engine::render() {
   glEnableVertexAttribArray(color_attribute);
   LEVI_CHECK();
 
-  ::glDrawArrays(GL_TRIANGLES, 0, 3);
+  ::glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+  //::glDrawArrays(GL_TRIANGLES, 0, 3);
   LEVI_CHECK();
 
   ::SDL_GL_SwapWindow(window_);
 
   glDeleteVertexArrays(1, &vao);
+  LEVI_CHECK();
+  glDeleteBuffers(1, &ebo);
+  LEVI_CHECK();
   glDeleteBuffers(1, &vbo);
   LEVI_CHECK();
 }
