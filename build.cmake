@@ -31,7 +31,7 @@ message(STATUS "build shared " ${BUILD_SHARED_LIBS})
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -Wextra")
 
 foreach(DIR ${LIST_SUBDIRS})
   add_subdirectory("src/${DIR}")

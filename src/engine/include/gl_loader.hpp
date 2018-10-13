@@ -2,30 +2,43 @@
 
 #pragma once
 
+#include <sstream>
 #include <string>
 
 #include <SDL2/SDL_opengl.h>
 
 #define LEVI_CHECK()                                                           \
   {                                                                            \
-    auto error = ::glGetError();                                               \
-    if (error != GL_NO_ERROR) {                                                \
-      switch (error) {                                                         \
+    auto some_error = ::glGetError();                                          \
+    if (some_error != GL_NO_ERROR) {                                           \
+      std::string error;                                                       \
+      switch (some_error) {                                                    \
       case GL_INVALID_ENUM:                                                    \
-        throw std::runtime_error{"gl_error: invalid enum"};                    \
+        error = "gl_error: invalid enum\n";                                    \
       case GL_INVALID_VALUE:                                                   \
-        throw std::runtime_error{"gl_error: invalid value"};                   \
+        error = "gl_error: invalid value\n";                                   \
       case GL_INVALID_OPERATION:                                               \
-        throw std::runtime_error{"gl_error: invalid operation"};               \
+        error = "gl_error: invalid operation\n";                               \
       case GL_INVALID_FRAMEBUFFER_OPERATION:                                   \
-        throw std::runtime_error{"gl_error: invalid framebuffer operation"};   \
+        error = "gl_error: invalid framebuffer operation\n";                   \
       case GL_OUT_OF_MEMORY:                                                   \
-        throw std::runtime_error{"gl_error: out of memory"};                   \
+        error = "gl_error: out of memory\n";                                   \
       default:                                                                 \
         break;                                                                 \
       }                                                                        \
+      std::stringstream ss;                                                    \
+      std::string pos;                                                         \
+      const size_t max_buf_size{512};                                          \
+      char buf[max_buf_size]{};                                                \
+      ss << __LINE__;                                                          \
+      int line{};                                                              \
+      ss >> line;                                                              \
+      ss << __FILE__ << ':' << line - 1 << '(' << __FUNCTION__ << ')';         \
+      ss.getline(buf, max_buf_size);                                           \
+      error += buf;                                                            \
+      throw std::runtime_error{error};                                         \
     }                                                                          \
-  };
+  }
 
 namespace levi {
 class gl_loader {

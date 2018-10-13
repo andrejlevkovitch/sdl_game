@@ -43,4 +43,5 @@ private:
 
 float get_angle_bitwin(vector2d lhs, vector2d rhs,
                        vector2d begin_koord = vector2d{0, 0});
+vector2d operator*(float lhs, const vector2d &rhs);
 }; // namespace levi
