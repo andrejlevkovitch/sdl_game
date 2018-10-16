@@ -9,12 +9,14 @@
 #include <tinyxml.h>
 
 #include "engine.hpp"
+#include "gl_loader.hpp"
+#include "load_png.hpp"
 
-levi::texture_manager::texture_manager(engine &engine) : engine_{engine} {}
+levi::texture_manager::texture_manager() {}
 
 levi::texture_manager::~texture_manager() {
   for (auto &i : texture_map_) {
-    SDL_DestroyTexture(i.second);
+    ::glDeleteTextures(1, &i.second.gl_tex);
   }
 }
 
@@ -54,21 +56,52 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
     }
 
     if (!texture_id.empty() && !texture_file.empty()) {
-      auto texture = engine_.create_texture(texture_file);
-      if (texture) {
-        texture_map_[texture_id] = texture;
-        ++capacity;
+      image image{};
+      try {
+        image = load_png_as_rgb(texture_file);
+      } catch (std::exception &except) {
+        not_loaded_.push_back("texture " + texture_id + " from file " +
+                              texture_file + " because: " + except.what());
+        continue;
       }
+
+      GLuint gl_tex{};
+      ::glActiveTexture(GL_TEXTURE7);
+      LEVI_CHECK();
+      ::glGenTextures(1, &gl_tex);
+      LEVI_CHECK();
+      ::glBindTexture(GL_TEXTURE_2D, gl_tex);
+      LEVI_CHECK();
+
+      ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, &image.data[0]);
+      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      //    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+      //    GL_CLAMP_TO_BORDER);
+      //    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+      //    GL_CLAMP_TO_BORDER);
+      LEVI_CHECK();
+
+      texture_map_[texture_id] = texture{gl_tex, image.width, image.height};
+      ++capacity;
     }
   }
 
   return capacity;
 }
 
-SDL_Texture *levi::texture_manager::get_texture(const std::string &texture_id) {
+levi::texture
+levi::texture_manager::get_texture(const std::string &texture_id) const {
   try {
     return texture_map_.at(texture_id);
   } catch (std::out_of_range &) {
-    return nullptr;
+    throw;
   }
+}
+
+std::list<std::string> levi::texture_manager::get_not_load_objects() {
+  std::list<std::string> retval;
+  not_loaded_.swap(retval);
+  return retval;
 }

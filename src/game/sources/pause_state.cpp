@@ -10,8 +10,6 @@
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
-#include <iostream>
-
 deep_space::pause_state::pause_state() : scene{} {
   auto resume_callback = []() {
     levi::engine::instance().state_machine().pop_state();

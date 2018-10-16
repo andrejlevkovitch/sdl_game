@@ -2,26 +2,31 @@
 
 #pragma once
 
+#include <list>
 #include <map>
 #include <string>
 
-struct SDL_Texture;
+#include "texture.hpp"
 
 namespace levi {
 class engine;
 
 class texture_manager {
 public:
-  texture_manager(engine &engine);
+  texture_manager();
   ~texture_manager();
   /**\brief parse xml file and create textures from datas
    * \param texture_file xml file with way to it
    * \return capacity of load textures*/
   size_t parse_textures(const std::string &texture_file);
-  SDL_Texture *get_texture(const std::string &texture_id);
+  /**\exception if texture_id not exist throw std::except*/
+  texture get_texture(const std::string &texture_id) const;
+  /**\brief get all not loaded objects whith errors, after this list will be
+   * cleared*/
+  std::list<std::string> get_not_load_objects();
 
 private:
-  engine &engine_;
-  std::map<std::string, SDL_Texture *> texture_map_;
+  std::map<std::string, texture> texture_map_;
+  std::list<std::string> not_loaded_;
 };
 }; // namespace levi

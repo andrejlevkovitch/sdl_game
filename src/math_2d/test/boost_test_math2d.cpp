@@ -3,7 +3,9 @@
 #define BOOST_TEST_MODULE test_math2d
 #include <boost/test/included/unit_test.hpp>
 
+#include "mat33.hpp"
 #include "vector2d.hpp"
+#include "vertex.hpp"
 
 BOOST_AUTO_TEST_SUITE(test_vector2d)
 BOOST_AUTO_TEST_CASE(test_get_lenght) {
@@ -20,8 +22,8 @@ BOOST_AUTO_TEST_CASE(test_addition) {
   levi::vector2d vec2(x2, y2);
 
   auto vec3 = vec1 + vec2;
-  BOOST_CHECK(vec3.get_x() == x1 + x2);
-  BOOST_CHECK(vec3.get_y() == y1 + y2);
+  BOOST_CHECK(vec3.x == x1 + x2);
+  BOOST_CHECK(vec3.y == y1 + y2);
 
   vec1 += vec2;
   BOOST_CHECK(vec3 == vec1);
@@ -36,11 +38,11 @@ BOOST_AUTO_TEST_CASE(test_dot) {
 
   BOOST_CHECK_CLOSE_FRACTION(vec1 * vec2, 0, 0.001);
 
-  vec1.set_y(0);
-  vec2.set_y(0);
+  vec1.y = 0;
+  vec2.y = 0;
   BOOST_CHECK(vec1 * vec2 < 0);
 
-  vec1.set_x(3);
+  vec1.x = 3;
   BOOST_CHECK(vec1 * vec2 > 0);
 
   vec1 = levi::vector2d{3, 2};
@@ -54,13 +56,13 @@ BOOST_AUTO_TEST_CASE(test_get_angle) {
 
   BOOST_CHECK_CLOSE_FRACTION(get_angle_bitwin(vec1, vec2), 90, 0.001);
 
-  vec2.set_x(0);
+  vec2.x = 0;
   BOOST_CHECK_CLOSE_FRACTION(get_angle_bitwin(vec2, vec1), 45, 0.001);
 
-  vec1.set_x(52);
-  vec1.set_y(98);
-  vec2.set_x(83);
-  vec2.set_y(280);
+  vec1.x = 52;
+  vec1.y = 98;
+  vec2.x = 83;
+  vec2.y = 280;
   BOOST_CHECK_CLOSE_FRACTION(get_angle_bitwin(vec1, vec2),
                              get_angle_bitwin(vec2, vec1), 0.001);
 
@@ -75,8 +77,8 @@ BOOST_AUTO_TEST_CASE(test_multiplication_on_scalar) {
   levi::vector2d vec{5, 3};
 
   auto rez = vec * 3;
-  BOOST_CHECK_CLOSE_FRACTION(rez.get_x(), 15, 0.001);
-  BOOST_CHECK_CLOSE_FRACTION(rez.get_y(), 9, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rez.x, 15, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rez.y, 9, 0.001);
 }
 
 BOOST_AUTO_TEST_CASE(test_get_norm) {
@@ -88,8 +90,60 @@ BOOST_AUTO_TEST_CASE(test_get_norm) {
 BOOST_AUTO_TEST_CASE(test_get_vec_from) {
   levi::vector2d vec{0, 0};
   auto vec1 = vec.get_vec_from(4, 60);
-  BOOST_CHECK_CLOSE_FRACTION(vec1.get_x(), 2.0f, 0.001);
-  BOOST_CHECK_CLOSE_FRACTION(vec1.get_y(), 3.464f, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(vec1.x, 2.0f, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(vec1.y, 3.464f, 0.001);
 }
 
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(test_mat33)
+BOOST_AUTO_TEST_CASE(test_multiplication_matrix_on_vertex) {
+  levi::mat33 matrix;
+  matrix[0] = 0.5;
+  matrix[2] = 0.3;
+  matrix[4] = 2;
+  matrix[5] = -1;
+  matrix[8] = 1;
+
+  levi::vertex vertex{5, 8};
+  auto rezult = matrix * vertex;
+  BOOST_CHECK_CLOSE_FRACTION(rezult.x, 2.8, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult.y, 15, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult.z, 1, 0.001);
+}
+
+BOOST_AUTO_TEST_CASE(test_multiplication_matrixs) {
+  levi::mat33 matrix1;
+  matrix1[0] = 1;
+  matrix1[1] = 2;
+  matrix1[2] = 3;
+  matrix1[3] = 4;
+  matrix1[4] = 5;
+  matrix1[5] = 6;
+  matrix1[6] = 7;
+  matrix1[7] = 8;
+  matrix1[8] = 9;
+
+  levi::mat33 matrix2;
+  matrix2[0] = 9;
+  matrix2[1] = 8;
+  matrix2[2] = 7;
+  matrix2[3] = 6;
+  matrix2[4] = 5;
+  matrix2[5] = 4;
+  matrix2[6] = 3;
+  matrix2[7] = 2;
+  matrix2[8] = 1;
+
+  auto rezult = matrix1 * matrix2;
+  BOOST_CHECK_CLOSE_FRACTION(rezult[0], 30, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[1], 24, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[2], 18, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[3], 84, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[4], 69, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[5], 54, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[6], 138, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[7], 114, 0.001);
+  BOOST_CHECK_CLOSE_FRACTION(rezult[8], 90, 0.001);
+}
 BOOST_AUTO_TEST_SUITE_END()

@@ -37,19 +37,17 @@ void deep_space::playing_state::update() {
   auto win_size = levi::engine::instance().get_window_size();
   for (auto &i : item_list_) {
     auto item_pos = i->get_pos();
-    if (item_pos.get_x() < -dop_width) {
-      i->set_pos(
-          levi::vector2d(win_size.get_width() + dop_width, item_pos.get_y()));
+    if (item_pos.x < -dop_width) {
+      i->set_pos(levi::vector2d(win_size.width + dop_width, item_pos.y));
     }
-    if (item_pos.get_y() < -dop_height) {
-      i->set_pos(
-          levi::vector2d(item_pos.get_x(), win_size.get_height() + dop_height));
+    if (item_pos.y < -dop_height) {
+      i->set_pos(levi::vector2d(item_pos.x, win_size.height + dop_height));
     }
-    if (item_pos.get_x() > win_size.get_width() + dop_width) {
-      i->set_pos(levi::vector2d(-dop_width, item_pos.get_y()));
+    if (item_pos.x > win_size.width + dop_width) {
+      i->set_pos(levi::vector2d(-dop_width, item_pos.y));
     }
-    if (item_pos.get_y() > win_size.get_height() + dop_height) {
-      i->set_pos(levi::vector2d(item_pos.get_x(), -dop_width));
+    if (item_pos.y > win_size.height + dop_height) {
+      i->set_pos(levi::vector2d(item_pos.x, -dop_width));
     }
   }
 }

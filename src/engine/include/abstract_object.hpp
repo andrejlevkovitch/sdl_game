@@ -6,10 +6,9 @@
 #include <string>
 #include <tuple>
 
+#include "rect.hpp"
 #include "size.hpp"
 #include "vector2d.hpp"
-
-struct SDL_Rect;
 
 namespace levi {
 class engine;
@@ -55,8 +54,8 @@ public:
 private:
   std::string texture_id_;
   bool wait_delete_;
-  ::SDL_Rect *src_rect_;
-  ::SDL_Rect *dst_rect_;
+  rect src_rect_;
+  rect dst_rect_;
   unsigned frame_;
   float angle_;
   flip flip_;

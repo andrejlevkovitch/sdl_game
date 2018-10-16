@@ -10,7 +10,12 @@ For build required:
 
 - cmake
 
+- libpng
+
+- tynixml
+
 - std=c++14 or newer
+
 
 
 How build:

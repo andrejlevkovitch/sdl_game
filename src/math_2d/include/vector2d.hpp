@@ -7,10 +7,6 @@ class vector2d final {
 public:
   vector2d();
   vector2d(float x, float y);
-  void set_x(float x);
-  float get_x() const;
-  void set_y(float y);
-  float get_y() const;
   /**\warning return true only if x_ and y_ completely identical
    * \todo close fraction for this method*/
   bool operator==(const vector2d &rhs) const;
@@ -36,11 +32,14 @@ public:
    * at an angle 'angle' (relatively axis y)*/
   vector2d get_vec_from(float distance, float angle) const;
 
-private:
-  float x_;
-  float y_;
+public:
+  float x;
+  float y;
 };
 
 float get_angle_bitwin(vector2d lhs, vector2d rhs,
                        vector2d begin_koord = vector2d{0, 0});
+
+float to_degrees(float radians);
+float to_radians(float degrees);
 }; // namespace levi

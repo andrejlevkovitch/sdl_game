@@ -10,8 +10,6 @@
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
-#include <iostream>
-
 deep_space::menu_state::menu_state() : levi::scene{} {
   auto callback_play = []() {
     auto cur_scene = levi::engine::instance().state_machine().current_state();
