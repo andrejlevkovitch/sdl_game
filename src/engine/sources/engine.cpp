@@ -2,6 +2,7 @@
 
 #include "engine.hpp"
 
+#include <fstream>
 #include <stdexcept>
 #include <string>
 
@@ -15,64 +16,9 @@
 #include "vector2d.hpp"
 #include "vertex.hpp"
 
+#include "config.hpp"
+
 const int default_number_of_ebo{6};
-
-const char *const gl_vertex_shader_code{
-    R"(
-    attribute vec3 pos;
-    attribute vec2 tex_pos;
-    uniform vec2 center_of_rotation;
-    uniform float radian_angle;
-    uniform vec2 win_size;
-    uniform vec2 tex_size;
-
-    varying vec2 v_tex_pos;
-
-    void main() {
-      mat3 transfer;
-      transfer[0] = vec3(1, 0, 0);
-      transfer[1] = vec3(0, 1, 0);
-      transfer[2] = vec3(-center_of_rotation.x, -center_of_rotation.y, 1);
-
-      mat3 rotade;
-      float sin_angle = sin(radian_angle);
-      float cos_angle = cos(radian_angle);
-      rotade[0] = vec3(cos_angle, sin_angle, 0);
-      rotade[1] = vec3(-sin_angle, cos_angle, 0);
-      rotade[2] = vec3(0, 0, 1);
-
-      mat3 to_ndc;
-      to_ndc[0] = vec3(2.0 / win_size.x, 0, 0);
-      to_ndc[1] = vec3(0, -2.0 / win_size.y, 0);
-      to_ndc[2] = vec3(-1, 1, 1);
-
-      mat3 rezult = rotade * transfer;
-      transfer[2][0] = center_of_rotation.x;
-      transfer[2][1] = center_of_rotation.y;
-      rezult = transfer * rezult;
-      rezult = to_ndc * rezult;
-
-      vec4 out_pos = vec4(rezult * pos, 1);
-      gl_Position = vec4(rezult * pos, 1);
-
-      mat2 tex_to_ndc;
-      tex_to_ndc[0] = vec2(1.0 / tex_size.x, 0);
-      tex_to_ndc[1] = vec2(0, 1.0 / tex_size.y);
-
-      v_tex_pos = tex_to_ndc * tex_pos;
-    }
-    )"};
-
-const char *const gl_fragment_shader_code{
-    R"(
-    varying vec2 v_tex_pos;
-
-    uniform sampler2D tex;
-
-    void main() {
-      gl_FragColor = texture2D(tex, v_tex_pos);
-    }
-    )"};
 
 levi::engine &levi::engine::instance() {
   static engine retval{};
@@ -140,10 +86,26 @@ levi::engine::engine()
 
   auto &gl_functions = gl_loader::instance();
 
+  char *shader_code{nullptr};
+
+  std::ifstream fin;
+  std::string vertex_shader_code{};
+  fin.open(levi::way_to_shaders + "vertex_shader");
+  if (fin.is_open()) {
+    std::string temp;
+    while (fin >> temp) {
+      vertex_shader_code += " " + temp;
+    }
+    fin.close();
+  } else {
+    throw std::runtime_error{"couldn't load vertex shader from file"};
+  }
+
+  shader_code = &vertex_shader_code[0];
+
   auto vertex_shader = gl_functions.glCreateShader(GL_VERTEX_SHADER);
   LEVI_CHECK();
-  gl_functions.glShaderSource(vertex_shader, 1, &gl_vertex_shader_code,
-                              nullptr);
+  gl_functions.glShaderSource(vertex_shader, 1, &shader_code, nullptr);
   LEVI_CHECK();
   gl_functions.glCompileShader(vertex_shader);
   LEVI_CHECK();
@@ -161,10 +123,22 @@ levi::engine::engine()
     throw std::runtime_error{"error while compile vertex shader:\n" + info_log};
   }
 
+  std::string fragment_shader_code{};
+  fin.open(levi::way_to_shaders + "fragment_shader");
+  if (fin.is_open()) {
+    std::string temp;
+    while (fin >> temp) {
+      fragment_shader_code += " " + temp;
+    }
+    fin.close();
+  } else {
+    throw std::runtime_error{"couldn't load vertex shader from file"};
+  }
+
   auto fragment_shader = gl_functions.glCreateShader(GL_FRAGMENT_SHADER);
   LEVI_CHECK();
-  gl_functions.glShaderSource(fragment_shader, 1, &gl_fragment_shader_code,
-                              nullptr);
+  shader_code = &fragment_shader_code[0];
+  gl_functions.glShaderSource(fragment_shader, 1, &shader_code, nullptr);
   LEVI_CHECK();
   gl_functions.glCompileShader(fragment_shader);
   LEVI_CHECK();
