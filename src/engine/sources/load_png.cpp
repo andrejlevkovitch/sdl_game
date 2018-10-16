@@ -8,7 +8,7 @@
 
 const size_t max_sig{8};
 
-levi::image levi::load_png_as_rgb(const std::string &file) {
+levi::image levi::load_png_as_rgba(const std::string &file) {
   std::FILE *fb = std::fopen(file.c_str(), "rb");
 
   if (!fb) {
@@ -54,7 +54,6 @@ levi::image levi::load_png_as_rgb(const std::string &file) {
 
   image.width = ::png_get_image_width(png_read, png_info);
   image.height = ::png_get_image_height(png_read, png_info);
-  // auto color = ::png_get_color_type(png_read, png_info);
   if (::png_get_bit_depth(png_read, png_info) < 8) {
     ::png_set_packing(png_read);
   }
@@ -62,12 +61,6 @@ levi::image levi::load_png_as_rgb(const std::string &file) {
     ::png_set_tRNS_to_alpha(png_read);
   }
   ::png_set_interlace_handling(png_read);
-  // if (color == PNG_COLOR_TYPE_PALETTE) {
-  //  ::png_set_palette_to_rgb(png_read);
-  //}
-  // if (color & PNG_COLOR_MASK_ALPHA) {
-  //  ::png_set_strip_alpha(png_read);
-  //}
 
   ::png_read_update_info(png_read, png_info);
 

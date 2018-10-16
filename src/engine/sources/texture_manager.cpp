@@ -58,7 +58,7 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
     if (!texture_id.empty() && !texture_file.empty()) {
       image image{};
       try {
-        image = load_png_as_rgb(texture_file);
+        image = load_png_as_rgba(texture_file);
       } catch (std::exception &except) {
         not_loaded_.push_back("texture " + texture_id + " from file " +
                               texture_file + " because: " + except.what());

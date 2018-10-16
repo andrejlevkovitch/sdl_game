@@ -13,5 +13,5 @@ struct image {
 };
 
 /**\exception if couldn't open or read file*/
-image load_png_as_rgb(const std::string &file);
+image load_png_as_rgba(const std::string &file);
 }; // namespace levi
