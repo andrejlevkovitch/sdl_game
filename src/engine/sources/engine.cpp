@@ -82,15 +82,18 @@ levi::engine::engine()
       cur_minor_version != gl_minor_version) {
     throw std::runtime_error{"couldn't created right gl_context"};
   }
+  ::glEnable(GL_BLEND);
+  ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   ::glClearColor(0, 1, 0, 1);
 
   auto &gl_functions = gl_loader::instance();
 
   char *shader_code{nullptr};
 
+  /**\todo optimize this code*/
   std::ifstream fin;
   std::string vertex_shader_code{};
-  fin.open(levi::way_to_shaders + "vertex_shader");
+  fin.open(levi::way_to_shaders + "vertex_shader.glsl");
   if (fin.is_open()) {
     std::string temp;
     while (fin >> temp) {
@@ -123,8 +126,9 @@ levi::engine::engine()
     throw std::runtime_error{"error while compile vertex shader:\n" + info_log};
   }
 
+  /**\todo optimize this code*/
   std::string fragment_shader_code{};
-  fin.open(levi::way_to_shaders + "fragment_shader");
+  fin.open(levi::way_to_shaders + "fragment_shader.glsl");
   if (fin.is_open()) {
     std::string temp;
     while (fin >> temp) {

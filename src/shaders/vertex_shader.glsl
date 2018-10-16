@@ -31,7 +31,6 @@ void main() {
   rezult = transfer * rezult;
   rezult = to_ndc * rezult;
 
-  vec4 out_pos = vec4(rezult * pos, 1);
   gl_Position = vec4(rezult * pos, 1);
 
   mat2 tex_to_ndc;
