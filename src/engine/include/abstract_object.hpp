@@ -3,6 +3,7 @@
 #pragma once
 
 #include <cstdint>
+#include <list>
 #include <string>
 #include <tuple>
 
@@ -47,17 +48,25 @@ public:
   void set_flip(flip f);
   flip get_flip() const;
   friend void draw(engine &engine, abstract_object *obj);
+  virtual rect get_rectangle() const;
+  bool need_collisions() const;
 
 private:
   std::string texture_id_;
   bool wait_delete_;
 
-public:
+protected:
   rect src_rect_;
 
 private:
   rect dst_rect_;
   float angle_;
   flip flip_;
+
+protected:
+  bool need_collisions_flag_;
+
+public:
+  std::list<abstract_object *> collisions_;
 };
 }; // namespace levi

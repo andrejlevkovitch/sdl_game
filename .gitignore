@@ -3,6 +3,3 @@ build/
 lib/
 doc/
 compile_commands.json
-deep_space/
-deep_space_states.xml
-deep_space_textures.xml

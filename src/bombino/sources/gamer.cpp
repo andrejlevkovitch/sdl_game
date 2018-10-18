@@ -4,13 +4,18 @@
 
 #include "config.hpp"
 #include "input_handler.hpp"
+#include "time.hpp"
+
+const unsigned fixed_time_update{50};
 
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos)
     : levi::abstract_object{texture_id, size, pos}, breaking_{0.5},
       acceleration_{}, direction_{1, 0}, cur_max_speed{3}, cur_frame_{},
-      front_frames_{}, side_frames_{}, back_frames_{},
-      texture_size_{}, type_{} {}
+      front_frames_{}, side_frames_{}, back_frames_{}, texture_size_{}, type_{},
+      last_tick_{} {
+  need_collisions_flag_ = true;
+}
 
 void bombino::gamer::specify_frames(frames front, frames side, frames back) {
   front_frames_ = front;
@@ -34,12 +39,18 @@ void bombino::gamer::set_texture_size(levi::size tex_size) {
 }
 
 void bombino::gamer::update() {
+  unsigned cur_tick{levi::get_time()};
+  if ((cur_tick - last_tick_) < fixed_time_update) {
+    return;
+  } else {
+    last_tick_ = cur_tick;
+  }
   auto &event_list = levi::input_handler::instance().get_event_list();
   for (auto &i : event_list) {
     if (i.type == levi::event_type::button_event) {
       if (i.button.code == active_buttons_[0]) {
         if (i.button.state == levi::button_state::pressed) {
-          set_angle(270);
+          direction_ = levi::vector2d{0, -1};
           acceleration_ = 2;
           set_flip(levi::flip_type::none);
           next_frame(back_frames_);
@@ -50,7 +61,7 @@ void bombino::gamer::update() {
       }
       if (i.button.code == active_buttons_[1]) {
         if (i.button.state == levi::button_state::pressed) {
-          set_angle(90);
+          direction_ = levi::vector2d{0, 1};
           acceleration_ = 2;
           set_flip(levi::flip_type::none);
           next_frame(front_frames_);
@@ -61,7 +72,7 @@ void bombino::gamer::update() {
       }
       if (i.button.code == active_buttons_[2]) {
         if (i.button.state == levi::button_state::pressed) {
-          set_angle(180);
+          direction_ = levi::vector2d{-1, 0};
           acceleration_ = 2;
           set_flip(levi::flip_type::horizontal);
           next_frame(side_frames_);
@@ -72,7 +83,7 @@ void bombino::gamer::update() {
       }
       if (i.button.code == active_buttons_[3]) {
         if (i.button.state == levi::button_state::pressed) {
-          set_angle(0);
+          direction_ = levi::vector2d{1, 0};
           acceleration_ = 2;
           set_flip(levi::flip_type::none);
           next_frame(side_frames_);
@@ -101,10 +112,6 @@ void bombino::gamer::motion() {
   }
 }
 
-void bombino::gamer::set_angle(float angle) {
-  direction_ = direction_.get_vec_from(1, angle);
-}
-
 levi::object_type bombino::gamer::type() const {
   return static_cast<levi::object_type>(type_);
 }
@@ -126,4 +133,13 @@ void bombino::gamer::set_type(object_type type) {
     active_buttons_.push_back(levi::button_code::right_dop);
     active_buttons_.push_back(levi::button_code::select_dop);
   }
+}
+
+levi::rect bombino::gamer::get_rectangle() const {
+  auto retval = levi::abstract_object::get_rectangle();
+  retval.x += 9;
+  retval.y += 12;
+  retval.width -= 16;
+  retval.height -= 16;
+  return retval;
 }

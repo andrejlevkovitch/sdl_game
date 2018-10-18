@@ -25,9 +25,9 @@ public:
   void set_texture_size(levi::size texture_size);
   void update() override;
   void motion();
-  void set_angle(float angle) override;
   levi::object_type type() const override;
   void set_type(object_type);
+  levi::rect get_rectangle() const override;
 
 private:
   float breaking_;
@@ -46,5 +46,7 @@ private:
   object_type type_;
 
   std::vector<levi::button_code> active_buttons_;
+
+  unsigned last_tick_;
 };
 }; // namespace bombino

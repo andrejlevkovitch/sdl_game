@@ -4,6 +4,7 @@
 #include <boost/test/included/unit_test.hpp>
 
 #include "mat33.hpp"
+#include "rect.hpp"
 #include "vector2d.hpp"
 #include "vertex.hpp"
 
@@ -147,3 +148,19 @@ BOOST_AUTO_TEST_CASE(test_multiplication_matrixs) {
   BOOST_CHECK_CLOSE_FRACTION(rezult[8], 90, 0.001);
 }
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(test_rect);
+BOOST_AUTO_TEST_CASE(test_crossing) {
+  levi::rect rect1{0, 0, 64, 64};
+  levi::rect rect2{32, 32, 64, 64};
+  BOOST_CHECK(levi::is_crossing(rect1, rect2));
+  rect2 = levi::rect{65, 65, 64, 64};
+  BOOST_CHECK(!levi::is_crossing(rect1, rect2));
+
+  rect1 = levi::rect{60, 5, 64, 64};
+  BOOST_CHECK(levi::is_crossing(rect1, rect2));
+
+  rect1 = levi::rect{32, 90, 64, 64};
+  BOOST_CHECK(levi::is_crossing(rect1, rect2));
+}
+BOOST_AUTO_TEST_SUITE_END();
