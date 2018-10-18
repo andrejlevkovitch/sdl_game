@@ -7,9 +7,9 @@
 #include <tinyxml.h>
 
 #include "button.hpp"
-#include "shiep.hpp"
+#include "gamer.hpp"
 
-void deep_space::parse_state(
+void bombino::parse_state(
     const std::string &state_file, const std::string &state_name,
     levi::item_list &item_list,
     std::map<std::string, std::function<void(void)>> *callback_map) {
@@ -60,6 +60,8 @@ void deep_space::parse_state(
                               state_name + " not founded"};
     }
 
+    std::string alias = i->Attribute("alias");
+
     int x{};
     int y{};
     int height{};
@@ -68,6 +70,28 @@ void deep_space::parse_state(
     i->Attribute("y", &y);
     i->Attribute("width", &width);
     i->Attribute("height", &height);
+
+    frames front_frames;
+    frames side_frames;
+    frames back_frames;
+    int first_frame{};
+    int second_frame{};
+    i->Attribute("front_frame", &first_frame);
+    i->Attribute("front_frame_count", &second_frame);
+    front_frames.first = first_frame;
+    front_frames.second = second_frame;
+    i->Attribute("side_frame", &first_frame);
+    i->Attribute("side_frame_count", &second_frame);
+    side_frames.first = first_frame;
+    side_frames.second = second_frame;
+    i->Attribute("back_frame", &first_frame);
+    i->Attribute("back_frame_count", &second_frame);
+    back_frames.first = first_frame;
+    back_frames.second = second_frame;
+
+    levi::size texture_size;
+    i->Attribute("texture_width", &texture_size.width);
+    i->Attribute("texture_height", &texture_size.height);
 
     std::string texture_id;
     if ((attribute_pointer = i->Attribute("texture_id"))) {
@@ -82,7 +106,7 @@ void deep_space::parse_state(
       callback_id = attribute_pointer;
     }
 
-    callback callback = nullptr;
+    levi::callback callback = nullptr;
     if (callback_map && !callback_id.empty()) {
       try {
         callback = callback_map->at(callback_id);
@@ -92,24 +116,42 @@ void deep_space::parse_state(
       }
     }
 
+    levi::size size{width, height};
+    levi::vector2d pos(x, y);
     try {
-      auto object = create_object(type, texture_id, levi::size{width, height},
-                                  levi::vector2d(x, y), callback);
+      std::shared_ptr<levi::abstract_object> object;
+      if (type == "button") {
+        object =
+            std::make_shared<levi::button>(texture_id, size, pos, callback);
+      }
+      if (type == "gamer") {
+        auto temp = std::make_shared<bombino::gamer>(texture_id, size, pos);
+        temp->specify_frames(front_frames, side_frames, back_frames);
+        temp->set_texture_size(texture_size);
+        if (alias == "gamer1") {
+          temp->set_type(object_type::gamer1);
+        }
+        if (alias == "gamer2") {
+          temp->set_type(object_type::gamer2);
+        }
+        object = temp;
+      }
       item_list.push_back(object);
     } catch (std::exception) {
       throw;
     }
   }
 }
+
 std::shared_ptr<levi::abstract_object>
-deep_space::create_object(std::string type, const std::string &file_name,
-                          levi::size size, levi::vector2d pos,
-                          std::function<void(void)> callback) {
+bombino::create_object(std::string type, const std::string &file_name,
+                       levi::size size, levi::vector2d pos,
+                       std::function<void(void)> callback) {
   if (type == "button") {
-    return std::make_shared<deep_space::button>(file_name, size, pos, callback);
+    return std::make_shared<levi::button>(file_name, size, pos, callback);
   }
   if (type == "gamer") {
-    return std::make_shared<deep_space::shiep>(file_name, size, pos);
+    return std::make_shared<bombino::gamer>(file_name, size, pos);
   }
   throw std::out_of_range{"can't create object with type " + type};
 }

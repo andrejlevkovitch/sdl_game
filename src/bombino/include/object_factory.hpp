@@ -10,8 +10,8 @@
 #include "button.hpp"
 #include "scene.hpp"
 
-namespace deep_space {
-using callback_map = std::map<std::string, callback>;
+namespace bombino {
+using callback_map = std::map<std::string, levi::callback>;
 
 /**\brief parse xml file and push objects in item_list
  * \param state_file xml file with
@@ -33,5 +33,5 @@ void parse_state(const std::string &state_file, const std::string &state_name,
  * \exception if type not allowed it throw out_of_range exception*/
 std::shared_ptr<levi::abstract_object>
 create_object(std::string type, const std::string &file_name, levi::size size,
-              levi::vector2d pos, callback callback = nullptr);
-}; // namespace deep_space
+              levi::vector2d pos, levi::callback callback = nullptr);
+}; // namespace bombino

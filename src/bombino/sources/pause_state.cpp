@@ -10,7 +10,7 @@
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
-deep_space::pause_state::pause_state() : scene{} {
+bombino::pause_state::pause_state() : scene{} {
   auto resume_callback = []() {
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().current_state()->set_updatebility(
@@ -36,14 +36,14 @@ deep_space::pause_state::pause_state() : scene{} {
   callback_map["to_menu"] = to_menu_callback;
   callback_map["restart"] = restart_callback;
 
-  parse_state(deep_space::way_to_objects + "objects.xml", "pause", item_list_,
-              &callback_map);
+  parse_state(bombino::way_to_objects + "bombino_states.xml", "pause",
+              item_list_, &callback_map);
 
   current_ = item_list_.begin();
-  reinterpret_cast<button *>((*current_).get())->hover(true);
+  reinterpret_cast<levi::button *>((*current_).get())->hover(true);
 }
 
-void deep_space::pause_state::update() {
+void bombino::pause_state::update() {
   scene::update();
   auto events = levi::input_handler::instance().get_event_list();
   for (auto &i : events) {
@@ -52,19 +52,19 @@ void deep_space::pause_state::update() {
       switch (i.button.code) {
       case levi::button_code::down:
         if (current_ != --item_list_.end()) {
-          auto p = dynamic_cast<deep_space::button *>(current_->get());
+          auto p = dynamic_cast<levi::button *>(current_->get());
           p->hover(false);
           ++current_;
-          p = dynamic_cast<deep_space::button *>(current_->get());
+          p = dynamic_cast<levi::button *>(current_->get());
           p->hover(true);
         }
         return;
       case levi::button_code::up:
         if (current_ != item_list_.begin()) {
-          auto p = dynamic_cast<deep_space::button *>(current_->get());
+          auto p = dynamic_cast<levi::button *>(current_->get());
           p->hover(false);
           --current_;
-          p = dynamic_cast<deep_space::button *>(current_->get());
+          p = dynamic_cast<levi::button *>(current_->get());
           p->hover(true);
         }
         return;
@@ -75,6 +75,6 @@ void deep_space::pause_state::update() {
   }
 }
 
-levi::id_state deep_space::pause_state::get_id() const {
+levi::id_state bombino::pause_state::get_id() const {
   return levi::id_state::pause;
 }

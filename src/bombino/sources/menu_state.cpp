@@ -10,7 +10,7 @@
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
-deep_space::menu_state::menu_state() : levi::scene{} {
+bombino::menu_state::menu_state() : levi::scene{} {
   auto callback_play = []() {
     auto cur_scene = levi::engine::instance().state_machine().current_state();
     cur_scene->set_visibility(false);
@@ -31,14 +31,14 @@ deep_space::menu_state::menu_state() : levi::scene{} {
   callback_map["play"] = callback_play;
   callback_map["exit"] = callback_exit;
 
-  parse_state(deep_space::way_to_objects + "objects.xml", "menu", item_list_,
-              &callback_map);
+  parse_state(bombino::way_to_objects + "bombino_states.xml", "menu",
+              item_list_, &callback_map);
 
   current_ = item_list_.begin();
-  reinterpret_cast<button *>((*current_).get())->hover(true);
+  reinterpret_cast<levi::button *>((*current_).get())->hover(true);
 }
 
-void deep_space::menu_state::update() {
+void bombino::menu_state::update() {
   scene::update();
   auto events = levi::input_handler::instance().get_event_list();
   for (auto &i : events) {
@@ -47,19 +47,19 @@ void deep_space::menu_state::update() {
       switch (i.button.code) {
       case levi::button_code::down:
         if (current_ != --item_list_.end()) {
-          auto p = dynamic_cast<deep_space::button *>(current_->get());
+          auto p = dynamic_cast<levi::button *>(current_->get());
           p->hover(false);
           ++current_;
-          p = dynamic_cast<deep_space::button *>(current_->get());
+          p = dynamic_cast<levi::button *>(current_->get());
           p->hover(true);
         }
         return;
       case levi::button_code::up:
         if (current_ != item_list_.begin()) {
-          auto p = dynamic_cast<deep_space::button *>(current_->get());
+          auto p = dynamic_cast<levi::button *>(current_->get());
           p->hover(false);
           --current_;
-          p = dynamic_cast<deep_space::button *>(current_->get());
+          p = dynamic_cast<levi::button *>(current_->get());
           p->hover(true);
         }
         return;
@@ -70,6 +70,6 @@ void deep_space::menu_state::update() {
   }
 }
 
-levi::id_state deep_space::menu_state::get_id() const {
+levi::id_state bombino::menu_state::get_id() const {
   return levi::id_state::menu;
 }

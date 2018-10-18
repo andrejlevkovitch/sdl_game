@@ -1,4 +1,4 @@
 -Iengine/include
 -Imath_2d/include
--Igame/include
 -I../build
+-Ibombino/include

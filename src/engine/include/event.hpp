@@ -7,7 +7,19 @@
 
 namespace levi {
 enum class event_type : uint8_t { none, quit_event, button_event, pause_event };
-enum class button_code : uint8_t { none, left, right, up, down, select };
+enum class button_code : uint8_t {
+  none,
+  left,
+  right,
+  up,
+  down,
+  select,
+  left_dop,
+  right_dop,
+  up_dop,
+  down_dop,
+  select_dop
+};
 enum class button_state : uint8_t { none, pressed, released };
 
 class quit_event {

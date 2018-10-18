@@ -16,8 +16,10 @@ const int fixedFPS{20};
 
 int main(int argc, char *argv[]) {
   auto &engine = levi::engine::instance();
-  engine.texture_manager().parse_textures(deep_space::way_to_files +
-                                          "textures.xml");
+  engine.texture_manager().parse_textures(bombino::way_to_files +
+                                          "menus_textures.xml");
+  engine.texture_manager().parse_textures(bombino::way_to_files +
+                                          "bombino_textures.xml");
   auto not_loaded = engine.texture_manager().get_not_load_objects();
   if (!not_loaded.empty()) {
     for (auto &i : not_loaded) {
@@ -27,7 +29,7 @@ int main(int argc, char *argv[]) {
 
   auto &input_handler = levi::input_handler::instance();
 
-  auto menu = std::make_shared<deep_space::menu_state>();
+  auto menu = std::make_shared<bombino::menu_state>();
   engine.state_machine().push_state(menu);
 
   bool game_stop = false;

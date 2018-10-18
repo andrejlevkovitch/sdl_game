@@ -6,6 +6,7 @@
 #include <string>
 #include <tuple>
 
+#include "dop_clases.hpp"
 #include "rect.hpp"
 #include "size.hpp"
 #include "vector2d.hpp"
@@ -13,7 +14,6 @@
 namespace levi {
 class engine;
 enum object_type { unknown, user_type = 100 };
-enum class flip { none, horizontal, vertical };
 
 /**\brief abstract base class for all objects*/
 class abstract_object {
@@ -38,9 +38,6 @@ public:
   levi::size get_size() const;
   void set_pos(vector2d pos);
   levi::vector2d get_pos() const;
-  /**\biref set current sprite frame, by default 0*/
-  void set_frame(int frame);
-  int get_frame() const;
   /**\breif add to current angle new value
    * \return angle past the operation*/
   virtual float rotate(float value);
@@ -54,9 +51,12 @@ public:
 private:
   std::string texture_id_;
   bool wait_delete_;
+
+public:
   rect src_rect_;
+
+private:
   rect dst_rect_;
-  unsigned frame_;
   float angle_;
   flip flip_;
 };

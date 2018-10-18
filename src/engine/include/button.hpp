@@ -6,7 +6,7 @@
 
 #include <functional>
 
-namespace deep_space {
+namespace levi {
 using callback = std::function<void(void)>;
 
 class button : public levi::abstract_object {
@@ -21,4 +21,4 @@ private:
   callback callback_;
   bool state_;
 };
-} // namespace deep_space
+} // namespace levi

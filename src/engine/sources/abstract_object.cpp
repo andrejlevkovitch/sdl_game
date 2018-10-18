@@ -14,7 +14,7 @@
 levi::abstract_object::abstract_object(const std::string &texture_id, size size,
                                        vector2d pos)
     : texture_id_{texture_id}, wait_delete_{false}, src_rect_{}, dst_rect_{},
-      frame_{}, angle_{}, flip_{flip::none} {
+      angle_{}, flip_{flip_type::none} {
   src_rect_.x = 0;
   src_rect_.y = 0;
   dst_rect_.x = pos.x;
@@ -51,13 +51,6 @@ levi::vector2d levi::abstract_object::get_pos() const {
   return levi::vector2d(dst_rect_.x, dst_rect_.y);
 }
 
-void levi::abstract_object::set_frame(int frame) {
-  frame_ = frame;
-  src_rect_.x = frame * src_rect_.width;
-}
-
-int levi::abstract_object::get_frame() const { return frame_; }
-
 float levi::abstract_object::rotate(float angle) {
   return std::fmod(angle_ += angle, 360);
 }
@@ -79,18 +72,5 @@ void levi::draw(levi::engine &engine, abstract_object *obj) {
   } catch (std::exception &) {
     return;
   }
-  ::SDL_RendererFlip f;
-  switch (obj->flip_) {
-  case flip::horizontal:
-    f = ::SDL_FLIP_HORIZONTAL;
-    break;
-  case flip::vertical:
-    f = ::SDL_FLIP_VERTICAL;
-    break;
-  default:
-    f = ::SDL_FLIP_NONE;
-    break;
-  }
-
-  engine.draw(texture, obj->src_rect_, obj->dst_rect_, obj->angle_);
+  engine.draw(texture, obj->src_rect_, obj->dst_rect_, obj->angle_, obj->flip_);
 }

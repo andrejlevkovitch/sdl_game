@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "dop_clases.hpp"
 #include "event.hpp"
 #include "rect.hpp"
 #include "size.hpp"
@@ -33,7 +34,7 @@ public:
   friend void draw(engine &engine, abstract_object *obj);
   /**\param angle in degrees*/
   void draw(const texture &texture, const rect &src_rect, const rect &dst_rect,
-            double angle);
+            double angle, flip flip);
 
 private:
   engine();

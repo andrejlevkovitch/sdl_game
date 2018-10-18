@@ -45,13 +45,13 @@ void levi::input_handler::read_input() {
       {::SDL_SCANCODE_ESCAPE, bind{pause_event{}}()},
       {::SDL_SCANCODE_RETURN, bind{button_code::select}()},
       {::SDL_SCANCODE_UP, bind{button_code::up}()},
-      {::SDL_SCANCODE_W, bind{button_code::up}()},
+      {::SDL_SCANCODE_W, bind{button_code::up_dop}()},
       {::SDL_SCANCODE_DOWN, bind{button_code::down}()},
-      {::SDL_SCANCODE_S, bind{button_code::down}()},
+      {::SDL_SCANCODE_S, bind{button_code::down_dop}()},
       {::SDL_SCANCODE_RIGHT, bind{button_code::right}()},
-      {::SDL_SCANCODE_D, bind{button_code::right}()},
+      {::SDL_SCANCODE_D, bind{button_code::right_dop}()},
       {::SDL_SCANCODE_LEFT, bind{button_code::left}()},
-      {::SDL_SCANCODE_A, bind{button_code::left}()}};
+      {::SDL_SCANCODE_A, bind{button_code::left_dop}()}};
 
   levi::event event{};
   ::SDL_Event sdl_event{};

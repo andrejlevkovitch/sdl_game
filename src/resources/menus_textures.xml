@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<textures>
+  <texture texture_id="t_play" file="menus/play.png"/>
+  <texture texture_id="t_exit" file="menus/exit.png"/>
+  <texture texture_id="t_resume" file="menus/resume.png"/>
+  <texture texture_id="t_restart" file="menus/restart.png"/>
+  <texture texture_id="t_to_menu" file="menus/to_menu.png"/>
+</textures>

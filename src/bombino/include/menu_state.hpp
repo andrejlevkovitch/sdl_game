@@ -4,7 +4,7 @@
 
 #include "scene.hpp"
 
-namespace deep_space {
+namespace bombino {
 class menu_state : public levi::scene {
 public:
   menu_state();
@@ -14,4 +14,4 @@ public:
 private:
   levi::item_list::iterator current_;
 };
-}; // namespace deep_space
+}; // namespace bombino

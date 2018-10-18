@@ -2,7 +2,9 @@
 
 #include "engine.hpp"
 
+#include <algorithm>
 #include <fstream>
+#include <iterator>
 #include <stdexcept>
 #include <string>
 
@@ -19,6 +21,28 @@
 #include "config.hpp"
 
 const int default_number_of_ebo{6};
+
+std::string read_shader_code_from_file(const std::string &file) {
+  std::ifstream fin;
+  fin.open(file);
+  if (fin.is_open()) {
+    fin.seekg(0, std::ios_base::end);
+    auto size = fin.tellg();
+    fin.seekg(0, std::ios_base::beg);
+    std::string retval;
+    retval.resize(size);
+    fin.read(&retval[0], retval.size());
+    for (auto &i : retval) {
+      if (i == '\n') {
+        i = ' ';
+      }
+    }
+    fin.close();
+    return retval;
+  } else {
+    throw std::runtime_error{"couldn't load vertex shader from file"};
+  }
+}
 
 levi::engine &levi::engine::instance() {
   static engine retval{};
@@ -90,18 +114,12 @@ levi::engine::engine()
 
   char *shader_code{nullptr};
 
-  /**\todo optimize this code*/
-  std::ifstream fin;
-  std::string vertex_shader_code{};
-  fin.open(levi::way_to_shaders + "vertex_shader.glsl");
-  if (fin.is_open()) {
-    std::string temp;
-    while (fin >> temp) {
-      vertex_shader_code += " " + temp;
-    }
-    fin.close();
-  } else {
-    throw std::runtime_error{"couldn't load vertex shader from file"};
+  std::string vertex_shader_code;
+  try {
+    vertex_shader_code =
+        read_shader_code_from_file(levi::way_to_shaders + "vertex_shader.glsl");
+  } catch (std::exception &) {
+    throw;
   }
 
   shader_code = &vertex_shader_code[0];
@@ -126,17 +144,12 @@ levi::engine::engine()
     throw std::runtime_error{"error while compile vertex shader:\n" + info_log};
   }
 
-  /**\todo optimize this code*/
-  std::string fragment_shader_code{};
-  fin.open(levi::way_to_shaders + "fragment_shader.glsl");
-  if (fin.is_open()) {
-    std::string temp;
-    while (fin >> temp) {
-      fragment_shader_code += " " + temp;
-    }
-    fin.close();
-  } else {
-    throw std::runtime_error{"couldn't load vertex shader from file"};
+  std::string fragment_shader_code;
+  try {
+    fragment_shader_code = read_shader_code_from_file(levi::way_to_shaders +
+                                                      "fragment_shader.glsl");
+  } catch (std::exception &) {
+    throw;
   }
 
   auto fragment_shader = gl_functions.glCreateShader(GL_FRAGMENT_SHADER);
@@ -263,7 +276,7 @@ levi::size levi::engine::get_window_size() const {
 }
 
 void levi::engine::draw(const texture &texture, const rect &src_rect,
-                        const rect &dst_rect, double angle) {
+                        const rect &dst_rect, double angle, flip flip) {
   auto global_vertices = dst_rect.get_vertices();
 
   auto win_size = get_window_size();
@@ -271,6 +284,15 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   angle = to_radians(angle);
 
   auto texture_vertices = src_rect.get_vertices();
+
+  if (flip & flip_type::horizontal) {
+    std::swap(texture_vertices[0], texture_vertices[3]);
+    std::swap(texture_vertices[1], texture_vertices[2]);
+  }
+  if (flip & flip_type::vertical) {
+    std::swap(texture_vertices[0], texture_vertices[1]);
+    std::swap(texture_vertices[3], texture_vertices[2]);
+  }
 
   std::array<vertex, 8> vertices;
   for (int i = 0; i < vertices.size() / 2; ++i) {

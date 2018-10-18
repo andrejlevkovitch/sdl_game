@@ -4,21 +4,21 @@
 
 #include "config.hpp"
 #include "engine.hpp"
+#include "gamer.hpp"
 #include "input_handler.hpp"
 #include "object_factory.hpp"
 #include "pause_state.hpp"
-#include "shiep.hpp"
 #include "state_machine.hpp"
 
 const int dop_height{40};
 const int dop_width{40};
 
-deep_space::playing_state::playing_state() {
-  parse_state(deep_space::way_to_objects + "objects.xml", "playing",
+bombino::playing_state::playing_state() {
+  parse_state(bombino::way_to_objects + "bombino_states.xml", "playing",
               item_list_);
 }
 
-void deep_space::playing_state::update() {
+void bombino::playing_state::update() {
   auto events = levi::input_handler::instance().get_event_list();
   for (auto &i : events) {
     if (i.type == levi::event_type::pause_event) {
@@ -52,6 +52,6 @@ void deep_space::playing_state::update() {
   }
 }
 
-levi::id_state deep_space::playing_state::get_id() const {
+levi::id_state bombino::playing_state::get_id() const {
   return levi::id_state::playing;
 }

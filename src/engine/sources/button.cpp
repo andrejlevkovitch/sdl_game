@@ -4,19 +4,19 @@
 
 #include "input_handler.hpp"
 
-deep_space::button::button(const std::string &texture_id, levi::size size,
-                           levi::vector2d pos, callback callback)
+levi ::button::button(const std::string &texture_id, levi::size size,
+                      levi::vector2d pos, callback callback)
     : levi::abstract_object{texture_id, size, pos}, callback_{callback},
       state_{false} {}
 
-void deep_space::button::hover(bool state) {
+void levi::button::hover(bool state) {
   state_ = state;
-  set_frame(state);
+  src_rect_.x = state * src_rect_.width;
 }
 
-void deep_space::button::push() { callback_(); }
+void levi::button::push() { callback_(); }
 
-void deep_space::button::update() {
+void levi::button::update() {
   if (state_) {
     auto events = levi::input_handler::instance().get_event_list();
     for (auto &i : events) {
