@@ -55,35 +55,7 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
       texture_file = way_to_files + pointer;
     }
 
-    if (!texture_id.empty() && !texture_file.empty()) {
-      image image{};
-      try {
-        image = load_png_as_rgba(texture_file);
-      } catch (std::exception &except) {
-        not_loaded_.push_back("texture " + texture_id + " from file " +
-                              texture_file + " because: " + except.what());
-        continue;
-      }
-
-      GLuint gl_tex{};
-      ::glActiveTexture(GL_TEXTURE7);
-      LEVI_CHECK();
-      ::glGenTextures(1, &gl_tex);
-      LEVI_CHECK();
-      ::glBindTexture(GL_TEXTURE_2D, gl_tex);
-      LEVI_CHECK();
-
-      ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, &image.data[0]);
-      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-      //    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
-      //    GL_CLAMP_TO_BORDER);
-      //    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
-      //    GL_CLAMP_TO_BORDER);
-      LEVI_CHECK();
-
-      texture_map_[texture_id] = texture{gl_tex, image.width, image.height};
+    if (create_texture(texture_id, texture_file)) {
       ++capacity;
     }
   }
@@ -104,4 +76,38 @@ std::list<std::string> levi::texture_manager::get_not_load_objects() {
   std::list<std::string> retval;
   not_loaded_.swap(retval);
   return retval;
+}
+
+bool levi::texture_manager::create_texture(const std::string &texture_id,
+                                           const std::string &texture_file) {
+  if (!texture_id.empty() && !texture_file.empty()) {
+    image image{};
+    try {
+      image = load_png_as_rgba(texture_file);
+    } catch (std::exception &except) {
+      not_loaded_.push_back("texture " + texture_id + " from file " +
+                            texture_file + " because: " + except.what());
+      return false;
+    }
+
+    GLuint gl_tex{};
+    ::glActiveTexture(GL_TEXTURE7);
+    LEVI_CHECK();
+    ::glGenTextures(1, &gl_tex);
+    LEVI_CHECK();
+    ::glBindTexture(GL_TEXTURE_2D, gl_tex);
+    LEVI_CHECK();
+
+    ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.width, image.height, 0,
+                   GL_RGBA, GL_UNSIGNED_BYTE, &image.data[0]);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    LEVI_CHECK();
+
+    texture_map_[texture_id] = texture{gl_tex, image.width, image.height};
+    return true;
+  }
+  return false;
 }

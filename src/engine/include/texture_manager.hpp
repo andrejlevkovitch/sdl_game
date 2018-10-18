@@ -24,6 +24,7 @@ public:
   /**\brief get all not loaded objects whith errors, after this list will be
    * cleared*/
   std::list<std::string> get_not_load_objects();
+  bool create_texture(const std::string &id, const std::string &file);
 
 private:
   std::map<std::string, texture> texture_map_;

@@ -9,12 +9,13 @@
 #include "button.hpp"
 #include "gamer.hpp"
 
+/// todo this function can be load files many times
 void bombino::parse_state(
     const std::string &state_file, const std::string &state_name,
     levi::item_list &item_list,
     std::map<std::string, std::function<void(void)>> *callback_map) {
   ::TiXmlDocument xml_doc;
-  if (!xml_doc.LoadFile(state_file.c_str())) {
+  if (!xml_doc.LoadFile(state_file)) {
     throw std::runtime_error{"xml file " + state_file + " not load"};
   }
 

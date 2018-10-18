@@ -8,11 +8,10 @@
 
 #include "abstract_object.hpp"
 #include "event.hpp"
+#include "object_types.hpp"
 #include "vector2d.hpp"
 
 namespace bombino {
-enum object_type { gamer1 = levi::object_type::user_type, gamer2 };
-
 /**\brief first is first frame, second is size of frames*/
 using frames = std::pair<uint8_t, uint8_t>;
 
