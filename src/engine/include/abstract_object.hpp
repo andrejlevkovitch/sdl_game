@@ -81,4 +81,6 @@ protected:
 public:
   std::list<abstract_object *> collisions_;
 };
+
+void draw(engine &engine, abstract_object *obj);
 }; // namespace levi

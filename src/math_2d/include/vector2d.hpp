@@ -46,4 +46,5 @@ float get_angle_bitwin(vector2d lhs, vector2d rhs,
 
 float to_degrees(float radians);
 float to_radians(float degrees);
+vector2d operator*(float lhs, const vector2d &rhs);
 }; // namespace levi

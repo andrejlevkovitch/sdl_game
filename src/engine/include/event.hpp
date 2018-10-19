@@ -43,7 +43,7 @@ public:
   event_type type;
 };
 
-using event = union {
+union event {
   event_type type;
   quit_event quit;
   button_event button;

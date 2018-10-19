@@ -44,4 +44,6 @@ private:
   bool is_visible_;
   bool is_updateble_;
 };
+
+void render(engine &engine, scene *scene);
 }; // namespace levi
