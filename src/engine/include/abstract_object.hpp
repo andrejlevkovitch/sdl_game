@@ -37,7 +37,11 @@ public:
   bool is_for_delete();
   void set_size(levi::size size);
   levi::size get_size() const;
+  /**\brief set position of the top-left corner
+   * \warning value of position store in int values, and when you set float pos,
+   * this pos will be rounded!*/
   void set_pos(vector2d pos);
+  /**\return current pixel position of the top-left corner*/
   levi::vector2d get_pos() const;
   /**\breif add to current angle new value
    * \return angle past the operation*/

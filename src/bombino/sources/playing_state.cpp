@@ -14,6 +14,10 @@
 #include "tile_loader.hpp"
 
 bombino::playing_state::playing_state() {
+  // load textures for objects
+  levi::engine::instance().texture_manager().parse_textures(
+      bombino::way_to_files + "bombino_textures.xml");
+  // tile_loading
   tile_loader t_loader;
   t_loader.parse_tile_map(bombino::way_to_objects + "map0.tmx");
   levi::engine::instance().texture_manager().create_texture(
@@ -21,6 +25,7 @@ bombino::playing_state::playing_state() {
   for (const auto &i : t_loader.get_tiles()) {
     item_list_.push_back(i);
   }
+  // object_loading
   parse_state(bombino::way_to_objects + "bombino_states.xml", "playing",
               item_list_);
 }

@@ -108,7 +108,7 @@ levi::engine::engine()
   }
   ::glEnable(GL_BLEND);
   ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  ::glClearColor(0, 1, 0, 1);
+  ::glClearColor(0, 0, 0, 1);
 
   auto &gl_functions = gl_loader::instance();
 

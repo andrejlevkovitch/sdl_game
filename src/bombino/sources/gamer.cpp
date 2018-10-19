@@ -11,10 +11,10 @@
 /// todo this game dependes on fps - I have to fixed this!
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type)
-    : levi::abstract_object{texture_id, size, pos},
-      acceleration_{1}, velocity_{}, direction_{0, 0}, cur_frame_{},
-      front_frame_collection_{}, side_frame_collection_{},
-      back_frame_collection_{}, texture_size_{}, type_{type} {
+    : levi::abstract_object{texture_id, size, pos}, velocity_{1}, distance_{},
+      direction_{0, 0}, cur_frame_{}, front_frame_collection_{},
+      side_frame_collection_{}, back_frame_collection_{},
+      texture_size_{}, type_{type} {
   need_collisions_flag_ = true;
   active_buttons_.clear();
   if (type_ == object_type::gamer1) {
@@ -121,8 +121,8 @@ void bombino::gamer::motion() {
   if (direction_ == levi::vector2d{0, 0}) {
     return;
   } else {
-    velocity_ = acceleration_ * direction_;
-    this->set_pos(this->get_pos() + velocity_);
+    distance_ = velocity_ * direction_;
+    this->set_pos(this->get_pos() + distance_);
     next_frame();
   }
 }
@@ -144,8 +144,8 @@ void bombino::gamer::collision_handler() {
   for (const auto &i : collisions_) {
     if (i->type() == static_cast<levi::object_type>(object_type::soft_block) ||
         i->type() == static_cast<levi::object_type>(object_type::solid_block)) {
-      this->set_pos(this->get_pos() - velocity_);
-      velocity_ = levi::vector2d{0, 0};
+      this->set_pos(this->get_pos() - distance_);
+      distance_ = levi::vector2d{0, 0};
       return;
     }
   }

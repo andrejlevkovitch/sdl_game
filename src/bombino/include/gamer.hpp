@@ -35,9 +35,9 @@ public:
   void collision_handler() override;
 
 private:
-  float acceleration_;
-  levi::vector2d velocity_;
-  /**\brief normilize vector*/
+  float velocity_;
+  levi::vector2d distance_;
+  /**\brief normilized vector2d*/
   levi::vector2d direction_;
 
   uint8_t cur_frame_;

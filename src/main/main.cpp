@@ -18,8 +18,6 @@ int main(int argc, char *argv[]) {
   auto &engine = levi::engine::instance();
   engine.texture_manager().parse_textures(bombino::way_to_files +
                                           "menus_textures.xml");
-  engine.texture_manager().parse_textures(bombino::way_to_files +
-                                          "bombino_textures.xml");
   auto not_loaded = engine.texture_manager().get_not_load_textures();
   if (!not_loaded.empty()) {
     for (auto &i : not_loaded) {
@@ -39,9 +37,6 @@ int main(int argc, char *argv[]) {
 
     input_handler.update();
     game_stop = input_handler.is_quit();
-    //  for (auto &i : input_handler.get_event_list()) {
-    //    std::cerr << i << std::endl;
-    //  }
     engine.update();
     engine.render();
 

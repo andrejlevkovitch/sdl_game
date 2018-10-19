@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <states>
   <menu>
-    <object type="button" alias="play_button" x="330" y="200" width="400"
+    <object type="button" alias="play_button" x="330" y="220" width="400"
       height="100" texture_id="t_play" callback_id="play"/>
-    <object type="button" alias="exit_button" x="330" y="400" width="400"
+    <object type="button" alias="exit_button" x="330" y="420" width="400"
       height="100" texture_id="t_exit" callback_id="exit"/>
   </menu>
   <pause>
