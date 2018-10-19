@@ -14,6 +14,8 @@ For build required:
 
 - tynixml
 
+- zlib
+
 - std=c++14 or newer
 
 
