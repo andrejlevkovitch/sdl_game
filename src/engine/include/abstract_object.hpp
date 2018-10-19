@@ -48,10 +48,18 @@ public:
   void set_flip(flip f);
   flip get_flip() const;
   friend void draw(engine &engine, abstract_object *obj);
+  /**\return by default this function return dst_rect_, but, if you need onother
+   * value, just redefine it
+   * \brief this function use for find collisions.*/
   virtual rect get_rectangle() const;
+  /**\return value of need_collisions_flag_.
+   * \brief this function use scene for collision-finding*/
   bool need_collisions() const;
+  /**\brief you need redefine this function, if you want handl collisions in
+   * fly*/
+  virtual void collision_handler();
 
-private:
+public:
   std::string texture_id_;
   bool wait_delete_;
 

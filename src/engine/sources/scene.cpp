@@ -15,6 +15,15 @@ void levi::scene::add_item(std::shared_ptr<abstract_object> obj) {
 const levi::item_list &levi::scene::get_item_list() { return item_list_; }
 
 void levi::scene::update() {
+  for (auto item = item_list_.begin(); item != item_list_.end();) {
+    if ((*item)->is_for_delete()) {
+      item = item_list_.erase(item);
+    } else {
+      (*item)->update();
+      ++item;
+    }
+  }
+  /// collision search
   for (auto &cur_item : item_list_) {
     if (cur_item->need_collisions()) {
       cur_item->collisions_.clear();
@@ -26,14 +35,7 @@ void levi::scene::update() {
           cur_item->collisions_.push_back(item->get());
         }
       }
-    }
-  }
-  for (auto item = item_list_.begin(); item != item_list_.end();) {
-    if ((*item)->is_for_delete()) {
-      item = item_list_.erase(item);
-    } else {
-      (*item)->update();
-      ++item;
+      cur_item->collision_handler();
     }
   }
 }

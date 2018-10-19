@@ -55,8 +55,12 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
       texture_file = way_to_files + pointer;
     }
 
-    if (create_texture(texture_id, texture_file)) {
-      ++capacity;
+    try {
+      texture_map_.at(texture_id);
+    } catch (std::out_of_range &) {
+      if (create_texture(texture_id, texture_file)) {
+        ++capacity;
+      }
     }
   }
 
@@ -72,7 +76,7 @@ levi::texture_manager::get_texture(const std::string &texture_id) const {
   }
 }
 
-std::list<std::string> levi::texture_manager::get_not_load_objects() {
+std::list<std::string> levi::texture_manager::get_not_load_textures() {
   std::list<std::string> retval;
   not_loaded_.swap(retval);
   return retval;
@@ -109,5 +113,7 @@ bool levi::texture_manager::create_texture(const std::string &texture_id,
     texture_map_[texture_id] = texture{gl_tex, image.width, image.height};
     return true;
   }
+  not_loaded_.push_back("texture " + texture_id + " from file " + texture_file +
+                        " because: unkorrect id or name");
   return false;
 }

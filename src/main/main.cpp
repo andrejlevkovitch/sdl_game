@@ -12,41 +12,15 @@
 #include "texture_manager.hpp"
 #include "time.hpp"
 
-#include "base64.h"
-#include <vector>
-#include <zlib.h>
-
-const int fixedFPS{20};
+const int fixedFPS{50};
 
 int main(int argc, char *argv[]) {
-
-  std::string code{"eJytk1sKACAIBH3c/879JCzL2kcaDEVOIlZpZtmAo3MKB+KivIqhjzniA2/"
-                   "yK++1p+rkGK+VY8JRZzoHe+6CoJnhHJM6NvqxdS8b72PjnU7/ywExDQHW"};
-  auto decode = base64_decode(code);
-
-  size_t size = 17 * 13 * sizeof(int);
-  std::vector<int> vec(17 * 13, 0);
-  if (::uncompress(reinterpret_cast<Bytef *>(&vec[0]), &size,
-                   reinterpret_cast<Bytef *>(&decode[0]),
-                   decode.size()) != Z_OK) {
-    std::cerr << "problem with uncompress\n" << std::endl;
-    return EXIT_FAILURE;
-  }
-
-  for (int i{}; i < 13; ++i) {
-    for (int j{}; j < 17; ++j) {
-      std::cerr << vec[i * 17 + j] << ' ';
-    }
-    std::cerr << std::endl;
-  }
-  std::cerr << std::endl;
-
   auto &engine = levi::engine::instance();
   engine.texture_manager().parse_textures(bombino::way_to_files +
                                           "menus_textures.xml");
   engine.texture_manager().parse_textures(bombino::way_to_files +
                                           "bombino_textures.xml");
-  auto not_loaded = engine.texture_manager().get_not_load_objects();
+  auto not_loaded = engine.texture_manager().get_not_load_textures();
   if (!not_loaded.empty()) {
     for (auto &i : not_loaded) {
       std::cerr << i << std::endl;

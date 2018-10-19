@@ -12,7 +12,13 @@ bool levi::vector2d::operator==(const vector2d &rhs) const {
   return ((this->x == rhs.x) && (this->y == rhs.y)) ? true : false;
 }
 
-float levi::vector2d::get_length() const { return std::sqrt(x * x + y * y); }
+float levi::vector2d::get_length() const {
+  float retval = std::sqrt(x * x + y * y);
+  if (retval == NAN) {
+    return 0;
+  }
+  return retval;
+}
 
 levi::vector2d levi::vector2d::operator+(const vector2d &rhs) const {
   return vector2d{this->x + rhs.x, this->y + rhs.y};
@@ -63,6 +69,9 @@ levi::vector2d levi::operator*(float lhs, const levi::vector2d &rhs) {
 
 levi::vector2d levi::vector2d::get_norm() const {
   auto length = get_length();
+  if (!length) {
+    return vector2d{0, 0};
+  }
   return vector2d{this->x / length, this->y / length};
 }
 

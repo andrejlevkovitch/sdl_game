@@ -9,7 +9,6 @@
 #include "button.hpp"
 #include "gamer.hpp"
 
-/// todo this function can be load files many times
 void bombino::parse_state(
     const std::string &state_file, const std::string &state_name,
     levi::item_list &item_list,
@@ -126,15 +125,17 @@ void bombino::parse_state(
             std::make_shared<levi::button>(texture_id, size, pos, callback);
       }
       if (type == "gamer") {
-        auto temp = std::make_shared<bombino::gamer>(texture_id, size, pos);
-        temp->specify_frames(front_frames, side_frames, back_frames);
-        temp->set_texture_size(texture_size);
+        bombino::object_type type;
         if (alias == "gamer1") {
-          temp->set_type(object_type::gamer1);
+          type = bombino::object_type::gamer1;
         }
         if (alias == "gamer2") {
-          temp->set_type(object_type::gamer2);
+          type = bombino::object_type::gamer2;
         }
+        auto temp =
+            std::make_shared<bombino::gamer>(texture_id, size, pos, type);
+        temp->specify_frame_collection(front_frames, side_frames, back_frames);
+        temp->set_texture_size(texture_size);
         object = temp;
       }
       item_list.push_back(object);
@@ -142,17 +143,4 @@ void bombino::parse_state(
       throw;
     }
   }
-}
-
-std::shared_ptr<levi::abstract_object>
-bombino::create_object(std::string type, const std::string &file_name,
-                       levi::size size, levi::vector2d pos,
-                       std::function<void(void)> callback) {
-  if (type == "button") {
-    return std::make_shared<levi::button>(file_name, size, pos, callback);
-  }
-  if (type == "gamer") {
-    return std::make_shared<bombino::gamer>(file_name, size, pos);
-  }
-  throw std::out_of_range{"can't create object with type " + type};
 }

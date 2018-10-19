@@ -8,8 +8,7 @@
 #include <zlib.h>
 
 #include "base64.h"
-#include "engine.hpp"
-#include "texture_manager.hpp"
+#include "tile.hpp"
 
 bool check_tile_map(const ::TiXmlElement *root) {
   int version{};
@@ -18,13 +17,16 @@ bool check_tile_map(const ::TiXmlElement *root) {
     return false;
   }
 
-  std::string orientation = root->Attribute("orientation");
-  if (orientation != "orthogonal") {
+  const char *pointer_to_attribute{};
+
+  pointer_to_attribute = root->Attribute("orientation");
+  if (!pointer_to_attribute ||
+      pointer_to_attribute != std::string{"orthogonal"}) {
     return false;
   }
 
-  std::string renderorder = root->Attribute("renderorder");
-  if (renderorder != "left-up") {
+  pointer_to_attribute = root->Attribute("renderorder");
+  if (!pointer_to_attribute || pointer_to_attribute != std::string{"left-up"}) {
     return false;
   }
 
@@ -51,13 +53,13 @@ void bombino::tile_loader::parse_tile_map(const std::string &file_name) {
   int height{};
   root->Attribute("width", &width);
   root->Attribute("height", &height);
-  map_width_ = width;
-  map_height_ = height;
+  map_size_.width = width;
+  map_size_.height = height;
 
   root->Attribute("tilewidth", &width);
   root->Attribute("tileheight", &height);
-  tile_width_ = width;
-  tile_height_ = height;
+  tile_size_.width = width;
+  tile_size_.height = height;
 
   auto tileset = root->FirstChildElement();
   if (!tileset) {
@@ -88,21 +90,17 @@ void bombino::tile_loader::parse_tile_map(const std::string &file_name) {
   } catch (std::exception &) {
     throw;
   }
+
+  create_tiles();
 }
 
-std::string bombino::tile_loader::read_tileset(const TiXmlElement *tileset) {
-  std::string image_id = tileset->Attribute("name");
+void bombino::tile_loader::read_tileset(const TiXmlElement *tileset) {
+  image_id_ = tileset->Attribute("name");
   auto image = tileset->FirstChildElement();
-  std::string image_file_name = image->Attribute("name");
-  int width{};
-  int height{};
-  image->Attribute("width", &width);
-  image->Attribute("height", &height);
-  if (levi::engine::instance().texture_manager().create_texture(
-          image_id, image_file_name)) {
-    return image_id;
+  if (!image) {
+    throw std::runtime_error{"couldn't read image information"};
   }
-  return "";
+  image_file_name_ = image->Attribute("source");
 }
 
 void bombino::tile_loader::read_layer(const TiXmlElement *layer) {
@@ -110,22 +108,41 @@ void bombino::tile_loader::read_layer(const TiXmlElement *layer) {
   if (!data) {
     throw std::runtime_error{"data not found"};
   }
-  std::string encoding = data->Attribute("encoding");
-  std::string compression = data->Attribute("compression");
-  if (encoding != "base64" || compression != "zlib") {
+  auto encoding = data->Attribute("encoding");
+  auto compression = data->Attribute("compression");
+  if (encoding != std::string{"base64"} || compression != std::string{"zlib"}) {
     throw std::runtime_error{"unrecognized options encoding | compression"};
   }
 
-  std::string encoding_data = data->GetText();
-  if (encoding_data.empty()) {
+  auto encoding_data = data->GetText();
+  if (!encoding_data) {
     throw std::runtime_error{"data not founded"};
   }
 
-  std::vector<int> layout(map_width_ * map_height_, 0);
-  size_t size = layout.size() * sizeof(int);
-  if (::uncompress(reinterpret_cast<Bytef *>(&layout[0]), &size,
-                   reinterpret_cast<Bytef *>(&encoding_data),
-                   encoding_data.size()) != Z_OK) {
+  std::string decoding_data = base64_decode(encoding_data);
+  layout_.resize(map_size_.width * map_size_.height, 0);
+  size_t size = layout_.size() * sizeof(int);
+  if (::uncompress(reinterpret_cast<Bytef *>(&layout_[0]), &size,
+                   reinterpret_cast<Bytef *>(&decoding_data[0]),
+                   decoding_data.size()) != Z_OK) {
     throw std::runtime_error{"fail of decode data"};
   }
+}
+
+void bombino::tile_loader::create_tiles() {
+  for (int i{}; i < map_size_.height; ++i) {
+    for (int j{}; j < map_size_.width; ++j) {
+      int index = i * map_size_.width + j;
+      levi::vector2d pos(tile_size_.width * j, tile_size_.height * i);
+      object_type type = static_cast<object_type>(
+          static_cast<int>(object_type::void_block) + layout_[index] - 1);
+      tile_list_.push_back(std::make_shared<tile>(image_id_, tile_size_, pos,
+                                                  type, layout_[index] - 1));
+    }
+  }
+}
+
+const std::list<std::shared_ptr<bombino::tile>>
+bombino::tile_loader::get_tiles() const {
+  return tile_list_;
 }

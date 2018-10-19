@@ -80,3 +80,5 @@ levi::rect levi::abstract_object::get_rectangle() const { return dst_rect_; }
 bool levi::abstract_object::need_collisions() const {
   return need_collisions_flag_;
 }
+
+void levi::abstract_object::collision_handler(){};

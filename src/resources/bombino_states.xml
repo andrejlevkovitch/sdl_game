@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <states>
   <menu>
-    <object type="button" alias="play_button" x="100" y="100" width="400"
+    <object type="button" alias="play_button" x="330" y="200" width="400"
       height="100" texture_id="t_play" callback_id="play"/>
-    <object type="button" alias="exit_button" x="100" y="300" width="400"
+    <object type="button" alias="exit_button" x="330" y="400" width="400"
       height="100" texture_id="t_exit" callback_id="exit"/>
   </menu>
   <pause>
-    <object type="button" alias="resume_button" x="200" y="50" width="200"
+    <object type="button" alias="resume_button" x="450" y="250" width="200"
       height="80" texture_id="t_resume" callback_id="resume"/>
-    <object type="button" alias="restart_button" x="200" y="150" width="200"
+    <object type="button" alias="restart_button" x="450" y="350" width="200"
       height="80" texture_id="t_restart" callback_id="restart"/>
-    <object type="button" alias="to_menu_button" x="200" y="250" width="200"
+    <object type="button" alias="to_menu_button" x="450" y="450" width="200"
       height="80" texture_id="t_to_menu" callback_id="to_menu"/>
   </pause>
   <playing>
-    <object type="gamer" alias="gamer1" x="300" y="150" width="64" height="64"
+    <object type="gamer" alias="gamer1" x="960" y="64" width="64" height="64"
       front_frame="0" front_frame_count="8" back_frame="8" back_frame_count="8"
       side_frame="16" side_frame_count="8" texture_id="gamer1"
       texture_width="512" texture_height="192"/>
-    <object type="gamer" alias="gamer2" x="200" y="50" width="64" height="64"
+    <object type="gamer" alias="gamer2" x="64" y="704" width="64" height="64"
       front_frame="0" front_frame_count="6" back_frame="6" back_frame_count="6"
       side_frame="12" side_frame_count="6" texture_id="gamer2"
       texture_width="384" texture_height="192"/>

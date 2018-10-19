@@ -57,7 +57,7 @@ levi::engine::engine()
   }
 
   window_ = ::SDL_CreateWindow("window", SDL_WINDOWPOS_CENTERED,
-                               SDL_WINDOWPOS_CENTERED, 1000, 500,
+                               SDL_WINDOWPOS_CENTERED, 1088, 832,
                                ::SDL_WINDOW_OPENGL);
   if (!window_) {
     throw std::runtime_error{::SDL_GetError()};

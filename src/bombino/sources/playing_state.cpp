@@ -9,11 +9,18 @@
 #include "object_factory.hpp"
 #include "pause_state.hpp"
 #include "state_machine.hpp"
-
-const int dop_height{40};
-const int dop_width{40};
+#include "texture_manager.hpp"
+#include "tile.hpp"
+#include "tile_loader.hpp"
 
 bombino::playing_state::playing_state() {
+  tile_loader t_loader;
+  t_loader.parse_tile_map(bombino::way_to_objects + "map0.tmx");
+  levi::engine::instance().texture_manager().create_texture(
+      t_loader.image_id_, bombino::way_to_objects + t_loader.image_file_name_);
+  for (const auto &i : t_loader.get_tiles()) {
+    item_list_.push_back(i);
+  }
   parse_state(bombino::way_to_objects + "bombino_states.xml", "playing",
               item_list_);
 }
@@ -33,23 +40,6 @@ void bombino::playing_state::update() {
   }
 
   levi::scene::update();
-
-  auto win_size = levi::engine::instance().get_window_size();
-  for (auto &i : item_list_) {
-    auto item_pos = i->get_pos();
-    if (item_pos.x < -dop_width) {
-      i->set_pos(levi::vector2d(win_size.width + dop_width, item_pos.y));
-    }
-    if (item_pos.y < -dop_height) {
-      i->set_pos(levi::vector2d(item_pos.x, win_size.height + dop_height));
-    }
-    if (item_pos.x > win_size.width + dop_width) {
-      i->set_pos(levi::vector2d(-dop_width, item_pos.y));
-    }
-    if (item_pos.y > win_size.height + dop_height) {
-      i->set_pos(levi::vector2d(item_pos.x, -dop_width));
-    }
-  }
 }
 
 levi::id_state bombino::playing_state::get_id() const {
