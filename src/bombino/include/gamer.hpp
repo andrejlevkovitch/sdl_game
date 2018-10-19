@@ -19,10 +19,14 @@ class gamer : public levi::abstract_object {
 public:
   gamer(const std::string &texture_id, levi::size size, levi::vector2d pos,
         bombino::object_type type);
+  /**\brief this method needed for load two-dimensional sprites.
+   * \param side right side frames, for left side using flip*/
   void specify_frame_collection(frames front, frames side, frames back);
   void set_frame(unsigned frame);
   void set_frame_collection(frames cur_collection);
+  /**\brief set next frame, using current collection of frames*/
   void next_frame();
+  /**\brief this function needed for load two-dimensional sprites*/
   void set_texture_size(levi::size texture_size);
   void update() override;
   void motion();

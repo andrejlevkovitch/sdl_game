@@ -55,8 +55,8 @@ public:
   /**\return value of need_collisions_flag_.
    * \brief this function use scene for collision-finding*/
   bool need_collisions() const;
-  /**\brief you need redefine this function, if you want handl collisions in
-   * fly*/
+  /**\brief you need redefine this function, if you want handle collisions in
+   * fly. If any collision detected, then scene call this method*/
   virtual void collision_handler();
 
 public:

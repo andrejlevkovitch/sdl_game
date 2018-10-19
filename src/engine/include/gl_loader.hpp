@@ -38,6 +38,7 @@
   }
 
 namespace levi {
+/**\brief this class load all needed gl function. Singleton*/
 class gl_loader {
 public:
   static gl_loader &instance();

@@ -118,7 +118,9 @@ void bombino::gamer::update() {
 }
 
 void bombino::gamer::motion() {
-  if (direction_.get_length() > 0.5) {
+  if (direction_ == levi::vector2d{0, 0}) {
+    return;
+  } else {
     velocity_ = acceleration_ * direction_;
     this->set_pos(this->get_pos() + velocity_);
     next_frame();
@@ -143,6 +145,8 @@ void bombino::gamer::collision_handler() {
     if (i->type() == static_cast<levi::object_type>(object_type::soft_block) ||
         i->type() == static_cast<levi::object_type>(object_type::solid_block)) {
       this->set_pos(this->get_pos() - velocity_);
+      velocity_ = levi::vector2d{0, 0};
+      return;
     }
   }
 }
