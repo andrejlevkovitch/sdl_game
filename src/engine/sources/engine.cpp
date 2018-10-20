@@ -140,6 +140,7 @@ levi::engine::engine()
     info_log.resize(length_of_info);
     gl_functions.glGetShaderInfoLog(vertex_shader, length_of_info, nullptr,
                                     &info_log[0]);
+    gl_functions.glDeleteShader(vertex_shader);
     throw std::runtime_error{"error while compile vertex shader:\n" + info_log};
   }
 
@@ -148,6 +149,7 @@ levi::engine::engine()
     fragment_shader_code = read_shader_code_from_file(levi::way_to_shaders +
                                                       "fragment_shader.glsl");
   } catch (std::exception &) {
+    gl_functions.glDeleteShader(vertex_shader);
     throw;
   }
 
@@ -169,6 +171,7 @@ levi::engine::engine()
     info_log.resize(length_of_info);
     gl_functions.glGetShaderInfoLog(fragment_shader, length_of_info, nullptr,
                                     &info_log[0]);
+    gl_functions.glDeleteShader(fragment_shader);
     throw std::runtime_error{"error while compile fragment shader:\n" +
                              info_log};
   }
@@ -185,6 +188,8 @@ levi::engine::engine()
   gl_functions.glGetProgramiv(shader_program_, GL_LINK_STATUS, &link_status);
   LEVI_CHECK();
   if (!link_status) {
+    gl_functions.glDeleteShader(vertex_shader);
+    gl_functions.glDeleteShader(fragment_shader);
     throw std::runtime_error{"shader program couldn't be linked"};
   }
   gl_functions.glUseProgram(shader_program_);
