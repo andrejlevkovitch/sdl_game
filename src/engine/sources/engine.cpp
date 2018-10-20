@@ -21,6 +21,7 @@
 
 const int default_number_of_ebo{6};
 
+namespace levi {
 std::string read_shader_code_from_file(const std::string &file) {
   std::ifstream fin;
   fin.open(file);
@@ -42,6 +43,33 @@ std::string read_shader_code_from_file(const std::string &file) {
     throw std::runtime_error{"couldn't load vertex shader from file"};
   }
 }
+
+uint32_t create_shader(uint32_t type, const std::string &shader_code) {
+  const char *code{nullptr};
+  auto &gl_functions = levi::gl_loader::instance();
+  auto shader = gl_functions.glCreateShader(type);
+  LEVI_CHECK();
+  code = &shader_code[0];
+  gl_functions.glShaderSource(shader, 1, &code, nullptr);
+  LEVI_CHECK();
+  gl_functions.glCompileShader(shader);
+  LEVI_CHECK();
+  GLint compile_status{};
+  gl_functions.glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
+  LEVI_CHECK();
+  if (!compile_status) {
+    GLint length_of_info{};
+    gl_functions.glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length_of_info);
+    std::string info_log{};
+    info_log.resize(length_of_info);
+    gl_functions.glGetShaderInfoLog(shader, length_of_info, nullptr,
+                                    &info_log[0]);
+    gl_functions.glDeleteShader(shader);
+    throw std::runtime_error{"error while compile shader:\n" + info_log};
+  }
+  return shader;
+}
+} // namespace levi
 
 levi::engine &levi::engine::instance() {
   static engine retval{};
@@ -111,8 +139,6 @@ levi::engine::engine()
 
   auto &gl_functions = gl_loader::instance();
 
-  char *shader_code{nullptr};
-
   std::string vertex_shader_code;
   try {
     vertex_shader_code =
@@ -121,59 +147,22 @@ levi::engine::engine()
     throw;
   }
 
-  shader_code = &vertex_shader_code[0];
-
-  auto vertex_shader = gl_functions.glCreateShader(GL_VERTEX_SHADER);
-  LEVI_CHECK();
-  gl_functions.glShaderSource(vertex_shader, 1, &shader_code, nullptr);
-  LEVI_CHECK();
-  gl_functions.glCompileShader(vertex_shader);
-  LEVI_CHECK();
-  GLint compile_status{};
-  gl_functions.glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &compile_status);
-  LEVI_CHECK();
-  if (!compile_status) {
-    GLint length_of_info{};
-    gl_functions.glGetShaderiv(vertex_shader, GL_INFO_LOG_LENGTH,
-                               &length_of_info);
-    std::string info_log{};
-    info_log.resize(length_of_info);
-    gl_functions.glGetShaderInfoLog(vertex_shader, length_of_info, nullptr,
-                                    &info_log[0]);
-    gl_functions.glDeleteShader(vertex_shader);
-    throw std::runtime_error{"error while compile vertex shader:\n" + info_log};
-  }
-
   std::string fragment_shader_code;
   try {
     fragment_shader_code = read_shader_code_from_file(levi::way_to_shaders +
                                                       "fragment_shader.glsl");
   } catch (std::exception &) {
-    gl_functions.glDeleteShader(vertex_shader);
     throw;
   }
 
-  auto fragment_shader = gl_functions.glCreateShader(GL_FRAGMENT_SHADER);
-  LEVI_CHECK();
-  shader_code = &fragment_shader_code[0];
-  gl_functions.glShaderSource(fragment_shader, 1, &shader_code, nullptr);
-  LEVI_CHECK();
-  gl_functions.glCompileShader(fragment_shader);
-  LEVI_CHECK();
-  gl_functions.glGetShaderiv(fragment_shader, GL_COMPILE_STATUS,
-                             &compile_status);
-  LEVI_CHECK();
-  if (!compile_status) {
-    GLint length_of_info{};
-    gl_functions.glGetShaderiv(fragment_shader, GL_INFO_LOG_LENGTH,
-                               &length_of_info);
-    std::string info_log{};
-    info_log.resize(length_of_info);
-    gl_functions.glGetShaderInfoLog(fragment_shader, length_of_info, nullptr,
-                                    &info_log[0]);
-    gl_functions.glDeleteShader(fragment_shader);
-    throw std::runtime_error{"error while compile fragment shader:\n" +
-                             info_log};
+  GLuint vertex_shader{};
+  GLuint fragment_shader{};
+
+  try {
+    vertex_shader = create_shader(GL_VERTEX_SHADER, vertex_shader_code);
+    fragment_shader = create_shader(GL_FRAGMENT_SHADER, fragment_shader_code);
+  } catch (std::exception &) {
+    throw;
   }
 
   shader_program_ = gl_functions.glCreateProgram();
