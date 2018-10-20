@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "dop_clases.hpp"
+#include "dop_classes.hpp"
 #include "event.hpp"
 #include "rect.hpp"
 #include "size.hpp"
@@ -31,7 +31,6 @@ public:
   void render();
   /**\return size of the window in pixels*/
   levi::size get_window_size() const;
-  friend void draw(engine &engine, abstract_object *obj);
   /**\param angle in degrees*/
   void draw(const texture &texture, const rect &src_rect, const rect &dst_rect,
             double angle, flip flip);

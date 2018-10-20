@@ -2,8 +2,6 @@
 
 [Build Status](https://hub.docker.com/r/andrejlevkovitch/sdl_game/builds/)
 
-base for asteroids
-
 For build required:
 
 - sdl2

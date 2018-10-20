@@ -7,14 +7,13 @@
 #include <string>
 #include <tuple>
 
-#include "dop_clases.hpp"
+#include "dop_classes.hpp"
 #include "rect.hpp"
 #include "size.hpp"
 #include "vector2d.hpp"
 
 namespace levi {
 class engine;
-enum object_type { unknown, user_type = 100 };
 
 /**\brief abstract base class for all objects*/
 class abstract_object {
@@ -47,7 +46,7 @@ public:
    * \return angle past the operation*/
   virtual float rotate(float value);
   virtual void set_angle(float angle);
-  /**\return current angle in diapason [0, 360)*/
+  /**\return current angle in degres [0, 360)*/
   float get_angle() const;
   void set_flip(flip f);
   flip get_flip() const;
@@ -64,22 +63,21 @@ public:
   virtual void collision_handler();
 
 public:
-  std::string texture_id_;
-  bool wait_delete_;
+  std::list<abstract_object *> collisions_;
 
 protected:
+  std::string texture_id_;
+  /**\brief this rect store rectangle of current sprite in image coordinates
+   * (begin from [0, 0] in integer values)*/
   rect src_rect_;
-
-private:
+  /**\brief this rect store rectangle of current screen position in screen
+   * coordinates (begin from [0, 0] in integer values)*/
   rect dst_rect_;
+  /**\brief angle in degrees*/
   float angle_;
   flip flip_;
-
-protected:
+  bool wait_delete_;
   bool need_collisions_flag_;
-
-public:
-  std::list<abstract_object *> collisions_;
 };
 
 void draw(engine &engine, abstract_object *obj);

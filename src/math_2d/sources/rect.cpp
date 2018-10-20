@@ -43,3 +43,9 @@ bool levi::is_crossing(const rect &lhs, const rect &rhs) {
   }
   return false;
 }
+
+std::ostream &levi::operator<<(std::ostream &out, const rect &rect) {
+  out << "x: " << rect.x << " y: "
+      << " width: " << rect.width << " height: " << rect.height << std::endl;
+  return out;
+}

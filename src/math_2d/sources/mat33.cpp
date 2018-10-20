@@ -34,3 +34,13 @@ levi::mat33 levi::mat33::operator*(const mat33 &rhs) {
   }
   return retval;
 }
+
+std::ostream &levi::operator<<(std::ostream &out, const mat33 &matrix) {
+  for (int i{}; i < 3; ++i) {
+    for (int j{}; j < 3; ++j) {
+      out << matrix[i * 3 + j] << ' ';
+    }
+    out << std::endl;
+  }
+  return out;
+}

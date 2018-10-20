@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <ostream>
+
 namespace levi {
 class size {
 public:
@@ -12,4 +14,6 @@ public:
   int width;
   int height;
 };
+
+std::ostream &operator<<(std::ostream &out, const size &size);
 }; // namespace levi

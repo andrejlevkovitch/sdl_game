@@ -35,20 +35,25 @@ public:
   void collision_handler() override;
 
 private:
-  float velocity_;
+  /**\brief texture size for calculate current sprite*/
+  levi::size texture_size_;
   levi::vector2d distance_;
-  /**\brief normilized vector2d*/
+  /**\brief direction is vector with valid values for x, y ONLY 0, 1, -1. When
+   * we calculate destination point, then we can get normalize vector
+   * from this, but we havn't to change the vector!*/
   levi::vector2d direction_;
+  float velocity_;
 
-  uint8_t cur_frame_;
+  /**\brief we can create two objects of this class for two gamers, and we have
+   * to set different buttons for control*/
+  std::vector<levi::button_code> active_buttons_;
+
   frames front_frame_collection_;
   frames side_frame_collection_;
   frames back_frame_collection_;
   frames cur_frame_collection_;
-  levi::size texture_size_;
 
   object_type type_;
-
-  std::vector<levi::button_code> active_buttons_;
+  uint8_t cur_frame_;
 };
 }; // namespace bombino

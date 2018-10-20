@@ -8,11 +8,5 @@ const std::string way_to_shaders{"${CMAKE_CURRENT_SOURCE_DIR}/src/shaders/"};
 }
 
 namespace bombino {
-const std::string way_to_files{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/"};
-const std::string way_to_objects{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/"};
-}
-
-namespace deep_space {
-const std::string way_to_files{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/"};
 const std::string way_to_objects{"${CMAKE_CURRENT_SOURCE_DIR}/src/resources/"};
 }

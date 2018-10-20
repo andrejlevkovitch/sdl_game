@@ -16,7 +16,7 @@
 bombino::playing_state::playing_state() {
   // load textures for objects
   levi::engine::instance().texture_manager().parse_textures(
-      bombino::way_to_files + "bombino_textures.xml");
+      bombino::way_to_objects + "bombino_textures.xml");
   // tile_loading
   tile_loader t_loader;
   t_loader.parse_tile_map(bombino::way_to_objects + "map0.tmx");

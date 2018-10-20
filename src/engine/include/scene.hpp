@@ -5,14 +5,14 @@
 #include <list>
 #include <memory>
 
+#include "dop_classes.hpp"
+
 struct SDL_Renderer;
 
 namespace levi {
 class engine;
 class abstract_object;
 void draw(engine &engine, abstract_object *obj);
-
-enum class id_state { none, menu, playing, pause, over, user_id = 100 };
 
 using item_list = std::list<std::shared_ptr<abstract_object>>;
 class scene {

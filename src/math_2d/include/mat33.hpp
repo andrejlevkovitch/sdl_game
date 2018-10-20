@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <ostream>
 
 namespace levi {
 class vertex;
@@ -14,4 +15,6 @@ public:
   vertex operator*(const vertex &rhs);
   mat33 operator*(const mat33 &rhs);
 };
+
+std::ostream &operator<<(std::ostream &out, const mat33 &matrix);
 } // namespace levi

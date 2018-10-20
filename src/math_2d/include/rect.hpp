@@ -3,6 +3,7 @@
 #pragma once
 
 #include <array>
+#include <ostream>
 
 namespace levi {
 class vertex;
@@ -22,5 +23,8 @@ public:
   int width;
   int height;
 };
+
 bool is_crossing(const rect &lhs, const rect &rhs);
+
+std::ostream &operator<<(std::ostream &out, const rect &rect);
 } // namespace levi

@@ -11,10 +11,10 @@
 /// todo this game dependes on fps - I have to fixed this!
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type)
-    : levi::abstract_object{texture_id, size, pos}, velocity_{1}, distance_{},
-      direction_{0, 0}, cur_frame_{}, front_frame_collection_{},
-      side_frame_collection_{}, back_frame_collection_{},
-      texture_size_{}, type_{type} {
+    : levi::abstract_object{texture_id, size, pos},
+      texture_size_{}, distance_{}, direction_{0, 0}, velocity_{1},
+      front_frame_collection_{}, side_frame_collection_{},
+      back_frame_collection_{}, type_{type}, cur_frame_{} {
   need_collisions_flag_ = true;
   active_buttons_.clear();
   if (type_ == object_type::gamer1) {
@@ -74,7 +74,7 @@ void bombino::gamer::update() {
       if (i.button.code == active_buttons_[0]) {
         if (i.button.state == levi::button_state::pressed) {
           direction_.y = -1;
-          set_flip(levi::flip_type::none);
+          flip_ = levi::flip::none;
           set_frame_collection(back_frame_collection_);
         } else {
           direction_.y = 0;
@@ -84,7 +84,7 @@ void bombino::gamer::update() {
       if (i.button.code == active_buttons_[1]) {
         if (i.button.state == levi::button_state::pressed) {
           direction_.y = 1;
-          set_flip(levi::flip_type::none);
+          flip_ = levi::flip::none;
           set_frame_collection(front_frame_collection_);
         } else {
           direction_.y = 0;
@@ -94,7 +94,7 @@ void bombino::gamer::update() {
       if (i.button.code == active_buttons_[2]) {
         if (i.button.state == levi::button_state::pressed) {
           direction_.x = -1;
-          set_flip(levi::flip_type::horizontal);
+          flip_ = levi::flip::horizontal;
           set_frame_collection(side_frame_collection_);
         } else {
           direction_.x = 0;
@@ -104,7 +104,7 @@ void bombino::gamer::update() {
       if (i.button.code == active_buttons_[3]) {
         if (i.button.state == levi::button_state::pressed) {
           direction_.x = 1;
-          set_flip(levi::flip_type::none);
+          flip_ = levi::flip::none;
           set_frame_collection(side_frame_collection_);
         } else {
           direction_.x = 0;
@@ -113,7 +113,6 @@ void bombino::gamer::update() {
       }
     }
   }
-  direction_ = direction_.get_norm();
   motion();
 }
 
@@ -121,7 +120,7 @@ void bombino::gamer::motion() {
   if (direction_ == levi::vector2d{0, 0}) {
     return;
   } else {
-    distance_ = velocity_ * direction_;
+    distance_ = velocity_ * direction_.get_norm();
     this->set_pos(this->get_pos() + distance_);
     next_frame();
   }

@@ -21,7 +21,7 @@ public:
    * \warning if texture id alrady is in manager, this texture will not be
    * loaded again*/
   size_t parse_textures(const std::string &texture_file);
-  /**\exception if texture_id not exist throw std::except*/
+  /**\exception if texture_id not exist throw std::exception*/
   texture get_texture(const std::string &texture_id) const;
   /**\brief get all not loaded objects whith errors, after this list will be
    * cleared.

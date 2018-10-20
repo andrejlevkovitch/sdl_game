@@ -84,3 +84,8 @@ levi::vector2d levi::vector2d::get_vec_from(float distance, float angle) const {
 
 float levi::to_degrees(float radians) { return radians * 180.0f / 3.14f; }
 float levi::to_radians(float degrees) { return degrees * 3.14f / 180.0f; }
+
+std::ostream &levi::operator<<(std::ostream &out, const vector2d &vector) {
+  out << "x: " << vector.x << " y: " << vector.y << std::endl;
+  return out;
+}

@@ -285,11 +285,11 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
 
   auto texture_vertices = src_rect.get_vertices();
 
-  if (flip & flip_type::horizontal) {
+  if (flip & flip::horizontal) {
     std::swap(texture_vertices[0], texture_vertices[3]);
     std::swap(texture_vertices[1], texture_vertices[2]);
   }
-  if (flip & flip_type::vertical) {
+  if (flip & flip::vertical) {
     std::swap(texture_vertices[0], texture_vertices[1]);
     std::swap(texture_vertices[3], texture_vertices[2]);
   }

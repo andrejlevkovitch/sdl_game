@@ -13,8 +13,13 @@ class TiXmlElement;
 
 namespace bombino {
 class tile;
+
+/**\brief this class load special .tmx files created by Tiled program
+ * \TODO nowadays it work only if map created by one png file, with zero
+ * margin*/
 class tile_loader {
 public:
+  /**\except throw std::exception, read output for more information*/
   void parse_tile_map(const std::string &file_name);
   const std::list<std::shared_ptr<tile>> get_tiles() const;
 
