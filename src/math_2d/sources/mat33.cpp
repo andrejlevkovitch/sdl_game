@@ -27,9 +27,11 @@ levi::mat33 levi::mat33::operator*(const mat33 &rhs) {
   mat33 retval;
   for (int i{}; i < rows; ++i) {
     for (int j{}; j < cols; ++j) {
+      // clang-format off
       retval[i * cols + j] = (*this)[i * cols + 0] * rhs[0 * cols + j] +
                              (*this)[i * cols + 1] * rhs[1 * cols + j] +
                              (*this)[i * cols + 2] * rhs[2 * cols + j];
+      // clang-fomat on
     }
   }
   return retval;

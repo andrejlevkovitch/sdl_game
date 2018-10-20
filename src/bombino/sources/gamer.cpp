@@ -2,17 +2,15 @@
 
 #include "gamer.hpp"
 
-#include "config.hpp"
 #include "input_handler.hpp"
+#include "objects_config.hpp"
 #include "time.hpp"
 
-// const unsigned fixed_time_update{50};
-
-/// todo this game dependes on fps - I have to fixed this!
+// TODO this game dependes on fps - I have to fixed this!
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type)
     : levi::abstract_object{texture_id, size, pos},
-      texture_size_{}, distance_{}, direction_{0, 0}, velocity_{1},
+      texture_size_{}, distance_{}, direction_{0, 0}, velocity_{2},
       front_frame_collection_{}, side_frame_collection_{},
       back_frame_collection_{}, type_{type}, cur_frame_{} {
   need_collisions_flag_ = true;
@@ -62,12 +60,6 @@ void bombino::gamer::set_texture_size(levi::size tex_size) {
 }
 
 void bombino::gamer::update() {
-  // unsigned cur_tick{levi::get_time()};
-  // if ((cur_tick - last_tick_) < fixed_time_update) {
-  //  return;
-  //} else {
-  //  last_tick_ = cur_tick;
-  //}
   auto &event_list = levi::input_handler::instance().get_event_list();
   for (auto &i : event_list) {
     if (i.type == levi::event_type::button_event) {

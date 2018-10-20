@@ -13,12 +13,11 @@
 
 #include "event.hpp"
 #include "gl_loader.hpp"
+#include "shaders_config.hpp"
 #include "state_machine.hpp"
 #include "texture_manager.hpp"
 #include "vector2d.hpp"
 #include "vertex.hpp"
-
-#include "config.hpp"
 
 const int default_number_of_ebo{6};
 
@@ -276,7 +275,7 @@ levi::size levi::engine::get_window_size() const {
 }
 
 void levi::engine::draw(const texture &texture, const rect &src_rect,
-                        const rect &dst_rect, double angle, flip flip) {
+                        const rect &dst_rect, double angle, flip flip_) {
   auto global_vertices = dst_rect.get_vertices();
 
   auto win_size = get_window_size();
@@ -285,11 +284,11 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
 
   auto texture_vertices = src_rect.get_vertices();
 
-  if (flip & flip::horizontal) {
+  if (flip_ & flip::horizontal) {
     std::swap(texture_vertices[0], texture_vertices[3]);
     std::swap(texture_vertices[1], texture_vertices[2]);
   }
-  if (flip & flip::vertical) {
+  if (flip_ & flip::vertical) {
     std::swap(texture_vertices[0], texture_vertices[1]);
     std::swap(texture_vertices[3], texture_vertices[2]);
   }

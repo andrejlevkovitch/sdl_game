@@ -17,7 +17,7 @@ set(LIST_SUBDIRS bombino base64 engine math_2d main)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR};${CMAKE_MODULE_PATH}")
 
-configure_file("config.hpp.cmake" "${CMAKE_BINARY_DIR}/config.hpp")
+configure_file("menu_config.hpp.cmake" "${CMAKE_BINARY_DIR}/menu_config.hpp")
 
 include(build.cmake)
 

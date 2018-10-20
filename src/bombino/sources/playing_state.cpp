@@ -2,11 +2,11 @@
 
 #include "playing_state.hpp"
 
-#include "config.hpp"
 #include "engine.hpp"
 #include "gamer.hpp"
 #include "input_handler.hpp"
 #include "object_factory.hpp"
+#include "objects_config.hpp"
 #include "pause_state.hpp"
 #include "state_machine.hpp"
 #include "texture_manager.hpp"

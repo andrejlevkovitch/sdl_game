@@ -3,10 +3,10 @@
 #include "menu_state.hpp"
 
 #include "button.hpp"
-#include "config.hpp"
 #include "engine.hpp"
 #include "input_handler.hpp"
 #include "object_factory.hpp"
+#include "objects_config.hpp"
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
