@@ -205,6 +205,8 @@ levi::texture_manager &levi::engine::texture_manager() {
 void levi::engine::update() { state_machine_->update(); }
 
 void levi::engine::render() {
+  auto win_size = get_window_size();
+  ::glViewport(0, 0, win_size.width, win_size.height);
   ::glClear(GL_COLOR_BUFFER_BIT);
 
   levi::render(*this, state_machine_);
