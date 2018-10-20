@@ -48,10 +48,5 @@ private:
   class state_machine *state_machine_;
   class texture_manager *texture_manager_;
   uint32_t shader_program_;
-  uint32_t vao_;
-  uint32_t vbo_;
-  uint32_t ebo_;
-  int32_t pos_;
-  int32_t tex_pos_;
 };
 }; // namespace levi

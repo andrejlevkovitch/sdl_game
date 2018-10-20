@@ -41,13 +41,9 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glGetAttribLocation", glGetAttribLocation);
   ::load_gl_func("glVertexAttribPointer", glVertexAttribPointer);
   ::load_gl_func("glEnableVertexAttribArray", glEnableVertexAttribArray);
+  ::load_gl_func("glDisableVertexAttribArray", glDisableVertexAttribArray);
 
   ::load_gl_func("glGetUniformLocation", glGetUniformLocation);
   ::load_gl_func("glUniform2f", glUniform2f);
   ::load_gl_func("glUniform1f", glUniform1f);
-
-  ::load_gl_func("glGenVertexArrays", glGenVertexArrays);
-  ::load_gl_func("glBindVertexArray", glBindVertexArray);
-  ::load_gl_func("glDeleteVertexArrays", glDeleteVertexArrays);
-  ::load_gl_func("glDisableVertexArray", glDisableVertexArray);
 }

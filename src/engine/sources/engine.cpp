@@ -19,8 +19,6 @@
 #include "vector2d.hpp"
 #include "vertex.hpp"
 
-const int default_number_of_ebo{6};
-
 namespace levi {
 std::string read_shader_code_from_file(const std::string &file) {
   std::ifstream fin;
@@ -78,7 +76,7 @@ levi::engine &levi::engine::instance() {
 
 levi::engine::engine()
     : window_{nullptr}, gl_context_{}, state_machine_{new levi::state_machine},
-      texture_manager_{new levi::texture_manager{}}, shader_program_{}, vao_{} {
+      texture_manager_{new levi::texture_manager{}}, shader_program_{} {
   if (::SDL_Init(SDL_INIT_EVERYTHING) < 0) {
     throw std::runtime_error{::SDL_GetError()};
   }
@@ -133,6 +131,7 @@ levi::engine::engine()
       cur_minor_version != gl_minor_version) {
     throw std::runtime_error{"couldn't created right gl_context"};
   }
+
   ::glEnable(GL_BLEND);
   ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   ::glClearColor(0, 0, 0, 1);
@@ -140,15 +139,10 @@ levi::engine::engine()
   auto &gl_functions = gl_loader::instance();
 
   std::string vertex_shader_code;
+  std::string fragment_shader_code;
   try {
     vertex_shader_code =
         read_shader_code_from_file(levi::way_to_shaders + "vertex_shader.glsl");
-  } catch (std::exception &) {
-    throw;
-  }
-
-  std::string fragment_shader_code;
-  try {
     fragment_shader_code = read_shader_code_from_file(levi::way_to_shaders +
                                                       "fragment_shader.glsl");
   } catch (std::exception &) {
@@ -190,53 +184,10 @@ levi::engine::engine()
   LEVI_CHECK();
   gl_functions.glDeleteShader(fragment_shader);
   LEVI_CHECK();
-
-  gl_functions.glGenVertexArrays(1, &vao_);
-  LEVI_CHECK();
-  gl_functions.glBindVertexArray(vao_);
-  LEVI_CHECK();
-
-  gl_functions.glGenBuffers(1, &vbo_);
-  LEVI_CHECK();
-  gl_functions.glBindBuffer(GL_ARRAY_BUFFER, vbo_);
-  LEVI_CHECK();
-
-  gl_functions.glGenBuffers(1, &ebo_);
-  LEVI_CHECK();
-  gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
-  LEVI_CHECK();
-
-  pos_ = gl_functions.glGetAttribLocation(shader_program_, "pos");
-  LEVI_CHECK();
-  if (pos_ < 0) {
-    throw std::runtime_error{"couldn't locate pos in shader program"};
-  }
-  gl_functions.glVertexAttribPointer(pos_, 3, GL_FLOAT, GL_FALSE,
-                                     sizeof(vertex) * 2, nullptr);
-  LEVI_CHECK();
-  gl_functions.glEnableVertexAttribArray(pos_);
-  LEVI_CHECK();
-
-  tex_pos_ = gl_functions.glGetAttribLocation(shader_program_, "tex_pos");
-  LEVI_CHECK();
-  if (tex_pos_ < 0) {
-    throw std::runtime_error{"couldn't locate tex_pos in shader program"};
-  }
-  gl_functions.glVertexAttribPointer(tex_pos_, 2, GL_FLOAT, GL_FALSE,
-                                     sizeof(vertex) * 2,
-                                     reinterpret_cast<void *>(sizeof(vertex)));
-  LEVI_CHECK();
-  gl_functions.glEnableVertexAttribArray(tex_pos_);
-  LEVI_CHECK();
 }
 
 levi::engine::~engine() {
   auto &gl_functions = gl_loader::instance();
-  gl_functions.glDisableVertexArray(tex_pos_);
-  gl_functions.glDisableVertexArray(pos_);
-  gl_functions.glDeleteBuffers(1, &ebo_);
-  gl_functions.glDeleteBuffers(1, &vbo_);
-  gl_functions.glDeleteBuffers(1, &vao_);
   gl_functions.glDeleteProgram(shader_program_);
   ::SDL_GL_DeleteContext(gl_context_);
   ::SDL_DestroyWindow(window_);
@@ -295,24 +246,54 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
 
   auto &gl_functions = gl_loader::instance();
 
-  ::glActiveTexture(GL_TEXTURE0);
-  LEVI_CHECK();
-  ::glBindTexture(GL_TEXTURE_2D, texture.gl_tex);
-  LEVI_CHECK();
+  GLuint vbo{};
+  GLuint ebo{};
+  GLint pos{};
+  GLint tex_pos{};
 
-  gl_functions.glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+  gl_functions.glGenBuffers(1, &vbo);
+  LEVI_CHECK();
+  gl_functions.glBindBuffer(GL_ARRAY_BUFFER, vbo);
   LEVI_CHECK();
   gl_functions.glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertex),
                             &vertices[0], GL_STATIC_DRAW);
   LEVI_CHECK();
 
+  // always looks like this, because we draw rectangles
+  static const int default_number_of_ebo{6};
   std::array<uint32_t, default_number_of_ebo> elements{0, 1, 2, 0, 2, 3};
-  gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo_);
+  gl_functions.glGenBuffers(1, &ebo);
+  LEVI_CHECK();
+  gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  LEVI_CHECK();
   LEVI_CHECK();
   gl_functions.glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                             elements.size() *
                                 sizeof(decltype(elements)::value_type),
                             &elements[0], GL_STATIC_DRAW);
+  LEVI_CHECK();
+
+  pos = gl_functions.glGetAttribLocation(shader_program_, "pos");
+  LEVI_CHECK();
+  gl_functions.glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE,
+                                     sizeof(vertex) * 2, nullptr);
+  LEVI_CHECK();
+  gl_functions.glEnableVertexAttribArray(pos);
+  LEVI_CHECK();
+
+  tex_pos = gl_functions.glGetAttribLocation(shader_program_, "tex_pos");
+  LEVI_CHECK();
+  gl_functions.glVertexAttribPointer(tex_pos, 2, GL_FLOAT, GL_FALSE,
+                                     sizeof(vertex) * 2,
+                                     reinterpret_cast<void *>(sizeof(vertex)));
+  LEVI_CHECK();
+  gl_functions.glEnableVertexAttribArray(tex_pos);
+  LEVI_CHECK();
+
+  // we use only one texture in shaders, so it always be GL_TEXTURE0
+  ::glActiveTexture(GL_TEXTURE0);
+  LEVI_CHECK();
+  ::glBindTexture(GL_TEXTURE_2D, texture.gl_tex);
   LEVI_CHECK();
 
   auto uniform_center =
@@ -338,5 +319,14 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
 
   ::glDrawElements(GL_TRIANGLES, default_number_of_ebo, GL_UNSIGNED_INT,
                    nullptr);
+  LEVI_CHECK();
+
+  gl_functions.glDisableVertexAttribArray(tex_pos);
+  LEVI_CHECK();
+  gl_functions.glDisableVertexAttribArray(pos);
+  LEVI_CHECK();
+  gl_functions.glDeleteBuffers(1, &ebo);
+  LEVI_CHECK();
+  gl_functions.glDeleteBuffers(1, &vbo);
   LEVI_CHECK();
 }
