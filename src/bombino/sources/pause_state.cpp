@@ -15,6 +15,40 @@ bombino::pause_state::pause_state() : scene{} {
     levi::engine::instance().state_machine().pop_state();
     levi::engine::instance().state_machine().current_state()->set_updatebility(
         true);
+
+    levi::event event{};
+
+    event.button = levi::button_event{levi::button_code::left,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button = levi::button_event{levi::button_code::right,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button =
+        levi::button_event{levi::button_code::up, levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button = levi::button_event{levi::button_code::down,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button = levi::button_event{levi::button_code::select,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+
+    event.button = levi::button_event{levi::button_code::left_dop,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button = levi::button_event{levi::button_code::right_dop,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button = levi::button_event{levi::button_code::up_dop,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button = levi::button_event{levi::button_code::down_dop,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
+    event.button = levi::button_event{levi::button_code::select_dop,
+                                      levi::button_state::released};
+    levi::input_handler::instance().add_event(event);
   };
   auto to_menu_callback = []() {
     levi::engine::instance().state_machine().pop_state();
