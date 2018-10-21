@@ -20,7 +20,7 @@
 #include "vertex.hpp"
 
 namespace levi {
-std::string read_shader_code_from_file(const std::string &file) {
+inline std::string read_shader_code_from_file(const std::string &file) {
   std::ifstream fin;
   fin.open(file);
   if (fin.is_open()) {
@@ -42,7 +42,7 @@ std::string read_shader_code_from_file(const std::string &file) {
   }
 }
 
-uint32_t create_shader(uint32_t type, const std::string &shader_code) {
+inline uint32_t create_shader(uint32_t type, const std::string &shader_code) {
   const char *code{nullptr};
   auto &gl_functions = levi::gl_loader::instance();
   auto shader = gl_functions.glCreateShader(type);
