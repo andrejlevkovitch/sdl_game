@@ -2,17 +2,25 @@
 
 #include "gamer.hpp"
 
+#include <memory>
+
+#include "bomb.hpp"
 #include "input_handler.hpp"
 #include "objects_config.hpp"
+#include "scene.hpp"
 #include "time.hpp"
 
 // TODO this game dependes on fps - I have to fixed this!
+// TODO when gamer push 2 buttons, and relesed one, then character can see on
+// uncorrect side
+// TODO hardkod
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type)
-    : levi::abstract_object{texture_id, size, pos},
-      texture_size_{}, distance_{}, direction_{0, 0}, velocity_{2},
-      front_frame_collection_{}, side_frame_collection_{},
-      back_frame_collection_{}, type_{type}, cur_frame_{} {
+    : levi::abstract_object{texture_id, size, pos}, texture_size_{},
+      distance_{}, direction_{0, 0}, velocity_{2}, front_frame_collection_{},
+      side_frame_collection_{}, back_frame_collection_{},
+      time_last_bomb_(-4000), time_to_new_bomb_{4000}, type_{type},
+      cur_frame_{} {
   need_collisions_flag_ = true;
   active_buttons_.clear();
   if (type_ == object_type::gamer1) {
@@ -103,6 +111,28 @@ void bombino::gamer::update() {
         }
         continue;
       }
+      if (i.button.code == active_buttons_[4]) {
+        if (i.button.state == levi::button_state::pressed) {
+          if (levi::get_time() > time_last_bomb_ + time_to_new_bomb_) {
+            time_last_bomb_ = levi::get_time();
+            levi::vector2d center_gamer{get_pos()};
+            center_gamer.x += get_size().width / 2;
+            center_gamer.y += get_size().height / 2;
+            for (auto &collision : collisions_) {
+              if (collision->type() ==
+                      static_cast<levi::object_type>(object_type::void_block) &&
+                  collision->get_rectangle().is_intake_pos(center_gamer)) {
+                scene->add_item(std::make_shared<class bomb>(
+                    "bomb", levi::size{48, 48},
+                    levi::vector2d{collision->get_pos() + levi::vector2d{8, 8}},
+                    1));
+                break;
+              }
+            }
+          }
+        }
+        continue;
+      }
     }
   }
   motion();
@@ -141,3 +171,5 @@ void bombino::gamer::collision_handler() {
     }
   }
 }
+
+void bombino::gamer::kill() { velocity_ = 0; }

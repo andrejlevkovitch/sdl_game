@@ -11,6 +11,10 @@
 #include "object_types.hpp"
 #include "vector2d.hpp"
 
+namespace levi {
+class scene;
+};
+
 namespace bombino {
 /**\brief first is first frame, second is size of frames*/
 using frames = std::pair<uint8_t, uint8_t>;
@@ -33,6 +37,10 @@ public:
   levi::object_type type() const override;
   levi::rect get_rectangle() const override;
   void collision_handler() override;
+  void kill();
+
+public:
+  levi::scene *scene;
 
 private:
   /**\brief texture size for calculate current sprite*/
@@ -52,6 +60,9 @@ private:
   frames side_frame_collection_;
   frames back_frame_collection_;
   frames cur_frame_collection_;
+
+  uint32_t time_last_bomb_;
+  uint32_t time_to_new_bomb_;
 
   object_type type_;
   uint8_t cur_frame_;

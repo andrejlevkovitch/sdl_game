@@ -37,6 +37,9 @@ int main(int argc, char *argv[]) {
 
     input_handler.update();
     game_stop = input_handler.is_quit();
+    for (const auto &i : input_handler.get_event_list()) {
+      std::cerr << i << std::endl;
+    }
     engine.update();
     engine.render();
 

@@ -7,6 +7,7 @@
 
 namespace levi {
 class vertex;
+class vector2d;
 
 class rect {
 public:
@@ -17,6 +18,8 @@ public:
   std::array<vertex, 4> get_vertices() const;
   vertex get_center() const;
   friend bool is_crossing(const rect &lhs, const rect &rhs);
+  /**\return true, if pos is in rectangle, or is on left or top side*/
+  bool is_intake_pos(const vector2d &pos);
 
   int x;
   int y;

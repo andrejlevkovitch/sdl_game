@@ -2,6 +2,7 @@
 
 #include "rect.hpp"
 
+#include "vector2d.hpp"
 #include "vertex.hpp"
 
 levi::rect::rect() : x{}, y{}, width{}, height{} {}
@@ -45,7 +46,15 @@ bool levi::is_crossing(const rect &lhs, const rect &rhs) {
 }
 
 std::ostream &levi::operator<<(std::ostream &out, const rect &rect) {
-  out << "x: " << rect.x << " y: "
-      << " width: " << rect.width << " height: " << rect.height << std::endl;
+  out << "x: " << rect.x << " y: " << rect.y << " width: " << rect.width
+      << " height: " << rect.height << std::endl;
   return out;
+}
+
+bool levi::rect::is_intake_pos(const vector2d &pos) {
+  if (pos.x >= this->x && pos.y >= this->y && pos.x < (this->x + this->width) &&
+      pos.y < (this->y + this->height)) {
+    return true;
+  }
+  return false;
 }

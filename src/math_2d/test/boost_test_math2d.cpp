@@ -162,5 +162,26 @@ BOOST_AUTO_TEST_CASE(test_crossing) {
 
   rect1 = levi::rect{32, 90, 64, 64};
   BOOST_CHECK(levi::is_crossing(rect1, rect2));
+
+  rect1 = levi::rect{0, 0, 64, 64};
+  rect2 = levi::rect{64, 64, 64, 64};
+  BOOST_CHECK(!levi::is_crossing(rect1, rect2));
+}
+
+BOOST_AUTO_TEST_CASE(test_intake_pos) {
+  levi::rect rect{0, 0, 64, 64};
+  levi::vector2d pos{0, 0};
+
+  BOOST_CHECK(rect.is_intake_pos(pos));
+
+  pos = levi::vector2d{64, 64};
+  BOOST_CHECK(!rect.is_intake_pos(pos));
+
+  pos = levi::vector2d{15, 63};
+  BOOST_CHECK(rect.is_intake_pos(pos));
+
+  rect = levi::rect{960, 64, 64, 64};
+  pos = levi::vector2d{988, 96};
+  BOOST_CHECK(rect.is_intake_pos(pos));
 }
 BOOST_AUTO_TEST_SUITE_END();

@@ -44,6 +44,7 @@ void levi::input_handler::read_input() {
   static const std::map<::SDL_Scancode, levi::event> key_event_map{
       {::SDL_SCANCODE_ESCAPE, bind{pause_event{}}()},
       {::SDL_SCANCODE_RETURN, bind{button_code::select}()},
+      {::SDL_SCANCODE_E, bind{button_code::select_dop}()},
       {::SDL_SCANCODE_UP, bind{button_code::up}()},
       {::SDL_SCANCODE_W, bind{button_code::up_dop}()},
       {::SDL_SCANCODE_DOWN, bind{button_code::down}()},

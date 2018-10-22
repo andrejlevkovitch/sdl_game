@@ -19,19 +19,7 @@ using callback_map = std::map<std::string, levi::callback>;
  * \param itemp_list abstract_object list from scene
  * \param callback_map pointer to map of callback functions, not bounded param
  * \exception throw exception if bounded attribute not recieved*/
-void parse_state(const std::string &state_file, const std::string &state_name,
-                 levi::item_list &item_list,
-                 callback_map *callback_map = nullptr);
-
-/**\brief created objects by type
- * \param type type of created object
- * \param file_name file name width way to it
- * \param size size of frame
- * \param pos top-left corner of texture
- * \param callback callback function, not bounded param
- * \return smart pointer to created object
- * \exception if type not allowed it throw out_of_range exception*/
-std::shared_ptr<levi::abstract_object>
-create_object(std::string type, const std::string &file_name, levi::size size,
-              levi::vector2d pos, levi::callback callback = nullptr);
+levi::item_list parse_state(const std::string &state_file,
+                            const std::string &state_name,
+                            callback_map *callback_map = nullptr);
 }; // namespace bombino

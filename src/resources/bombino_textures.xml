@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <textures>
   <texture texture_id="bomb" file="bomber/bomb.png"/>
-  <texture texture_id="flames" file="bomber/flames.png"/>
+  <texture texture_id="flame" file="bomber/flames.png"/>
   <texture texture_id="gamer1" file="bomber/gamer1.png"/>
   <texture texture_id="gamer2" file="bomber/gamer2.png"/>
-  <texture texture_id="powers" file="bomber/powers.png"/>
+  <texture texture_id="power" file="bomber/powers.png"/>
 </textures>

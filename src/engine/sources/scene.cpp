@@ -23,7 +23,9 @@ void levi::scene::update() {
       ++item;
     }
   }
-  /// collision search
+}
+
+void levi::scene::collision_detecting() {
   for (auto &cur_item : item_list_) {
     if (cur_item->need_collisions()) {
       cur_item->collisions_.clear();
@@ -38,6 +40,17 @@ void levi::scene::update() {
       cur_item->collision_handler();
     }
   }
+}
+
+std::list<levi::abstract_object *>
+levi::scene::get_collisions_for(levi::rect rect) {
+  std::list<levi::abstract_object *> retlist;
+  for (auto item = item_list_.begin(); item != item_list_.end(); ++item) {
+    if (is_crossing((*item)->get_rectangle(), rect)) {
+      retlist.push_back(item->get());
+    }
+  }
+  return retlist;
 }
 
 levi::id_state levi::scene::get_id() const { return id_state::none; }

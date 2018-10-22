@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "dop_classes.hpp"
+#include "rect.hpp"
 
 struct SDL_Renderer;
 
@@ -19,9 +20,11 @@ class scene {
 public:
   scene();
   virtual ~scene();
-  void add_item(std::shared_ptr<abstract_object> obj);
+  virtual void add_item(std::shared_ptr<abstract_object> obj);
   const levi::item_list &get_item_list();
   virtual void update();
+  virtual void collision_detecting();
+  virtual std::list<abstract_object *> get_collisions_for(rect rect);
   virtual id_state get_id() const;
   friend void render(engine &engine, scene *scene);
   /**\brief hides or shows scene

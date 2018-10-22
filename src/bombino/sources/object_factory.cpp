@@ -9,10 +9,10 @@
 #include "button.hpp"
 #include "gamer.hpp"
 
-void bombino::parse_state(
+levi::item_list bombino::parse_state(
     const std::string &state_file, const std::string &state_name,
-    levi::item_list &item_list,
     std::map<std::string, std::function<void(void)>> *callback_map) {
+  levi::item_list item_list;
   ::TiXmlDocument xml_doc;
   if (!xml_doc.LoadFile(state_file)) {
     throw std::runtime_error{"xml file " + state_file + " not load"};
@@ -143,4 +143,5 @@ void bombino::parse_state(
       throw;
     }
   }
+  return item_list;
 }

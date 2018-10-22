@@ -12,6 +12,7 @@ enum object_type {
   gamer2,
   void_block,
   soft_block,
-  solid_block
+  solid_block,
+  bomb
 };
 };

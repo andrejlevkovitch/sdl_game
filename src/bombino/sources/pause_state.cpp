@@ -70,8 +70,11 @@ bombino::pause_state::pause_state() : scene{} {
   callback_map["to_menu"] = to_menu_callback;
   callback_map["restart"] = restart_callback;
 
-  parse_state(bombino::way_to_objects + "bombino_states.xml", "pause",
-              item_list_, &callback_map);
+  auto new_items = parse_state(bombino::way_to_objects + "bombino_states.xml",
+                               "pause", &callback_map);
+  for (auto &i : new_items) {
+    item_list_.push_back(i);
+  }
 
   current_ = item_list_.begin();
   reinterpret_cast<levi::button *>((*current_).get())->hover(true);
