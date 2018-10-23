@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include <sstream>
 #include <string>
 
 #include <SDL2/SDL_opengl.h>
+
+#include "get_file_line_func.hpp"
 
 #define LEVI_CHECK()                                                           \
   {                                                                            \
@@ -26,13 +27,7 @@
       default:                                                                 \
         break;                                                                 \
       }                                                                        \
-      std::stringstream ss;                                                    \
-      std::string pos;                                                         \
-      const size_t max_buf_size{512};                                          \
-      char buf[max_buf_size]{};                                                \
-      ss << __FILE__ << ':' << __LINE__ << '(' << __FUNCTION__ << ')';         \
-      ss.getline(buf, max_buf_size);                                           \
-      error += buf;                                                            \
+      error += get_file_line_func();                                           \
       throw std::runtime_error{error};                                         \
     }                                                                          \
   }
@@ -64,6 +59,7 @@ public:
   ::PFNGLUSEPROGRAMPROC glUseProgram;
   ::PFNGLVALIDATEPROGRAMPROC glValidateProgram;
   ::PFNGLDELETEPROGRAMPROC glDeleteProgram;
+  ::PFNGLGETPROGRAMINFOLOGPROC glGetProgramInfoLog;
 
   ::PFNGLGETATTRIBLOCATIONPROC glGetAttribLocation;
   ::PFNGLVERTEXATTRIBPOINTERPROC glVertexAttribPointer;

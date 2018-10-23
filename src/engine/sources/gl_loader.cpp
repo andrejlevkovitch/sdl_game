@@ -37,6 +37,7 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glUseProgram", glUseProgram);
   ::load_gl_func("glValidateProgram", glValidateProgram);
   ::load_gl_func("glDeleteProgram", glDeleteProgram);
+  ::load_gl_func("glGetProgramInfoLog", glGetProgramInfoLog);
 
   ::load_gl_func("glGetAttribLocation", glGetAttribLocation);
   ::load_gl_func("glVertexAttribPointer", glVertexAttribPointer);

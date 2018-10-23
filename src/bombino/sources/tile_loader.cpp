@@ -134,8 +134,11 @@ void bombino::tile_loader::create_tiles() {
     for (int j{}; j < map_size_.width; ++j) {
       int index = i * map_size_.width + j;
       levi::vector2d pos(tile_size_.width * j, tile_size_.height * i);
-      object_type type = static_cast<object_type>(
-          static_cast<int>(object_type::void_block) + layout_[index] - 1);
+      if (!layout_[index]) {
+        continue;
+      }
+      auto type = static_cast<object_type>(object_type::void_block +
+                                           layout_[index] - 1);
       tile_list_.push_back(std::make_shared<tile>(image_id_, tile_size_, pos,
                                                   type, layout_[index] - 1));
     }

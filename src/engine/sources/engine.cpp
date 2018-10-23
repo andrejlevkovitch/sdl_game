@@ -173,7 +173,13 @@ levi::engine::engine()
   if (!link_status) {
     gl_functions.glDeleteShader(vertex_shader);
     gl_functions.glDeleteShader(fragment_shader);
-    throw std::runtime_error{"shader program couldn't be linked"};
+    GLint lenght;
+    gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH, &lenght);
+    std::string log;
+    log.resize(lenght);
+    gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                     &log[0]);
+    throw std::runtime_error{"shader program couldn't be linked:\n" + log};
   }
   gl_functions.glUseProgram(shader_program_);
   LEVI_CHECK();
@@ -267,7 +273,6 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   gl_functions.glGenBuffers(1, &ebo);
   LEVI_CHECK();
   gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-  LEVI_CHECK();
   LEVI_CHECK();
   gl_functions.glBufferData(GL_ELEMENT_ARRAY_BUFFER,
                             elements.size() *

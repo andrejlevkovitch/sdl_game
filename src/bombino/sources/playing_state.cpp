@@ -9,6 +9,7 @@
 #include "object_factory.hpp"
 #include "objects_config.hpp"
 #include "pause_state.hpp"
+#include "power.hpp"
 #include "state_machine.hpp"
 #include "texture_manager.hpp"
 #include "tile.hpp"
@@ -24,7 +25,7 @@ bombino::playing_state::playing_state() {
   levi::engine::instance().texture_manager().create_texture(
       t_loader.image_id_, bombino::way_to_objects + t_loader.image_file_name_);
   for (const auto &i : t_loader.get_tiles()) {
-    item_list_.push_back(i);
+    add_item(i);
   }
   // object_loading
   auto new_items =
@@ -51,6 +52,9 @@ void bombino::playing_state::add_item(
   if (obj->type() ==
       static_cast<levi::object_type>(bombino::object_type::bomb)) {
     dynamic_cast<class bomb *>(obj.get())->scene = this;
+  }
+  if (obj->type() == static_cast<levi::object_type>(object_type::soft_block)) {
+    dynamic_cast<class tile *>(obj.get())->scene = this;
   }
   levi::scene::add_item(obj);
 }

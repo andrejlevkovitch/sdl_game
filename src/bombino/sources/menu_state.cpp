@@ -6,6 +6,7 @@
 #include "engine.hpp"
 #include "input_handler.hpp"
 #include "object_factory.hpp"
+#include "object_manager.hpp"
 #include "objects_config.hpp"
 #include "playing_state.hpp"
 #include "state_machine.hpp"
@@ -30,6 +31,9 @@ bombino::menu_state::menu_state() : levi::scene{} {
 
   callback_map["play"] = callback_play;
   callback_map["exit"] = callback_exit;
+
+  object_manager::instance().parse_file(bombino::way_to_objects +
+                                        "bombino_objects.xml");
 
   auto new_items = parse_state(bombino::way_to_objects + "bombino_states.xml",
                                "menu", &callback_map);

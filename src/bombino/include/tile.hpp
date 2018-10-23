@@ -5,6 +5,10 @@
 #include "abstract_object.hpp"
 #include "object_types.hpp"
 
+namespace levi {
+class scene;
+};
+
 namespace bombino {
 class tile : public levi::abstract_object {
 public:
@@ -14,7 +18,11 @@ public:
   levi::object_type type() const override;
   void destroy();
 
+public:
+  levi::scene *scene;
+
 private:
   object_type type_;
+  uint8_t power_shance_;
 };
 }; // namespace bombino

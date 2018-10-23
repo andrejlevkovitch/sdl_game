@@ -4,6 +4,9 @@
 
 #include "abstract_object.hpp"
 
+#include <string>
+#include <vector>
+
 namespace bombino {
 enum object_type {
   error_value,
@@ -13,6 +16,11 @@ enum object_type {
   void_block,
   soft_block,
   solid_block,
-  bomb
+  bomb,
+  power
 };
-};
+
+enum powers { energy, bombs, speed, size };
+
+const std::vector<std::string> powers_names{"energy", "bombs", "speed"};
+}; // namespace bombino

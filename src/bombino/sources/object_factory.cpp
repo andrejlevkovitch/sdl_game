@@ -8,6 +8,7 @@
 
 #include "button.hpp"
 #include "gamer.hpp"
+#include "object_manager.hpp"
 
 levi::item_list bombino::parse_state(
     const std::string &state_file, const std::string &state_name,
@@ -60,46 +61,19 @@ levi::item_list bombino::parse_state(
                               state_name + " not founded"};
     }
 
-    std::string alias = i->Attribute("alias");
+    std::string alias;
+    attribute_pointer = i->Attribute("alias");
+    if (!attribute_pointer) {
+      throw std::domain_error{"attribute alias for object with type " + type +
+                              " in state " + state_name + " not founded"};
+    } else {
+      alias = attribute_pointer;
+    }
 
     int x{};
     int y{};
-    int height{};
-    int width{};
     i->Attribute("x", &x);
     i->Attribute("y", &y);
-    i->Attribute("width", &width);
-    i->Attribute("height", &height);
-
-    frames front_frames;
-    frames side_frames;
-    frames back_frames;
-    int first_frame{};
-    int second_frame{};
-    i->Attribute("front_frame", &first_frame);
-    i->Attribute("front_frame_count", &second_frame);
-    front_frames.first = first_frame;
-    front_frames.second = second_frame;
-    i->Attribute("side_frame", &first_frame);
-    i->Attribute("side_frame_count", &second_frame);
-    side_frames.first = first_frame;
-    side_frames.second = second_frame;
-    i->Attribute("back_frame", &first_frame);
-    i->Attribute("back_frame_count", &second_frame);
-    back_frames.first = first_frame;
-    back_frames.second = second_frame;
-
-    levi::size texture_size;
-    i->Attribute("texture_width", &texture_size.width);
-    i->Attribute("texture_height", &texture_size.height);
-
-    std::string texture_id;
-    if ((attribute_pointer = i->Attribute("texture_id"))) {
-      texture_id = attribute_pointer;
-    } else {
-      throw std::domain_error{"attribute texture_id for object in state " +
-                              state_name + " not founded"};
-    }
 
     std::string callback_id;
     if ((attribute_pointer = i->Attribute("callback_id"))) {
@@ -116,30 +90,36 @@ levi::item_list bombino::parse_state(
       }
     }
 
-    levi::size size{width, height};
     levi::vector2d pos(x, y);
     try {
+      auto &obj_params = object_manager::instance().get_obj_params(alias);
       std::shared_ptr<levi::abstract_object> object;
       if (type == "button") {
-        object =
-            std::make_shared<levi::button>(texture_id, size, pos, callback);
+        object = std::make_shared<levi::button>(
+            obj_params.texture_id, obj_params.object_size, pos, callback);
+        item_list.push_back(object);
       }
       if (type == "gamer") {
         bombino::object_type type;
         if (alias == "gamer1") {
           type = bombino::object_type::gamer1;
-        }
-        if (alias == "gamer2") {
+        } else if (alias == "gamer2") {
           type = bombino::object_type::gamer2;
         }
-        auto temp =
-            std::make_shared<bombino::gamer>(texture_id, size, pos, type);
-        temp->specify_frame_collection(front_frames, side_frames, back_frames);
-        temp->set_texture_size(texture_size);
+        auto temp = std::make_shared<bombino::gamer>(
+            obj_params.texture_id, obj_params.object_size, pos, type);
+        std::pair<uint8_t, uint8_t> front_frames{obj_params.front_frame,
+                                                 obj_params.back_frame};
+        std::pair<uint8_t, uint8_t> back_frames{obj_params.back_frame,
+                                                obj_params.side_frame};
+        std::pair<uint8_t, uint8_t> side_frames{obj_params.side_frame,
+                                                obj_params.frame_count};
+        temp->specify_frame_collection(front_frames, back_frames, side_frames);
+        temp->set_texture_width(obj_params.texture_width);
         object = temp;
+        item_list.push_back(object);
       }
-      item_list.push_back(object);
-    } catch (std::exception) {
+    } catch (std::exception &) {
       throw;
     }
   }

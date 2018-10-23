@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<objects>
+  <object alias="play_button" width="400" height="100"
+    texture_id="t_play"
+    front_frame="0" back_frame="1" frame_count="2"/>
+  <object alias="exit_button" width="400" height="100"
+    texture_id="t_exit"
+    front_frame="0" back_frame="1" frame_count="2"/>
+  <object alias="resume_button" width="200" height="80"
+    texture_id="t_resume"
+    front_frame="0" back_frame="1" frame_count="2"/>
+  <object alias="restart_button" width="200" height="80"
+    texture_id="t_restart"
+    front_frame="0" back_frame="1" frame_count="2"/>
+  <object alias="to_menu_button" width="200" height="80"
+    texture_id="t_to_menu"
+    front_frame="0" back_frame="1" frame_count="2"/>
+
+  <object alias="gamer1" width="64" height="64"
+    texture_id="gamer1" texture_width="512"
+    front_frame="0" back_frame="8" side_frame="16" frame_count="24"/>
+  <object alias="gamer2" width="64" height="64"
+    texture_id="gamer2" texture_width="384"
+    front_frame="0" back_frame="6" side_frame="12" frame_count="18"/>
+
+  <object alias="bomb" width="48" height="48"
+    texture_id="bomb"/>
+  <object alias="flame" width="48" height="48"
+    texture_id="flame"
+    front_frame="0" frame_count="4"/>
+
+  <object alias="tile" width="64" height="64"
+    texture_id=""/>
+  <object alias="void_block" width="64" height="64"
+    texture_id="blocks"
+    front_frame="0"/>
+  <object alias="soft_block" width="64" height="64"
+    texture_id="blocks"
+    front_frame="1"/>
+  <object alias="solid_block" width="64" height="64"
+    texture_id="blocks"
+    front_frame="2"/>
+
+  <object alias="energy" width="32" height="32"
+    texture_id="power"
+    front_frame="0"/>
+  <object alias="bombs" width="32" height="32"
+    texture_id="power"
+    front_frame="1"/>
+  <object alias="speed" width="32" height="32"
+    texture_id="power"
+    front_frame="2"/>
+</objects>

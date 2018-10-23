@@ -17,6 +17,7 @@ public:
        uint8_t power);
   ~bomb();
   void update() override;
+  void blow_up();
   levi::object_type type() const override;
 
 public:

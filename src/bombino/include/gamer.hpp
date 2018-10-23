@@ -16,7 +16,7 @@ class scene;
 };
 
 namespace bombino {
-/**\brief first is first frame, second is size of frames*/
+/**\brief first is first frame, second is end of frames (not valid!)*/
 using frames = std::pair<uint8_t, uint8_t>;
 
 class gamer : public levi::abstract_object {
@@ -25,13 +25,13 @@ public:
         bombino::object_type type);
   /**\brief this method needed for load two-dimensional sprites.
    * \param side right side frames, for left side using flip*/
-  void specify_frame_collection(frames front, frames side, frames back);
+  void specify_frame_collection(frames front, frames back, frames side);
   void set_frame(unsigned frame);
   void set_frame_collection(frames cur_collection);
   /**\brief set next frame, using current collection of frames*/
   void next_frame();
   /**\brief this function needed for load two-dimensional sprites*/
-  void set_texture_size(levi::size texture_size);
+  void set_texture_width(unsigned texture_width);
   void update() override;
   void motion();
   levi::object_type type() const override;
@@ -44,7 +44,7 @@ public:
 
 private:
   /**\brief texture size for calculate current sprite*/
-  levi::size texture_size_;
+  unsigned texture_width_;
   levi::vector2d distance_;
   /**\brief direction is vector with valid values for x, y ONLY 0, 1, -1. When
    * we calculate destination point, then we can get normalize vector
@@ -66,5 +66,7 @@ private:
 
   object_type type_;
   uint8_t cur_frame_;
+
+  uint8_t explosition_power_;
 };
 }; // namespace bombino
