@@ -190,7 +190,9 @@ levi::rect bombino::gamer::get_rectangle() const {
 void bombino::gamer::collision_handler() {
   for (const auto &i : collisions_) {
     if (i->type() == static_cast<levi::object_type>(object_type::soft_block) ||
-        i->type() == static_cast<levi::object_type>(object_type::solid_block)) {
+        i->type() == static_cast<levi::object_type>(object_type::solid_block) ||
+        (i->type() == static_cast<levi::object_type>(object_type::bomb) &&
+         !reinterpret_cast<class bomb *>(i)->can_walk(this))) {
       this->set_pos(this->get_pos() - distance_);
       distance_ = levi::vector2d{0, 0};
       return;

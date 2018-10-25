@@ -1,6 +1,9 @@
 // bomb.cpp
 
 #include "bomb.hpp"
+
+#include <algorithm>
+
 #include "flame.hpp"
 #include "gamer.hpp"
 #include "object_manager.hpp"
@@ -56,8 +59,10 @@ inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
 
 bombino::bomb::bomb(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, uint8_t power)
-    : levi::abstract_object{texture_id, size, pos},
-      creating_time_{levi::get_time()}, power_{power} {}
+    : levi::abstract_object{texture_id, size, pos}, scene_{},
+      creating_time_{levi::get_time()}, power_{power} {
+  need_collisions_flag_ = true;
+}
 
 bombino::bomb::~bomb() {}
 
@@ -75,7 +80,7 @@ void bombino::bomb::blow_up() {
       object_manager::instance().get_obj_params("tile").object_size;
 
   // here we always get tile, becose tiles is first objects in item_list
-  explosition(scene, scene->get_collisions_for(dst_rect_).front());
+  explosition(scene_, scene_->get_collisions_for(dst_rect_).front());
 
   bool side1{true};
   bool side2{true};
@@ -84,13 +89,13 @@ void bombino::bomb::blow_up() {
       auto temp_rect = dst_rect_;
       temp_rect.x -= i * tile_size.width;
 
-      side1 = calculate_for_rect(scene, temp_rect);
+      side1 = calculate_for_rect(scene_, temp_rect);
     }
     if (side2) {
       auto temp_rect = dst_rect_;
       temp_rect.x += i * tile_size.width;
 
-      side2 = calculate_for_rect(scene, temp_rect);
+      side2 = calculate_for_rect(scene_, temp_rect);
     }
   }
   side1 = side2 = true;
@@ -99,17 +104,57 @@ void bombino::bomb::blow_up() {
       auto temp_rect = dst_rect_;
       temp_rect.y -= i * tile_size.height;
 
-      side1 = calculate_for_rect(scene, temp_rect);
+      side1 = calculate_for_rect(scene_, temp_rect);
     }
     if (side2) {
       auto temp_rect = dst_rect_;
       temp_rect.y += i * tile_size.height;
 
-      side2 = calculate_for_rect(scene, temp_rect);
+      side2 = calculate_for_rect(scene_, temp_rect);
     }
   }
 }
 
 levi::object_type bombino::bomb::type() const {
   return static_cast<levi::object_type>(bombino::object_type::bomb);
+}
+
+void bombino::bomb::collision_handler() {
+  if (!gamers_hwo_can_walk_.empty()) {
+    std::list<gamer *> cur_gamers;
+    for (auto &i : collisions_) {
+      if (i->type() == static_cast<levi::object_type>(object_type::gamer1) ||
+          i->type() == static_cast<levi::object_type>(object_type::gamer2)) {
+        cur_gamers.push_back(reinterpret_cast<gamer *>(i));
+      }
+    }
+    for (auto i = gamers_hwo_can_walk_.begin();
+         i != gamers_hwo_can_walk_.end();) {
+      if (std::find(cur_gamers.begin(), cur_gamers.end(), *i) ==
+          cur_gamers.end()) {
+        i = gamers_hwo_can_walk_.erase(i);
+      } else {
+        ++i;
+      }
+    }
+  }
+}
+
+void bombino::bomb::set_scene(levi::scene *scene) {
+  scene_ = scene;
+  for (auto &i : scene_->get_collisions_for(this->get_rectangle())) {
+    if (i->type() == static_cast<levi::object_type>(object_type::gamer1) ||
+        i->type() == static_cast<levi::object_type>(object_type::gamer2)) {
+      gamers_hwo_can_walk_.push_back(reinterpret_cast<gamer *>(i));
+    }
+  }
+}
+
+bool bombino::bomb::can_walk(gamer *gamer) {
+  for (auto &i : gamers_hwo_can_walk_) {
+    if (gamer == i) {
+      return true;
+    }
+  }
+  return false;
 }

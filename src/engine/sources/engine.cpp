@@ -181,6 +181,21 @@ levi::engine::engine()
                                      &log[0]);
     throw std::runtime_error{"shader program couldn't be linked:\n" + log};
   }
+  gl_functions.glValidateProgram(shader_program_);
+  GLint validate_status{};
+  gl_functions.glGetProgramiv(shader_program_, GL_VALIDATE_STATUS,
+                              &validate_status);
+  if (!validate_status) {
+    gl_functions.glDeleteShader(vertex_shader);
+    gl_functions.glDeleteShader(fragment_shader);
+    GLint lenght;
+    gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH, &lenght);
+    std::string log;
+    log.resize(lenght);
+    gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                     &log[0]);
+    throw std::runtime_error{"shader program couldn't be validate:\n" + log};
+  }
   gl_functions.glUseProgram(shader_program_);
   LEVI_CHECK();
 

@@ -51,7 +51,7 @@ void bombino::playing_state::add_item(
   }
   if (obj->type() ==
       static_cast<levi::object_type>(bombino::object_type::bomb)) {
-    dynamic_cast<class bomb *>(obj.get())->scene = this;
+    dynamic_cast<class bomb *>(obj.get())->set_scene(this);
   }
   if (obj->type() == static_cast<levi::object_type>(object_type::soft_block)) {
     dynamic_cast<class tile *>(obj.get())->scene = this;
