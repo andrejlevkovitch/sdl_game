@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(sdl_game)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+#set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_custom_target(copy_commands ALL COMMAND
   cp "${CMAKE_BINARY_DIR}/compile_commands.json" "${CMAKE_SOURCE_DIR}")
 

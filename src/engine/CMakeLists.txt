@@ -14,7 +14,7 @@ endif()
 
 find_package(OpenGL REQUIRED)
 
-configure_file("shaders_config.hpp.cmake" "${CMAKE_CURRENT_BINARY_DIR}/shaders_config.hpp")
+configure_file("shaders_config.hpp.cmake" "${CMAKE_BINARY_DIR}/shaders_config.hpp")
 
 set(ENGINE_LBR "engine")
 file(GLOB ENGINE_SRC "sources/*.cpp")
@@ -25,4 +25,4 @@ target_link_libraries(${ENGINE_LBR} ${SDL2_LIBRARY} ${TinyXML_LIBRARY} ${PNG_LIB
 
 target_include_directories(${ENGINE_LBR} PUBLIC "include")
 target_include_directories(${ENGINE_LBR} PRIVATE "../math_2d/include")
-target_include_directories(${ENGINE_LBR} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(${ENGINE_LBR} PRIVATE "${CMAKE_BINARY_DIR}")
