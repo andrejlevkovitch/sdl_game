@@ -68,9 +68,7 @@ inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
 bombino::bomb::bomb(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, uint8_t power)
     : levi::abstract_object{texture_id, size, pos},
-      creating_time_{levi::get_time()}, power_{power} {
-  need_collisions_flag_ = true;
-}
+      creating_time_{levi::get_time()}, power_{power} {}
 
 bombino::bomb::~bomb() {}
 
@@ -78,6 +76,7 @@ void bombino::bomb::update() {
   if (levi::get_time() > creating_time_ + time_to_explosion) {
     blow_up();
   }
+  collision_handler();
 }
 
 void bombino::bomb::blow_up() {
@@ -132,7 +131,7 @@ levi::object_type bombino::bomb::type() const {
 void bombino::bomb::collision_handler() {
   if (!gamers_hwo_can_walk_.empty()) {
     std::list<gamer *> cur_gamers;
-    for (auto &i : collisions_) {
+    for (auto &i : scene_->get_collisions_for(this->get_rectangle())) {
       if (i->type() == static_cast<levi::object_type>(object_type::gamer1) ||
           i->type() == static_cast<levi::object_type>(object_type::gamer2)) {
         cur_gamers.push_back(reinterpret_cast<gamer *>(i));

@@ -7,6 +7,7 @@
 #include <tinyxml.h>
 
 #include "button.hpp"
+#include "callback_map.hpp"
 #include "gamer.hpp"
 #include "object_manager.hpp"
 

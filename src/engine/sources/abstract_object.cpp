@@ -14,8 +14,7 @@
 levi::abstract_object::abstract_object(const std::string &texture_id, size size,
                                        vector2d pos)
     : scene_{nullptr}, texture_id_{texture_id}, src_rect_{}, dst_rect_{},
-      angle_{}, flip_{flip::none}, wait_delete_{false}, need_collisions_flag_{
-                                                            false} {
+      angle_{}, flip_{flip::none}, wait_delete_{false} {
   src_rect_.x = 0;
   src_rect_.y = 0;
   dst_rect_.x = pos.x;
@@ -77,11 +76,5 @@ void levi::draw(levi::engine &engine, abstract_object *obj) {
 }
 
 levi::rect levi::abstract_object::get_rectangle() const { return dst_rect_; }
-
-bool levi::abstract_object::need_collisions() const {
-  return need_collisions_flag_;
-}
-
-void levi::abstract_object::collision_handler(){};
 
 void levi::abstract_object::set_scene(scene *scene) { scene_ = scene; }

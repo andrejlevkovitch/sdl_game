@@ -3,78 +3,18 @@
 #include "pause_state.hpp"
 
 #include "button.hpp"
-#include "engine.hpp"
+#include "callback_map.hpp"
 #include "input_handler.hpp"
 #include "object_factory.hpp"
 #include "objects_config.hpp"
 #include "player.hpp"
 #include "playing_state.hpp"
-#include "state_machine.hpp"
 
 bombino::pause_state::pause_state() : scene{} {
-  auto resume_callback = []() {
-    levi::engine::instance().state_machine().pop_state();
-    levi::engine::instance().state_machine().current_state()->set_updatebility(
-        true);
-
-    levi::event event{};
-
-    event.button = levi::button_event{levi::button_code::left,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button = levi::button_event{levi::button_code::right,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button =
-        levi::button_event{levi::button_code::up, levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button = levi::button_event{levi::button_code::down,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button = levi::button_event{levi::button_code::select,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-
-    event.button = levi::button_event{levi::button_code::left_dop,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button = levi::button_event{levi::button_code::right_dop,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button = levi::button_event{levi::button_code::up_dop,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button = levi::button_event{levi::button_code::down_dop,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-    event.button = levi::button_event{levi::button_code::select_dop,
-                                      levi::button_state::released};
-    levi::input_handler::instance().add_event(event);
-  };
-  auto to_menu_callback = []() {
-    levi::engine::instance().state_machine().pop_state();
-    levi::engine::instance().state_machine().pop_state();
-    levi::engine::instance().state_machine().current_state()->set_updatebility(
-        true);
-    levi::engine::instance().state_machine().current_state()->set_visibility(
-        true);
-  };
-  auto restart_callback = []() {
-    levi::engine::instance().state_machine().pop_state();
-    levi::engine::instance().state_machine().pop_state();
-    levi::engine::instance().state_machine().push_state(
-        std::make_shared<playing_state>());
-  };
-
   levi::player::instance().play("fon", true);
 
-  callback_map callback_map{};
-  callback_map["resume"] = resume_callback;
-  callback_map["to_menu"] = to_menu_callback;
-  callback_map["restart"] = restart_callback;
-
   auto new_items = parse_state(bombino::way_to_objects + "bombino_states.xml",
-                               "pause", &callback_map);
+                               "pause", &callback_map::instance());
   for (auto &i : new_items) {
     item_list_.push_back(i);
   }

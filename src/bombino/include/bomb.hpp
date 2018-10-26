@@ -22,7 +22,7 @@ public:
   void update() override;
   void blow_up();
   levi::object_type type() const override;
-  void collision_handler() override;
+  void collision_handler();
   /**\brief this function tell can or not gamer walk fru the bomb*/
   bool can_walk(gamer *gamer);
   virtual void set_scene(levi::scene *scene) override;

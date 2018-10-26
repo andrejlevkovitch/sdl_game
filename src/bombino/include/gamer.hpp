@@ -37,7 +37,8 @@ public:
   void motion();
   levi::object_type type() const override;
   levi::rect get_rectangle() const override;
-  void collision_handler() override;
+  void collision_handler();
+  /**\brief call seted callback*/
   void kill();
 
 private:
@@ -49,6 +50,8 @@ private:
    * we calculate destination point, then we can get normalize vector
    * from this, but we havn't to change the vector!*/
   levi::vector2d direction_;
+  /**\warning don't use values with .5 - becose it use round function!!! Better
+   * use integer values*/
   float velocity_;
 
   /**\brief we can create two objects of this class for two gamers, and we have

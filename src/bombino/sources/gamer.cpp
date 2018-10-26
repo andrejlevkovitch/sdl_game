@@ -29,7 +29,7 @@ bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type,
                       levi::callback callback)
     : levi::abstract_object{texture_id, size, pos}, callback_{callback},
-      texture_width_{}, distance_{}, direction_{0, 0}, velocity_{2},
+      texture_width_{}, distance_{}, direction_{0, 0}, velocity_{3},
       front_frame_collection_{}, side_frame_collection_{},
       back_frame_collection_{},
       time_last_bomb_(-4000) /*this value have to be < 0, otherwise, gamer will
@@ -37,7 +37,6 @@ bombino::gamer::gamer(const std::string &texture_id, levi::size size,
       ,
       time_to_new_bomb_{4000}, type_{type}, cur_frame_{}, explosition_power_{
                                                               1} {
-  need_collisions_flag_ = true;
   active_buttons_.clear();
   switch (type) {
   case object_type::gamer1:
@@ -104,8 +103,7 @@ void bombino::gamer::update() {
           direction_.y = 0;
         }
         continue;
-      }
-      if (i.button.code == active_buttons_[1]) {
+      } else if (i.button.code == active_buttons_[1]) {
         if (i.button.state == levi::button_state::pressed) {
           direction_.y = down.y;
           flip_ = levi::flip::none;
@@ -114,8 +112,7 @@ void bombino::gamer::update() {
           direction_.y = 0;
         }
         continue;
-      }
-      if (i.button.code == active_buttons_[2]) {
+      } else if (i.button.code == active_buttons_[2]) {
         if (i.button.state == levi::button_state::pressed) {
           direction_.x = left.x;
           flip_ = levi::flip::horizontal;
@@ -124,8 +121,7 @@ void bombino::gamer::update() {
           direction_.x = 0;
         }
         continue;
-      }
-      if (i.button.code == active_buttons_[3]) {
+      } else if (i.button.code == active_buttons_[3]) {
         if (i.button.state == levi::button_state::pressed) {
           direction_.x = right.x;
           flip_ = levi::flip::none;
@@ -134,23 +130,22 @@ void bombino::gamer::update() {
           direction_.x = 0;
         }
         continue;
-      }
-      if (i.button.code == active_buttons_[4]) {
+      } else if (i.button.code == active_buttons_[4]) {
         if (i.button.state == levi::button_state::pressed) {
           if (levi::get_time() > time_last_bomb_ + time_to_new_bomb_) {
-            std::cerr << "try set bomb\n";
             time_last_bomb_ = levi::get_time();
             // we have to find tile in which we set bomb
             levi::vector2d center_gamer{get_pos()};
             center_gamer.x += get_size().width / 2;
             center_gamer.y += get_size().height / 2;
-            for (auto &collision : collisions_) {
+            for (auto &collision :
+                 scene_->get_collisions_for(this->get_rectangle())) {
               if (collision->type() ==
                       static_cast<levi::object_type>(object_type::void_block) &&
                   collision->get_rectangle().is_intake_pos(center_gamer)) {
                 auto &bomb_params =
                     object_manager::instance().get_obj_params("bomb");
-                // bom size and tile size can (read as have to) be difference!
+                // bomb size and tile size can (read as have to) be difference!
                 levi::vector2d bomb_pos = collision->get_pos();
                 bomb_pos.x += (collision->get_size().width -
                                bomb_params.object_size.width) /
@@ -161,7 +156,6 @@ void bombino::gamer::update() {
                 scene_->add_item(std::make_shared<class bomb>(
                     bomb_params.texture_id, bomb_params.object_size, bomb_pos,
                     explosition_power_));
-                std::cerr << "set_bomb\n";
                 break;
               }
             }
@@ -172,6 +166,7 @@ void bombino::gamer::update() {
     }
   }
   motion();
+  collision_handler();
 }
 
 void bombino::gamer::motion() {
@@ -201,7 +196,7 @@ levi::rect bombino::gamer::get_rectangle() const {
 }
 
 void bombino::gamer::collision_handler() {
-  for (const auto &i : collisions_) {
+  for (const auto &i : scene_->get_collisions_for(get_rectangle())) {
     switch (static_cast<object_type>(i->type())) {
     case object_type::soft_block:
     case object_type::solid_block:

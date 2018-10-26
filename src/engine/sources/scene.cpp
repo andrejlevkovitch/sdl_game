@@ -26,23 +26,6 @@ void levi::scene::update() {
   }
 }
 
-void levi::scene::collision_detecting() {
-  for (auto &cur_item : item_list_) {
-    if (cur_item->need_collisions()) {
-      cur_item->collisions_.clear();
-      for (auto item = item_list_.begin(); item != item_list_.end(); ++item) {
-        if (cur_item == (*item)) {
-          continue;
-        }
-        if (is_crossing(cur_item->get_rectangle(), (*item)->get_rectangle())) {
-          cur_item->collisions_.push_back(item->get());
-        }
-      }
-      cur_item->collision_handler();
-    }
-  }
-}
-
 std::list<levi::abstract_object *>
 levi::scene::get_collisions_for(levi::rect rect) {
   std::list<levi::abstract_object *> retlist;

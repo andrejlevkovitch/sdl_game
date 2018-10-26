@@ -56,11 +56,9 @@ public:
    * value, just redefine it
    * \brief this function use for find collisions.*/
   virtual rect get_rectangle() const;
-  /**\brief you need redefine this function, if you want handle collisions in
-   * fly. If any collision detected, then scene call this method*/
-  virtual void collision_handler();
-  /**\brief when scene intake object, it set pointer on it in the object (only
-   * if object load by add_item method)*/
+  /**\brief when scene intake object, it set pointer on it in the object
+   * \warning this method call only if object loaded by add_item, otherwise,
+   * pointer to scene will be nullptr */
   virtual void set_scene(scene *scene);
 
 protected:

@@ -6,7 +6,8 @@
 #include <map>
 #include <string>
 
-#include <SDL2/SDL.h>
+// supported format
+#define AUDIO_FORMAT AUDIO_S16LSB
 
 namespace levi {
 struct sound {
@@ -18,7 +19,7 @@ struct sound {
   uint8_t *cur_pos;
   int length;
   int cur_length;
-  /**\brief relatively max volume*/
+  /**\brief value relatively max volume*/
   float volume;
   bool loop;
   bool for_playing;
@@ -26,6 +27,9 @@ struct sound {
 
 using sound_map = std::map<std::string, sound>;
 
+struct audio_settings;
+
+/**\brief singleton*/
 class player {
 public:
   /**\except if can't open audio device*/
@@ -57,7 +61,6 @@ private:
 
 private:
   sound_map sound_map_;
-  ::SDL_AudioSpec want_;
-  ::SDL_AudioDeviceID device_;
+  audio_settings *audio_settings_;
 };
 }; // namespace levi

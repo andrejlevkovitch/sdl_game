@@ -34,6 +34,9 @@ void levi::state_machine::update() {
 }
 
 std::shared_ptr<levi::scene> levi::state_machine::current_state() {
+  if (current_state_ == states_list_.end()) {
+    throw std::runtime_error{"state is absent"};
+  }
   return *current_state_;
 }
 

@@ -20,6 +20,7 @@ public:
   /**\brief this method safely delete current state, when it not used*/
   void pop_state();
   void update();
+  /**\except if current_state absent*/
   std::shared_ptr<scene> current_state();
   friend void render(engine &engine, state_machine *s_m);
 

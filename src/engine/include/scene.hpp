@@ -20,11 +20,16 @@ class scene {
 public:
   scene();
   virtual ~scene();
+  /**\warning if you want to overload this method, you must remember, that
+   * method have to call set_scene for every added object, otherwise in objects
+   * you will have nullptr in scene_*/
   virtual void add_item(std::shared_ptr<abstract_object> obj);
   const levi::item_list &get_item_list();
   virtual void update();
-  virtual void collision_detecting();
+  /**\return all coolisions for input rectengle*/
   virtual std::list<abstract_object *> get_collisions_for(rect rect);
+  /**\brief if you want to set new id, which not have in enum, then set value
+   * after levi::id_state::user_id, becose all values before is rezerved*/
   virtual id_state get_id() const;
   friend void render(engine &engine, scene *scene);
   /**\brief hides or shows scene

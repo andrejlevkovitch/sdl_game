@@ -8,7 +8,13 @@
 #include <SDL2/SDL.h>
 #include <tinyxml.h>
 
-#define AUDIO_FORMAT AUDIO_S16LSB
+namespace levi {
+// I create this struct before I don't want include sdl in header file
+struct audio_settings {
+  ::SDL_AudioSpec want_;
+  ::SDL_AudioDeviceID device_;
+};
+}; // namespace levi
 
 levi::sound::sound()
     : buff{}, cur_pos{buff}, length{}, cur_length{length}, loop{false},
@@ -63,28 +69,29 @@ levi::player &levi::player::instance() {
   }
 }
 
-levi::player::player() {
-  ::SDL_memset(&want_, 0, sizeof(want_));
-  want_.freq = 48000;
-  want_.format = AUDIO_FORMAT;
-  want_.channels = 2;
-  want_.samples = 4096;
-  want_.callback = my_callback;
-  want_.userdata = &sound_map_;
+levi::player::player() : audio_settings_{new audio_settings} {
+  ::SDL_memset(&audio_settings_->want_, 0, sizeof(audio_settings_->want_));
+  audio_settings_->want_.freq = 48000;
+  audio_settings_->want_.format = AUDIO_FORMAT;
+  audio_settings_->want_.channels = 2;
+  audio_settings_->want_.samples = 4096;
+  audio_settings_->want_.callback = my_callback;
+  audio_settings_->want_.userdata = &sound_map_;
 
-  device_ =
-      ::SDL_OpenAudioDevice(NULL, 0, &want_, NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
-  if (!device_) {
+  audio_settings_->device_ = ::SDL_OpenAudioDevice(
+      NULL, 0, &audio_settings_->want_, NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
+  if (!audio_settings_->device_) {
     throw std::runtime_error{::SDL_GetError()};
   }
 }
 
 levi::player::~player() {
-  ::SDL_PauseAudioDevice(device_, 1);
-  ::SDL_CloseAudioDevice(device_);
+  ::SDL_PauseAudioDevice(audio_settings_->device_, 1);
+  ::SDL_CloseAudioDevice(audio_settings_->device_);
   for (auto &i : sound_map_) {
     ::SDL_FreeWAV(i.second.buff);
   }
+  delete audio_settings_;
 }
 
 size_t levi::player::parse_file(const std::string &file_with_sounds) {
@@ -140,11 +147,12 @@ size_t levi::player::parse_file(const std::string &file_with_sounds) {
 bool levi::player::load_audio_in_storage(const std::string &alias,
                                          const std::string &file_name,
                                          float volume, bool loop) {
-  locker(this->device_);
+  locker(audio_settings_->device_);
   if (sound_map_.find(alias) == sound_map_.end()) {
     Uint32 length{};
     Uint8 *temp_buf{nullptr};
-    if (SDL_LoadWAV(file_name.c_str(), &want_, &temp_buf, &length) == nullptr) {
+    if (SDL_LoadWAV(file_name.c_str(), &audio_settings_->want_, &temp_buf,
+                    &length) == nullptr) {
       std::cerr << ::SDL_GetError() << std::endl;
       return false;
     }
@@ -156,7 +164,7 @@ bool levi::player::load_audio_in_storage(const std::string &alias,
 }
 
 bool levi::player::play(const std::string &alias, bool status) {
-  locker(this->device_);
+  locker(audio_settings_->device_);
   auto iter = sound_map_.find(alias);
   if (iter == sound_map_.end()) {
     return false;
@@ -167,5 +175,5 @@ bool levi::player::play(const std::string &alias, bool status) {
 }
 
 void levi::player::pause(bool status) {
-  ::SDL_PauseAudioDevice(device_, status);
+  ::SDL_PauseAudioDevice(audio_settings_->device_, status);
 }

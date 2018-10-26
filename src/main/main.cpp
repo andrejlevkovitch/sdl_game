@@ -13,7 +13,7 @@
 #include "texture_manager.hpp"
 #include "time.hpp"
 
-const int fixedFPS{25};
+const int fixedFPS{24};
 
 int main(int argc, char *argv[]) {
   auto &engine = levi::engine::instance();
@@ -44,9 +44,9 @@ int main(int argc, char *argv[]) {
 
     input_handler.update();
     game_stop = input_handler.is_quit();
-    for (const auto &i : input_handler.get_event_list()) {
-      std::cerr << i << std::endl;
-    }
+    //  for (const auto &i : input_handler.get_event_list()) {
+    //    std::cerr << i << std::endl;
+    //  }
     engine.update();
     engine.render();
 
