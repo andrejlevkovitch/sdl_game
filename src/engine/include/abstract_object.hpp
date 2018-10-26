@@ -14,6 +14,7 @@
 
 namespace levi {
 class engine;
+class scene;
 
 /**\brief abstract base class for all objects*/
 class abstract_object {
@@ -55,17 +56,15 @@ public:
    * value, just redefine it
    * \brief this function use for find collisions.*/
   virtual rect get_rectangle() const;
-  /**\return value of need_collisions_flag_.
-   * \brief this function use scene for collision-finding*/
-  bool need_collisions() const;
   /**\brief you need redefine this function, if you want handle collisions in
    * fly. If any collision detected, then scene call this method*/
   virtual void collision_handler();
-
-public:
-  std::list<abstract_object *> collisions_;
+  /**\brief when scene intake object, it set pointer on it in the object (only
+   * if object load by add_item method)*/
+  virtual void set_scene(scene *scene);
 
 protected:
+  scene *scene_;
   std::string texture_id_;
   /**\brief this rect store rectangle of current sprite in image coordinates
    * (begin from [0, 0] in integer values)*/
@@ -77,7 +76,6 @@ protected:
   float angle_;
   flip flip_;
   bool wait_delete_;
-  bool need_collisions_flag_;
 };
 
 void draw(engine &engine, abstract_object *obj);

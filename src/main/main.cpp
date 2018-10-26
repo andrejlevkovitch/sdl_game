@@ -8,6 +8,7 @@
 #include "input_handler.hpp"
 #include "menu_config.hpp"
 #include "menu_state.hpp"
+#include "player.hpp"
 #include "state_machine.hpp"
 #include "texture_manager.hpp"
 #include "time.hpp"
@@ -23,6 +24,12 @@ int main(int argc, char *argv[]) {
     for (auto &i : not_loaded) {
       std::cerr << i << std::endl;
     }
+  }
+
+  // have to be loaded before, then set menu!
+  auto &player = levi::player::instance();
+  if (player.parse_file(levi::way_to_menu_textures + "sounds.xml") == 0) {
+    std::cerr << "problem, no one sound loaded\n";
   }
 
   auto &input_handler = levi::input_handler::instance();

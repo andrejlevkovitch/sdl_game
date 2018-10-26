@@ -10,9 +10,9 @@
 #include "gamer.hpp"
 #include "object_manager.hpp"
 
-levi::item_list bombino::parse_state(
-    const std::string &state_file, const std::string &state_name,
-    std::map<std::string, std::function<void(void)>> *callback_map) {
+levi::item_list bombino::parse_state(const std::string &state_file,
+                                     const std::string &state_name,
+                                     callback_map *callback_map) {
   levi::item_list item_list;
   ::TiXmlDocument xml_doc;
   if (!xml_doc.LoadFile(state_file)) {
@@ -107,7 +107,7 @@ levi::item_list bombino::parse_state(
           type = bombino::object_type::gamer2;
         }
         auto temp = std::make_shared<bombino::gamer>(
-            obj_params.texture_id, obj_params.object_size, pos, type);
+            obj_params.texture_id, obj_params.object_size, pos, type, callback);
         std::pair<uint8_t, uint8_t> front_frames{obj_params.front_frame,
                                                  obj_params.back_frame};
         std::pair<uint8_t, uint8_t> back_frames{obj_params.back_frame,

@@ -23,12 +23,11 @@ public:
   void blow_up();
   levi::object_type type() const override;
   void collision_handler() override;
-  void set_scene(levi::scene *scene);
   /**\brief this function tell can or not gamer walk fru the bomb*/
   bool can_walk(gamer *gamer);
+  virtual void set_scene(levi::scene *scene) override;
 
 private:
-  levi::scene *scene_;
   std::list<gamer *> gamers_hwo_can_walk_;
   uint32_t creating_time_;
   uint8_t power_;

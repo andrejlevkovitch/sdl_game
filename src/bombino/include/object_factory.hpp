@@ -21,5 +21,5 @@ using callback_map = std::map<std::string, levi::callback>;
  * \exception throw exception if bounded attribute not recieved*/
 levi::item_list parse_state(const std::string &state_file,
                             const std::string &state_name,
-                            callback_map *callback_map = nullptr);
+                            bombino::callback_map *call_map = nullptr);
 }; // namespace bombino

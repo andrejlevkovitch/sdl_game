@@ -9,8 +9,6 @@
 #include "rect.hpp"
 #include "size.hpp"
 
-struct SDL_Window;
-
 namespace levi {
 class state_machine;
 class texture_manager;
@@ -43,7 +41,7 @@ private:
   engine &operator=(const engine &) = delete;
 
 private:
-  SDL_Window *window_;
+  void *window_;
   void *gl_context_;
   class state_machine *state_machine_;
   class texture_manager *texture_manager_;

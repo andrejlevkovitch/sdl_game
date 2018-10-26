@@ -8,6 +8,7 @@
 #include "input_handler.hpp"
 #include "object_factory.hpp"
 #include "objects_config.hpp"
+#include "over_state.hpp"
 #include "pause_state.hpp"
 #include "power.hpp"
 #include "state_machine.hpp"
@@ -27,36 +28,20 @@ bombino::playing_state::playing_state() {
   for (const auto &i : t_loader.get_tiles()) {
     add_item(i);
   }
-  // object_loading
-  auto new_items =
-      parse_state(bombino::way_to_objects + "bombino_states.xml", "playing");
-  for (auto &i : new_items) {
-    if (i->type() ==
-            static_cast<levi::object_type>(bombino::object_type::gamer1) ||
-        i->type() ==
-            static_cast<levi::object_type>(bombino::object_type::gamer2)) {
-      dynamic_cast<bombino::gamer *>(i.get())->scene = this;
-    }
-    item_list_.push_back(i);
-  }
-}
 
-void bombino::playing_state::add_item(
-    std::shared_ptr<levi::abstract_object> obj) {
-  if (obj->type() ==
-          static_cast<levi::object_type>(bombino::object_type::gamer1) ||
-      obj->type() ==
-          static_cast<levi::object_type>(bombino::object_type::gamer2)) {
-    dynamic_cast<bombino::gamer *>(obj.get())->scene = this;
+  // object_loading
+  auto to_game_over = []() {
+    levi::engine::instance().state_machine().current_state()->set_updatebility(
+        false);
+    levi::engine::instance().state_machine().push_state(
+        std::make_shared<bombino::over_state>());
+  };
+  callback_map call_map{std::make_pair("to_game_over", to_game_over)};
+  auto new_items = parse_state(bombino::way_to_objects + "bombino_states.xml",
+                               "playing", &call_map);
+  for (auto &i : new_items) {
+    add_item(i);
   }
-  if (obj->type() ==
-      static_cast<levi::object_type>(bombino::object_type::bomb)) {
-    dynamic_cast<class bomb *>(obj.get())->set_scene(this);
-  }
-  if (obj->type() == static_cast<levi::object_type>(object_type::soft_block)) {
-    dynamic_cast<class tile *>(obj.get())->scene = this;
-  }
-  levi::scene::add_item(obj);
 }
 
 void bombino::playing_state::update() {

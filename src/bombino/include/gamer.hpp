@@ -21,8 +21,9 @@ using frames = std::pair<uint8_t, uint8_t>;
 
 class gamer : public levi::abstract_object {
 public:
+  /**\param callback callback function, which call when gamer was be killed*/
   gamer(const std::string &texture_id, levi::size size, levi::vector2d pos,
-        bombino::object_type type);
+        bombino::object_type type, levi::callback callback);
   /**\brief this method needed for load two-dimensional sprites.
    * \param side right side frames, for left side using flip*/
   void specify_frame_collection(frames front, frames back, frames side);
@@ -39,10 +40,8 @@ public:
   void collision_handler() override;
   void kill();
 
-public:
-  levi::scene *scene;
-
 private:
+  levi::callback callback_;
   /**\brief texture size for calculate current sprite*/
   unsigned texture_width_;
   levi::vector2d distance_;

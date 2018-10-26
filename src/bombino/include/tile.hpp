@@ -18,9 +18,6 @@ public:
   levi::object_type type() const override;
   void destroy();
 
-public:
-  levi::scene *scene;
-
 private:
   object_type type_;
   uint8_t power_shance_;

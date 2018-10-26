@@ -9,9 +9,7 @@ class vector2d final {
 public:
   vector2d();
   vector2d(float x, float y);
-  /**\brief use this function only for check equal to [0,0]
-   * \warning return true only if x_ and y_ completely identical
-   * \todo close fraction for this method*/
+  /**\return true if values close then 0.01, else - false*/
   bool operator==(const vector2d &rhs) const;
   /**\brief compute length every time, when you call this method
    * \return length of this vector. If x and y equal 0, then, garanted, this

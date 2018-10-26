@@ -15,6 +15,9 @@
   <object alias="to_menu_button" width="200" height="80"
     texture_id="t_to_menu"
     front_frame="0" back_frame="1" frame_count="2"/>
+  <object alias="game_over" width="190" height="30"
+    texture_id="t_game_over"
+    front_frame="0" back_frame="1" frame_count="2"/>
 
   <object alias="gamer1" width="64" height="64"
     texture_id="gamer1" texture_width="512"

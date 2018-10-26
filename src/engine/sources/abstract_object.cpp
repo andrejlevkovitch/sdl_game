@@ -13,8 +13,9 @@
 
 levi::abstract_object::abstract_object(const std::string &texture_id, size size,
                                        vector2d pos)
-    : texture_id_{texture_id}, src_rect_{}, dst_rect_{}, angle_{},
-      flip_{flip::none}, wait_delete_{false}, need_collisions_flag_{false} {
+    : scene_{nullptr}, texture_id_{texture_id}, src_rect_{}, dst_rect_{},
+      angle_{}, flip_{flip::none}, wait_delete_{false}, need_collisions_flag_{
+                                                            false} {
   src_rect_.x = 0;
   src_rect_.y = 0;
   dst_rect_.x = pos.x;
@@ -82,3 +83,5 @@ bool levi::abstract_object::need_collisions() const {
 }
 
 void levi::abstract_object::collision_handler(){};
+
+void levi::abstract_object::set_scene(scene *scene) { scene_ = scene; }

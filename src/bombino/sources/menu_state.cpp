@@ -8,6 +8,7 @@
 #include "object_factory.hpp"
 #include "object_manager.hpp"
 #include "objects_config.hpp"
+#include "player.hpp"
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
@@ -19,6 +20,8 @@ bombino::menu_state::menu_state() : levi::scene{} {
 
     auto new_scene = std::make_shared<playing_state>();
     levi::engine::instance().state_machine().push_state(new_scene);
+
+    levi::player::instance().play("fon", false);
   };
 
   auto callback_exit = []() {
@@ -26,6 +29,10 @@ bombino::menu_state::menu_state() : levi::scene{} {
     event.type = levi::event_type::quit_event;
     levi::input_handler::instance().add_event(event);
   };
+
+  auto &player = levi::player::instance();
+  player.play("fon", true);
+  player.pause(false);
 
   callback_map callback_map;
 

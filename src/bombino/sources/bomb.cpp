@@ -8,24 +8,27 @@
 #include "gamer.hpp"
 #include "object_manager.hpp"
 #include "object_types.hpp"
+#include "player.hpp"
 #include "scene.hpp"
 #include "tile.hpp"
 #include "time.hpp"
 
-const unsigned time_to_explosition{4000};
+#include <iostream>
+
+const unsigned time_to_explosion{4000};
 
 namespace bombino {
-inline void explosition(levi::scene *scene, levi::abstract_object *obj) {
-  if (obj->type() == static_cast<levi::object_type>(gamer1) ||
-      obj->type() == static_cast<levi::object_type>(gamer2)) {
+inline void explosion(levi::scene *scene, levi::abstract_object *obj) {
+  switch (static_cast<object_type>(obj->type())) {
+  case object_type::gamer1:
+  case object_type::gamer2:
     dynamic_cast<gamer *>(obj)->kill();
-  } else if (obj->type() ==
-             static_cast<levi::object_type>(object_type::power)) {
+    break;
+  case object_type::power:
     obj->delete_later();
-  } else if (obj->type() ==
-                 static_cast<levi::object_type>(object_type::soft_block) ||
-             obj->type() ==
-                 static_cast<levi::object_type>(object_type::void_block)) {
+    break;
+  case object_type::soft_block:
+  case object_type::void_block: {
     dynamic_cast<tile *>(obj)->destroy();
     auto &flame_params = object_manager::instance().get_obj_params("flame");
     levi::vector2d flame_pos = obj->get_pos();
@@ -35,23 +38,28 @@ inline void explosition(levi::scene *scene, levi::abstract_object *obj) {
     scene->add_item(std::make_shared<class flame>(
         flame_params.texture_id, flame_params.object_size, flame_pos,
         flame_params.frame_count));
-  } else if (obj->type() == static_cast<levi::object_type>(bomb)) {
+  } break;
+  case object_type::bomb:
     // here we check: this bomb alrady blow up, or not
     if (!obj->is_for_delete()) {
       dynamic_cast<class bomb *>(obj)->blow_up();
     }
+    break;
+  default:
+    break;
   }
-}
+} // namespace bombino
 
+/**\return false if meet on the way any solid or soft block
+ * \brif in this function call func explosion for every collision*/
 inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
   bool retval{true};
-  auto collisions = scene->get_collisions_for(rect);
-  for (auto &j : collisions) {
+  for (auto &j : scene->get_collisions_for(rect)) {
     if (j->type() == static_cast<levi::object_type>(object_type::soft_block) ||
         j->type() == static_cast<levi::object_type>(object_type::solid_block)) {
       retval = false;
     }
-    explosition(scene, j);
+    explosion(scene, j);
   }
   return retval;
 }
@@ -59,7 +67,7 @@ inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
 
 bombino::bomb::bomb(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, uint8_t power)
-    : levi::abstract_object{texture_id, size, pos}, scene_{},
+    : levi::abstract_object{texture_id, size, pos},
       creating_time_{levi::get_time()}, power_{power} {
   need_collisions_flag_ = true;
 }
@@ -67,7 +75,7 @@ bombino::bomb::bomb(const std::string &texture_id, levi::size size,
 bombino::bomb::~bomb() {}
 
 void bombino::bomb::update() {
-  if (levi::get_time() > creating_time_ + time_to_explosition) {
+  if (levi::get_time() > creating_time_ + time_to_explosion) {
     blow_up();
   }
 }
@@ -76,11 +84,13 @@ void bombino::bomb::blow_up() {
   // this have to be first, becose we check by it repides calls
   this->delete_later();
 
+  levi::player::instance().play("explosion", true);
+
   auto tile_size =
       object_manager::instance().get_obj_params("tile").object_size;
 
-  // here we always get tile, becose tiles is first objects in item_list
-  explosition(scene_, scene_->get_collisions_for(dst_rect_).front());
+  // here we destroy all in tile, there set bomb
+  calculate_for_rect(scene_, dst_rect_);
 
   bool side1{true};
   bool side2{true};

@@ -15,7 +15,13 @@
       callback_id="to_menu"/>
   </pause>
   <playing>
-    <object type="gamer" alias="gamer1" x="960" y="64"/>
-    <object type="gamer" alias="gamer2" x="64" y="704"/>
+    <object type="gamer" alias="gamer1" x="960" y="64"
+      callback_id="to_game_over"/>
+    <object type="gamer" alias="gamer2" x="64" y="704"
+      callback_id="to_game_over"/>
   </playing>
+  <over>
+    <object type="button" alias="game_over" x="450" y="400"
+      callback_id="to_menu"/>
+  </over>
 </states>

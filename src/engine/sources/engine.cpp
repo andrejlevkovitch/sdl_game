@@ -70,14 +70,18 @@ inline uint32_t create_shader(uint32_t type, const std::string &shader_code) {
 } // namespace levi
 
 levi::engine &levi::engine::instance() {
-  static engine retval{};
-  return retval;
+  try {
+    static engine retval{};
+    return retval;
+  } catch (std::exception) {
+    throw;
+  }
 }
 
 levi::engine::engine()
     : window_{nullptr}, gl_context_{}, state_machine_{new levi::state_machine},
       texture_manager_{new levi::texture_manager{}}, shader_program_{} {
-  if (::SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+  if (::SDL_Init(SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0) {
     throw std::runtime_error{::SDL_GetError()};
   }
 
@@ -106,7 +110,7 @@ levi::engine::engine()
     throw std::runtime_error{::SDL_GetError()};
   }
 
-  gl_context_ = ::SDL_GL_CreateContext(window_);
+  gl_context_ = ::SDL_GL_CreateContext(reinterpret_cast<SDL_Window *>(window_));
   if (!gl_context_) {
     throw std::runtime_error{::SDL_GetError()};
   }
@@ -211,7 +215,7 @@ levi::engine::~engine() {
   auto &gl_functions = gl_loader::instance();
   gl_functions.glDeleteProgram(shader_program_);
   ::SDL_GL_DeleteContext(gl_context_);
-  ::SDL_DestroyWindow(window_);
+  ::SDL_DestroyWindow(reinterpret_cast<SDL_Window *>(window_));
   delete state_machine_;
   delete texture_manager_;
   ::SDL_Quit();
@@ -232,13 +236,13 @@ void levi::engine::render() {
 
   levi::render(*this, state_machine_);
 
-  ::SDL_GL_SwapWindow(window_);
+  ::SDL_GL_SwapWindow(reinterpret_cast<SDL_Window *>(window_));
 }
 
 levi::size levi::engine::get_window_size() const {
   int w{};
   int h{};
-  ::SDL_GetWindowSize(window_, &w, &h);
+  ::SDL_GetWindowSize(reinterpret_cast<SDL_Window *>(window_), &w, &h);
   return size{w, h};
 }
 

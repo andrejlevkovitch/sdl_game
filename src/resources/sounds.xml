@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<sounds>
+  <sound alias="steps" file_name="music/steps.wav" volume="0.1"/>
+  <sound alias="fon" file_name="music/fon.wav" loop="1" volume="0.03"/>
+  <sound alias="explosion" file_name="music/explosion.wav" volume="0.2"/>
+</sounds>

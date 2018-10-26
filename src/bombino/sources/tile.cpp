@@ -10,8 +10,8 @@
 
 bombino::tile::tile(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, object_type type, unsigned frame)
-    : levi::abstract_object{texture_id, size, pos}, scene{nullptr}, type_{type},
-      power_shance_{7} {
+    : levi::abstract_object{texture_id, size, pos}, type_{type}, power_shance_{
+                                                                     7} {
   src_rect_.x += src_rect_.width * frame;
 }
 
@@ -40,7 +40,7 @@ void bombino::tile::destroy() {
       levi::vector2d pos = get_pos();
       pos.x += (get_size().width - power_params.object_size.width) / 2;
       pos.y += (get_size().height - power_params.object_size.height) / 2;
-      scene->add_item(std::make_shared<class power>(
+      scene_->add_item(std::make_shared<class power>(
           power_params.texture_id, power_params.object_size, pos, p,
           power_params.front_frame));
     }

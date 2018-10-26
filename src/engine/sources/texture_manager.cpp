@@ -34,11 +34,7 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
 
   std::string way_to_files = texture_file;
   auto last_slesh = std::find(way_to_files.rbegin(), way_to_files.rend(), '/');
-  if (last_slesh == way_to_files.rend()) {
-    way_to_files.clear();
-  } else {
-    way_to_files.erase(last_slesh.base(), way_to_files.rbegin().base());
-  }
+  way_to_files.erase(last_slesh.base(), way_to_files.rbegin().base());
 
   size_t capacity{};
   for (auto i = root->FirstChildElement(); i != nullptr;
@@ -55,9 +51,7 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
       texture_file = way_to_files + pointer;
     }
 
-    try {
-      texture_map_.at(texture_id);
-    } catch (std::out_of_range &) {
+    if (texture_map_.find(texture_id) == texture_map_.end()) {
       if (create_texture(texture_id, texture_file)) {
         ++capacity;
       }

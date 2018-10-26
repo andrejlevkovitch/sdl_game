@@ -9,7 +9,10 @@ levi::vector2d::vector2d() : x{}, y{} {}
 levi::vector2d::vector2d(float x_, float y_) : x{x_}, y{y_} {}
 
 bool levi::vector2d::operator==(const vector2d &rhs) const {
-  return ((this->x == rhs.x) && (this->y == rhs.y)) ? true : false;
+  if (std::fabs(this->x - rhs.x) < 0.01 && std::fabs(this->y - rhs.y) < 0.01) {
+    return true;
+  }
+  return false;
 }
 
 float levi::vector2d::get_length() const {

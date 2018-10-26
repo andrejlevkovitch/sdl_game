@@ -4,11 +4,7 @@
 
 #include "abstract_object.hpp"
 
-#include <functional>
-
 namespace levi {
-using callback = std::function<void(void)>;
-
 class button : public levi::abstract_object {
 public:
   button(const std::string &texture_id, levi::size, levi::vector2d pos,

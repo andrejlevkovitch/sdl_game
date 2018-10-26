@@ -7,6 +7,7 @@
 #include "input_handler.hpp"
 #include "object_factory.hpp"
 #include "objects_config.hpp"
+#include "player.hpp"
 #include "playing_state.hpp"
 #include "state_machine.hpp"
 
@@ -64,6 +65,8 @@ bombino::pause_state::pause_state() : scene{} {
     levi::engine::instance().state_machine().push_state(
         std::make_shared<playing_state>());
   };
+
+  levi::player::instance().play("fon", true);
 
   callback_map callback_map{};
   callback_map["resume"] = resume_callback;

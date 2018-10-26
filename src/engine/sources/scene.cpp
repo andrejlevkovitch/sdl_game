@@ -9,6 +9,7 @@ levi::scene::scene() : is_visible_{true}, is_updateble_{true} {}
 levi::scene::~scene() {}
 
 void levi::scene::add_item(std::shared_ptr<abstract_object> obj) {
+  obj->set_scene(this);
   item_list_.push_back(obj);
 }
 
