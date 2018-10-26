@@ -3,7 +3,6 @@
 #pragma once
 
 #include "abstract_object.hpp"
-
 #include <cstdint>
 
 namespace bombino {

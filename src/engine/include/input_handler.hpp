@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include <list>
-
 #include "event.hpp"
+#include <list>
 
 namespace levi {
 /**\brief event handler, singlton*/

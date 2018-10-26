@@ -1,11 +1,9 @@
 // state_machine.cpp
 
 #include "state_machine.hpp"
-
-#include <algorithm>
-
 #include "engine.hpp"
 #include "scene.hpp"
+#include <algorithm>
 
 levi::state_machine::state_machine() { current_state_ = states_list_.begin(); }
 

@@ -1,15 +1,12 @@
 // abstract_object.cpp
 
 #include "abstract_object.hpp"
-
-#include <cmath>
-#include <vector>
-
-#include <SDL2/SDL.h>
-
 #include "engine.hpp"
 #include "texture_manager.hpp"
 #include "vector2d.hpp"
+#include <SDL2/SDL.h>
+#include <cmath>
+#include <vector>
 
 levi::abstract_object::abstract_object(const std::string &texture_id, size size,
                                        vector2d pos)

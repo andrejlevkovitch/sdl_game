@@ -2,12 +2,11 @@
 
 #pragma once
 
+#include "size.hpp"
 #include <list>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "size.hpp"
 
 class TiXmlElement;
 

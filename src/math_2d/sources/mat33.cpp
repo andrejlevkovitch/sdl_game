@@ -1,7 +1,6 @@
 // mat33.cpp
 
 #include "mat33.hpp"
-
 #include "vertex.hpp"
 
 const int rows{3};

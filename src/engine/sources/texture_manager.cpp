@@ -1,16 +1,13 @@
 // texture_manager.cpp
 
 #include "texture_manager.hpp"
-
-#include <algorithm>
-#include <stdexcept>
-
-#include <SDL2/SDL.h>
-#include <tinyxml.h>
-
 #include "engine.hpp"
 #include "gl_loader.hpp"
 #include "load_png.hpp"
+#include <SDL2/SDL.h>
+#include <algorithm>
+#include <stdexcept>
+#include <tinyxml.h>
 
 levi::texture_manager::texture_manager() {}
 

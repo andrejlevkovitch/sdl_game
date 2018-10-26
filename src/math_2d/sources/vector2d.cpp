@@ -1,7 +1,6 @@
 // vector2d.cpp
 
 #include "vector2d.hpp"
-
 #include <cmath>
 
 levi::vector2d::vector2d() : x{}, y{} {}

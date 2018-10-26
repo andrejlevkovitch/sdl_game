@@ -1,9 +1,6 @@
 // gamer.cpp
 
 #include "gamer.hpp"
-
-#include <memory>
-
 #include "bomb.hpp"
 #include "input_handler.hpp"
 #include "object_manager.hpp"
@@ -12,8 +9,7 @@
 #include "power.hpp"
 #include "scene.hpp"
 #include "time.hpp"
-
-#include <iostream>
+#include <memory>
 
 namespace bombino {
 const levi::vector2d up{0, -1};

@@ -1,7 +1,6 @@
 // button.cpp
 
 #include "button.hpp"
-
 #include "input_handler.hpp"
 
 levi ::button::button(const std::string &texture_id, levi::size size,

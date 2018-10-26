@@ -3,10 +3,8 @@
 #pragma once
 
 #include "abstract_object.hpp"
-
-#include <cstdint>
-
 #include "object_types.hpp"
+#include <cstdint>
 
 namespace bombino {
 class power : public levi::abstract_object {

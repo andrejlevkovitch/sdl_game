@@ -1,12 +1,10 @@
 // tile.cpp
 
 #include "tile.hpp"
-
-#include <random>
-
 #include "object_manager.hpp"
 #include "power.hpp"
 #include "scene.hpp"
+#include <random>
 
 bombino::tile::tile(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, object_type type, unsigned frame)

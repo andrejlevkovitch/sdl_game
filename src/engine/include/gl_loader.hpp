@@ -2,11 +2,9 @@
 
 #pragma once
 
-#include <string>
-
-#include <SDL2/SDL_opengl.h>
-
 #include "get_file_line_func.hpp"
+#include <SDL2/SDL_opengl.h>
+#include <string>
 
 #define LEVI_CHECK()                                                           \
   {                                                                            \

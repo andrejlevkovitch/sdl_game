@@ -1,18 +1,14 @@
 // pause_state.cpp
 
 #include "pause_state.hpp"
-
 #include "button.hpp"
 #include "callback_map.hpp"
 #include "input_handler.hpp"
 #include "object_factory.hpp"
 #include "objects_config.hpp"
-#include "player.hpp"
 #include "playing_state.hpp"
 
 bombino::pause_state::pause_state() : scene{} {
-  levi::player::instance().play("fon", true);
-
   auto new_items = parse_state(bombino::way_to_objects + "bombino_states.xml",
                                "pause", &callback_map::instance());
   for (auto &i : new_items) {

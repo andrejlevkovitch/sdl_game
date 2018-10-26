@@ -1,11 +1,9 @@
 // player.cpp
 
 #include "player.hpp"
-
+#include <SDL2/SDL.h>
 #include <algorithm>
 #include <stdexcept>
-
-#include <SDL2/SDL.h>
 #include <tinyxml.h>
 
 namespace levi {

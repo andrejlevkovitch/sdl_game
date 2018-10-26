@@ -2,13 +2,12 @@
 
 #pragma once
 
-#include <functional>
-#include <map>
-#include <memory>
-
 #include "abstract_object.hpp"
 #include "button.hpp"
 #include "scene.hpp"
+#include <functional>
+#include <map>
+#include <memory>
 
 namespace bombino {
 class callback_map;

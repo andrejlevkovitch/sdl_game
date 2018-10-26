@@ -1,7 +1,6 @@
 // playing_state.cpp
 
 #include "playing_state.hpp"
-
 #include "bomb.hpp"
 #include "callback_map.hpp"
 #include "engine.hpp"

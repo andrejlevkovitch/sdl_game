@@ -1,16 +1,6 @@
 // engine.cpp
 
 #include "engine.hpp"
-
-#include <algorithm>
-#include <fstream>
-#include <iterator>
-#include <stdexcept>
-#include <string>
-
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-
 #include "event.hpp"
 #include "gl_loader.hpp"
 #include "shaders_config.hpp"
@@ -18,6 +8,13 @@
 #include "texture_manager.hpp"
 #include "vector2d.hpp"
 #include "vertex.hpp"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include <algorithm>
+#include <fstream>
+#include <iterator>
+#include <stdexcept>
+#include <string>
 
 namespace levi {
 inline std::string read_shader_code_from_file(const std::string &file) {

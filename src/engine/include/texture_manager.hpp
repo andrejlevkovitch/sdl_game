@@ -2,11 +2,10 @@
 
 #pragma once
 
+#include "texture.hpp"
 #include <list>
 #include <map>
 #include <string>
-
-#include "texture.hpp"
 
 namespace levi {
 class engine;

@@ -1,7 +1,6 @@
 // menu_state.cpp
 
 #include "menu_state.hpp"
-
 #include "button.hpp"
 #include "callback_map.hpp"
 #include "input_handler.hpp"

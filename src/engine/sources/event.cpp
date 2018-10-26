@@ -1,7 +1,6 @@
 // event.cpp
 
 #include "event.hpp"
-
 #include <SDL2/SDL.h>
 
 std::ostream &levi::operator<<(std::ostream &out, const levi::event &event) {

@@ -1,14 +1,12 @@
 // tile_loader.cpp
 
 #include "tile_loader.hpp"
-
+#include "base64.h"
+#include "tile.hpp"
 #include <stdexcept>
 #include <tinyxml.h>
 #include <vector>
 #include <zlib.h>
-
-#include "base64.h"
-#include "tile.hpp"
 
 bool check_tile_map(const ::TiXmlElement *root) {
   int version{};

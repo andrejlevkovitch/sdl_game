@@ -1,7 +1,6 @@
 // rect.cpp
 
 #include "rect.hpp"
-
 #include "vector2d.hpp"
 #include "vertex.hpp"
 

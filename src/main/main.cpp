@@ -1,9 +1,5 @@
 // main.cpp
 
-#include <cstdlib>
-#include <iostream>
-#include <memory>
-
 #include "engine.hpp"
 #include "input_handler.hpp"
 #include "menu_config.hpp"
@@ -12,6 +8,9 @@
 #include "state_machine.hpp"
 #include "texture_manager.hpp"
 #include "time.hpp"
+#include <cstdlib>
+#include <iostream>
+#include <memory>
 
 const int fixedFPS{24};
 

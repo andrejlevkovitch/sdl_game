@@ -2,10 +2,9 @@
 
 #pragma once
 
+#include "abstract_object.hpp"
 #include <cstdint>
 #include <list>
-
-#include "abstract_object.hpp"
 
 namespace levi {
 class scene;

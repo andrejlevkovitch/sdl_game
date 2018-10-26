@@ -2,14 +2,13 @@
 
 #pragma once
 
-#include <cstdint>
-#include <utility>
-#include <vector>
-
 #include "abstract_object.hpp"
 #include "event.hpp"
 #include "object_types.hpp"
 #include "vector2d.hpp"
+#include <cstdint>
+#include <utility>
+#include <vector>
 
 namespace levi {
 class scene;

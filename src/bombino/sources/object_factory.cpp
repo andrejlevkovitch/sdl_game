@@ -1,15 +1,13 @@
 // object_factory.cpp
 
 #include "object_factory.hpp"
-
-#include <algorithm>
-#include <stdexcept>
-#include <tinyxml.h>
-
 #include "button.hpp"
 #include "callback_map.hpp"
 #include "gamer.hpp"
 #include "object_manager.hpp"
+#include <algorithm>
+#include <stdexcept>
+#include <tinyxml.h>
 
 levi::item_list bombino::parse_state(const std::string &state_file,
                                      const std::string &state_name,

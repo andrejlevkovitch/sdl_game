@@ -1,10 +1,8 @@
 // gl_loader.cpp
 
 #include "gl_loader.hpp"
-
-#include <string>
-
 #include <SDL2/SDL.h>
+#include <string>
 
 levi::gl_loader &levi::gl_loader::instance() {
   static gl_loader retval{};

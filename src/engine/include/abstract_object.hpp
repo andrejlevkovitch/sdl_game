@@ -2,15 +2,14 @@
 
 #pragma once
 
-#include <cstdint>
-#include <list>
-#include <string>
-#include <tuple>
-
 #include "dop_classes.hpp"
 #include "rect.hpp"
 #include "size.hpp"
 #include "vector2d.hpp"
+#include <cstdint>
+#include <list>
+#include <string>
+#include <tuple>
 
 namespace levi {
 class engine;

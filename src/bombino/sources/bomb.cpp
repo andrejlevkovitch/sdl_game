@@ -1,9 +1,6 @@
 // bomb.cpp
 
 #include "bomb.hpp"
-
-#include <algorithm>
-
 #include "flame.hpp"
 #include "gamer.hpp"
 #include "object_manager.hpp"
@@ -12,8 +9,7 @@
 #include "scene.hpp"
 #include "tile.hpp"
 #include "time.hpp"
-
-#include <iostream>
+#include <algorithm>
 
 const unsigned time_to_explosion{4000};
 

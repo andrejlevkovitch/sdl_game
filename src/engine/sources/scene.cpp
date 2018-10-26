@@ -1,7 +1,6 @@
 // scene.cpp
 
 #include "scene.hpp"
-
 #include "abstract_object.hpp"
 
 levi::scene::scene() : is_visible_{true}, is_updateble_{true} {}

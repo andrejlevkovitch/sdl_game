@@ -1,12 +1,10 @@
 // event_hanler.cpp
 
 #include "input_handler.hpp"
-
+#include <SDL2/SDL.h>
 #include <algorithm>
 #include <iterator>
 #include <map>
-
-#include <SDL2/SDL.h>
 
 levi::input_handler &levi::input_handler::instance() {
   static input_handler retval{};

@@ -2,9 +2,8 @@
 
 #pragma once
 
-#include <map>
-
 #include "dop_classes.hpp"
+#include <map>
 
 namespace bombino {
 /**\brief singleton, intakes all callbacks functions*/

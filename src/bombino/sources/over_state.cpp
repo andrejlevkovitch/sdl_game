@@ -1,7 +1,6 @@
 // over_state.cpp
 
 #include "over_state.hpp"
-
 #include "button.hpp"
 #include "callback_map.hpp"
 #include "object_factory.hpp"

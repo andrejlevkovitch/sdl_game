@@ -2,10 +2,9 @@
 
 #pragma once
 
+#include "size.hpp"
 #include <cstdint>
 #include <map>
-
-#include "size.hpp"
 
 namespace bombino {
 struct object_params {

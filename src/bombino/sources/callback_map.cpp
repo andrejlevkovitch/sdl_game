@@ -1,7 +1,6 @@
 // callback_map.cpp
 
 #include "callback_map.hpp"
-
 #include "engine.hpp"
 #include "input_handler.hpp"
 #include "menu_state.hpp"
@@ -99,6 +98,7 @@ bombino::callback_map::callback_map() {
         false);
     levi::engine::instance().state_machine().push_state(
         std::make_shared<bombino::over_state>());
+    levi::player::instance().play("fon", true);
   };
 
   auto callback_to_pause = []() {

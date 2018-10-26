@@ -2,12 +2,11 @@
 
 #pragma once
 
-#include <cstdint>
-
 #include "dop_classes.hpp"
 #include "event.hpp"
 #include "rect.hpp"
 #include "size.hpp"
+#include <cstdint>
 
 namespace levi {
 class state_machine;

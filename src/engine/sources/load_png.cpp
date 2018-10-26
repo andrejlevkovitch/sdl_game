@@ -1,10 +1,8 @@
 // load_png.cpp
 
 #include "load_png.hpp"
-
-#include <stdexcept>
-
 #include <png.h>
+#include <stdexcept>
 
 const size_t max_sig{8};
 

@@ -1,7 +1,6 @@
 // object_manager.cpp
 
 #include "object_manager.hpp"
-
 #include <stdexcept>
 #include <tinyxml.h>
 
