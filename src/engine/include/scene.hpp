@@ -16,6 +16,7 @@ void draw(engine &engine, const abstract_object &obj);
 void render(engine &engine, const scene &scene);
 
 using item_list = std::list<std::shared_ptr<abstract_object>>;
+
 class scene {
 public:
   scene();

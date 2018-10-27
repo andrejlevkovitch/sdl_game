@@ -8,8 +8,9 @@
 namespace levi {
 class engine;
 class scene;
+class state_machine;
 
-void render(engine &engine, const scene &a_s);
+void render(engine &engine, const state_machine &state_machine);
 
 class state_machine {
 public:
@@ -21,7 +22,7 @@ public:
   void update();
   /**\except if current_state absent*/
   std::shared_ptr<scene> current_state();
-  friend void render(engine &engine, const state_machine &a_s);
+  const std::list<std::shared_ptr<scene>> &get_states_list() const;
 
 private:
   std::list<std::shared_ptr<scene>> states_list_;

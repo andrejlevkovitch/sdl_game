@@ -15,8 +15,6 @@ class abstract_object;
 class engine;
 class texture;
 
-void render(engine &engine, const state_machine &state_machine);
-
 /**\brief engine, singleton*/
 class engine {
 public:
