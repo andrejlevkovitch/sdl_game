@@ -2,9 +2,10 @@
 
 #pragma once
 
-#include "get_file_line_func.hpp"
 #include <SDL2/SDL_opengl.h>
 #include <string>
+
+#include <sstream>
 
 #define LEVI_CHECK()                                                           \
   {                                                                            \
@@ -25,7 +26,12 @@
       default:                                                                 \
         break;                                                                 \
       }                                                                        \
-      error += get_file_line_func();                                           \
+      std::stringstream ss;                                                    \
+      const int max_len{512};                                                  \
+      char buf[max_len]{};                                                     \
+      ss << __FILE__ << ':' << __LINE__ << ' ' << __FUNCTION__;                \
+      ss.getline(buf, max_len);                                                \
+      error += buf;                                                            \
       throw std::runtime_error{error};                                         \
     }                                                                          \
   }

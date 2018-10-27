@@ -4,5 +4,5 @@
 #pragma once
 
 namespace levi {
-const std::string way_to_shaders{"${CMAKE_CURRENT_SOURCE_DIR}/../shaders/"};
+const std::string way_to_shaders{"${CMAKE_CURRENT_SOURCE_DIR}/../../shaders/"};
 };

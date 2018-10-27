@@ -4,5 +4,5 @@
 #pragma once
 
 namespace bombino {
-const std::string way_to_objects{"${CMAKE_CURRENT_SOURCE_DIR}/../resources/"};
+const std::string way_to_objects{"${CMAKE_CURRENT_SOURCE_DIR}/../../resources/"};
 };

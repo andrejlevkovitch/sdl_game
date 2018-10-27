@@ -7,6 +7,8 @@
 const size_t max_sig{8};
 
 levi::image levi::load_png_as_rgba(const std::string &file) {
+  image image{};
+
   std::FILE *fb = std::fopen(file.c_str(), "rb");
 
   if (!fb) {
@@ -33,6 +35,7 @@ levi::image levi::load_png_as_rgba(const std::string &file) {
   if (!png_info) {
     std::fclose(fb);
     ::png_destroy_read_struct(&png_read, nullptr, nullptr);
+    throw std::runtime_error{"file: " + file + " not valid"};
   }
 
   auto png_end_info = ::png_create_info_struct(png_read);
@@ -40,6 +43,7 @@ levi::image levi::load_png_as_rgba(const std::string &file) {
   if (!png_end_info) {
     std::fclose(fb);
     ::png_destroy_read_struct(&png_read, &png_info, nullptr);
+    throw std::runtime_error{"file: " + file + " not valid"};
   }
 
   ::png_init_io(png_read, fb);
@@ -47,8 +51,6 @@ levi::image levi::load_png_as_rgba(const std::string &file) {
   ::png_set_sig_bytes(png_read, max_sig);
 
   ::png_read_info(png_read, png_info);
-
-  image image{};
 
   image.width = ::png_get_image_width(png_read, png_info);
   image.height = ::png_get_image_height(png_read, png_info);

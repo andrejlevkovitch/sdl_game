@@ -38,11 +38,11 @@ std::shared_ptr<levi::scene> levi::state_machine::current_state() {
   return *current_state_;
 }
 
-void levi::render(engine &engine, state_machine *s_m) {
-  std::for_each(s_m->states_list_.rbegin(), s_m->states_list_.rend(),
+void levi::render(engine &engine, const state_machine &s_m) {
+  std::for_each(s_m.states_list_.rbegin(), s_m.states_list_.rend(),
                 [&](std::shared_ptr<scene> item) {
                   if (item->is_visible()) {
-                    render(engine, item.get());
+                    render(engine, *item.get());
                   }
                 });
 }

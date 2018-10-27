@@ -231,7 +231,7 @@ void levi::engine::render() {
   ::glViewport(0, 0, win_size.width, win_size.height);
   ::glClear(GL_COLOR_BUFFER_BIT);
 
-  levi::render(*this, state_machine_);
+  levi::render(*this, *state_machine_);
 
   ::SDL_GL_SwapWindow(reinterpret_cast<SDL_Window *>(window_));
 }

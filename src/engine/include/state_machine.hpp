@@ -5,12 +5,11 @@
 #include <list>
 #include <memory>
 
-struct SDL_Renderer;
-
 namespace levi {
 class engine;
 class scene;
-void render(engine &engine, scene *a_s);
+
+void render(engine &engine, const scene &a_s);
 
 class state_machine {
 public:
@@ -22,7 +21,7 @@ public:
   void update();
   /**\except if current_state absent*/
   std::shared_ptr<scene> current_state();
-  friend void render(engine &engine, state_machine *s_m);
+  friend void render(engine &engine, const state_machine &a_s);
 
 private:
   std::list<std::shared_ptr<scene>> states_list_;

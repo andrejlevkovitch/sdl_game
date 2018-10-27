@@ -7,12 +7,13 @@
 #include <list>
 #include <memory>
 
-struct SDL_Renderer;
-
 namespace levi {
 class engine;
 class abstract_object;
-void draw(engine &engine, abstract_object *obj);
+class scene;
+
+void draw(engine &engine, const abstract_object &obj);
+void render(engine &engine, const scene &scene);
 
 using item_list = std::list<std::shared_ptr<abstract_object>>;
 class scene {
@@ -23,14 +24,13 @@ public:
    * method have to call set_scene for every added object, otherwise in objects
    * you will have nullptr in scene_*/
   virtual void add_item(std::shared_ptr<abstract_object> obj);
-  const levi::item_list &get_item_list();
+  const levi::item_list &get_item_list() const;
   virtual void update();
   /**\return all coolisions for input rectengle*/
   virtual std::list<abstract_object *> get_collisions_for(rect rect);
   /**\brief if you want to set new id, which not have in enum, then set value
    * after levi::id_state::user_id, becose all values before is rezerved*/
   virtual id_state get_id() const;
-  friend void render(engine &engine, scene *scene);
   /**\brief hides or shows scene
    * \param value false if you want hide, true if show. By default scene is
    * visible*/
@@ -52,5 +52,4 @@ private:
   bool is_updateble_;
 };
 
-void render(engine &engine, scene *scene);
 }; // namespace levi

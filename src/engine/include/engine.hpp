@@ -12,9 +12,10 @@ namespace levi {
 class state_machine;
 class texture_manager;
 class abstract_object;
-
 class engine;
 class texture;
+
+void render(engine &engine, const state_machine &state_machine);
 
 /**\brief engine, singleton*/
 class engine {
@@ -45,6 +46,4 @@ private:
   class texture_manager *texture_manager_;
   uint32_t shader_program_;
 };
-
-void render(engine &engine, state_machine *s_m);
 }; // namespace levi
