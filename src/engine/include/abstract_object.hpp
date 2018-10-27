@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "dop_classes.hpp"
+#include "enums.hpp"
 #include "rect.hpp"
 #include "size.hpp"
 #include "vector2d.hpp"

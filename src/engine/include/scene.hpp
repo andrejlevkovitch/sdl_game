@@ -2,11 +2,10 @@
 
 #pragma once
 
+#include "enums.hpp"
+#include "rect.hpp"
 #include <list>
 #include <memory>
-
-#include "dop_classes.hpp"
-#include "rect.hpp"
 
 struct SDL_Renderer;
 
