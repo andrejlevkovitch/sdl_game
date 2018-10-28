@@ -82,7 +82,7 @@ levi::engine::engine()
     throw std::runtime_error{::SDL_GetError()};
   }
 
-  window_ = ::SDL_CreateWindow("window", SDL_WINDOWPOS_CENTERED,
+  window_ = ::SDL_CreateWindow("bomberman", SDL_WINDOWPOS_CENTERED,
                                SDL_WINDOWPOS_CENTERED, 1088, 832,
                                ::SDL_WINDOW_OPENGL);
   if (!window_) {

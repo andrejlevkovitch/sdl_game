@@ -43,10 +43,11 @@ levi::state_machine::get_states_list() const {
   return this->states_list_;
 }
 
-void levi::render(engine &engine, const state_machine &s_m) {
-  for (auto &i : s_m.get_states_list()) {
-    if (i->is_visible()) {
-      render(engine, *i);
+void levi::render(engine &engine, const state_machine &state_machine) {
+  auto &states = state_machine.get_states_list();
+  std::for_each(states.rbegin(), states.rend(), [&](const auto &item) {
+    if (item->is_visible()) {
+      render(engine, *item);
     }
-  }
+  });
 }
