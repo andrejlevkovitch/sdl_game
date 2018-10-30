@@ -7,6 +7,7 @@
 #include "object_types.hpp"
 #include "vector2d.hpp"
 #include <cstdint>
+#include <functional>
 #include <utility>
 #include <vector>
 
@@ -22,7 +23,7 @@ class gamer : public levi::abstract_object {
 public:
   /**\param callback callback function, which call when gamer was be killed*/
   gamer(const std::string &texture_id, levi::size size, levi::vector2d pos,
-        bombino::object_type type, levi::callback callback);
+        bombino::object_type type, std::function<void(void)> callback);
   /**\brief this method needed for load two-dimensional sprites.
    * \param side right side frames, for left side using flip*/
   void specify_frame_collection(frames front, frames back, frames side);
@@ -41,7 +42,7 @@ public:
   void kill();
 
 private:
-  levi::callback callback_;
+  std::function<void(void)> callback_;
   /**\brief texture size for calculate current sprite*/
   unsigned texture_width_;
   levi::vector2d distance_;

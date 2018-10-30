@@ -79,7 +79,7 @@ levi::item_list bombino::parse_state(const std::string &state_file,
       callback_id = attribute_pointer;
     }
 
-    levi::callback callback = nullptr;
+    std::function<void(void)> callback = nullptr;
     if (callback_map && !callback_id.empty()) {
       try {
         callback = callback_map->at(callback_id);

@@ -2,12 +2,12 @@
 
 #pragma once
 
-#include "enums.hpp"
+#include <functional>
 #include <map>
 
 namespace bombino {
 /**\brief singleton, intakes all callbacks functions*/
-class callback_map : public std::map<std::string, levi::callback> {
+class callback_map : public std::map<std::string, std::function<void(void)>> {
 public:
   static callback_map &instance();
 

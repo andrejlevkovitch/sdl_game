@@ -16,6 +16,10 @@
 #include <stdexcept>
 #include <string>
 
+#include "imgui.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_sdl.h"
+
 namespace levi {
 inline std::string read_shader_code_from_file(const std::string &file) {
   std::ifstream fin;
@@ -206,15 +210,29 @@ levi::engine::engine()
   LEVI_CHECK();
   gl_functions.glDeleteShader(fragment_shader);
   LEVI_CHECK();
+
+  IMGUI_CHECKVERSION();
+  ImGui::CreateContext();
+  ::ImGui_ImplSDL2_InitForOpenGL(reinterpret_cast<SDL_Window *>(window_),
+                                 gl_context_);
+  ::ImGui_ImplOpenGL3_Init("#version 110");
+  ::ImGui::StyleColorsClassic();
 }
 
 levi::engine::~engine() {
+  ::ImGui_ImplOpenGL3_Shutdown();
+  ::ImGui_ImplSDL2_Shutdown();
+  ::ImGui::DestroyContext();
+
   auto &gl_functions = gl_loader::instance();
   gl_functions.glDeleteProgram(shader_program_);
+
   ::SDL_GL_DeleteContext(gl_context_);
   ::SDL_DestroyWindow(reinterpret_cast<SDL_Window *>(window_));
+
   delete state_machine_;
   delete texture_manager_;
+
   ::SDL_Quit();
 }
 
@@ -227,11 +245,28 @@ levi::texture_manager &levi::engine::texture_manager() {
 void levi::engine::update() { state_machine_->update(); }
 
 void levi::engine::render() {
+  auto &io = ::ImGui::GetIO();
+  io.MousePos = ::ImVec2{50, 50};
+
+  ::ImGui_ImplOpenGL3_NewFrame();
+  ::ImGui_ImplSDL2_NewFrame(reinterpret_cast<SDL_Window *>(window_));
+  ::ImGui::NewFrame();
+
+  auto mouse_pos = ::ImGui::GetMousePos();
+  ::ImGui::Begin("My demo");
+  ::ImGui::Text("Hello");
+  ::ImGui::Text("%f %f", mouse_pos.x, mouse_pos.y);
+  ::ImGui::End();
+
+  ::ImGui::Render();
+
   auto win_size = get_window_size();
   ::glViewport(0, 0, win_size.width, win_size.height);
   ::glClear(GL_COLOR_BUFFER_BIT);
 
   levi::render(*this, *state_machine_);
+
+  ::ImGui_ImplOpenGL3_RenderDrawData(::ImGui::GetDrawData());
 
   ::SDL_GL_SwapWindow(reinterpret_cast<SDL_Window *>(window_));
 }
@@ -263,7 +298,7 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   }
 
   std::array<vertex, 8> vertices;
-  for (int i = 0; i < vertices.size() / 2; ++i) {
+  for (unsigned i = 0; i < vertices.size() / 2; ++i) {
     vertices[i * 2] = global_vertices[i];
     vertices[i * 2 + 1] = texture_vertices[i];
   }

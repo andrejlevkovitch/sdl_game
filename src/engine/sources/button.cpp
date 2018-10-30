@@ -4,7 +4,7 @@
 #include "input_handler.hpp"
 
 levi ::button::button(const std::string &texture_id, levi::size size,
-                      levi::vector2d pos, callback callback)
+                      levi::vector2d pos, std::function<void(void)> callback)
     : levi::abstract_object{texture_id, size, pos}, callback_{callback},
       state_{false} {}
 

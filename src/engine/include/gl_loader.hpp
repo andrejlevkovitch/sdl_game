@@ -6,7 +6,6 @@
 #include <string>
 
 #include <sstream>
-
 #define LEVI_CHECK()                                                           \
   {                                                                            \
     auto some_error = ::glGetError();                                          \

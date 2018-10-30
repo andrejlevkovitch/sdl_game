@@ -23,7 +23,7 @@ const levi::vector2d left{-1, 0};
 // uncorrect side
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type,
-                      levi::callback callback)
+                      std::function<void(void)> callback)
     : levi::abstract_object{texture_id, size, pos}, callback_{callback},
       texture_width_{}, distance_{}, direction_{0, 0}, velocity_{3},
       front_frame_collection_{}, side_frame_collection_{},

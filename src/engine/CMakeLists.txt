@@ -26,3 +26,4 @@ target_link_libraries(${ENGINE_LBR} ${SDL2_LIBRARY} ${TinyXML_LIBRARY} ${PNG_LIB
 target_include_directories(${ENGINE_LBR} PUBLIC "include")
 target_include_directories(${ENGINE_LBR} PRIVATE "../math_2d/include")
 target_include_directories(${ENGINE_LBR} PRIVATE "${CMAKE_BINARY_DIR}")
+target_include_directories(${ENGINE_LBR} PRIVATE "../imgui/include")

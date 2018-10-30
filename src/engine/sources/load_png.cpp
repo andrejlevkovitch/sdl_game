@@ -69,7 +69,7 @@ levi::image levi::load_png_as_rgba(const std::string &file) {
   image.data.resize(image.height * byte_width);
 
   std::vector<::png_bytep> row_pointers(image.height, nullptr);
-  for (int i{}; i < row_pointers.size(); ++i) {
+  for (unsigned i{}; i < row_pointers.size(); ++i) {
     row_pointers[i] =
         reinterpret_cast<::png_bytep>(&image.data[i * byte_width]);
   }
