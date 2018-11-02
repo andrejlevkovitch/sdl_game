@@ -253,6 +253,7 @@ static void ImGui_ImplSDL2_UpdateMousePosAndButtons() {
 #if SDL_HAS_CAPTURE_MOUSE && !defined(__EMSCRIPTEN__)
   SDL_Window *focused_window = SDL_GetKeyboardFocus();
   if (g_Window == focused_window) {
+    /* TODO for newer version in is right, but for 2.0.4 sdl it is wrong*/
     // SDL_GetMouseState() gives mouse position seemingly based on the last
     // window entered/focused(?) The creation of a new windows at runtime and
     // SDL_CaptureMouse both seems to severely mess up with that, so we retrieve

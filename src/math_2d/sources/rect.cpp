@@ -10,9 +10,12 @@ levi::rect::rect(int x_, int y_, int width_, int height_)
     : x{x_}, y{y_}, width{width_}, height{height_} {}
 
 std::array<levi::vertex, 4> levi::rect::get_vertices() const {
-  return std::array<vertex, 4>{vertex(x, y), vertex(x, y + height),
+  // clang-format off
+  return std::array<vertex, 4>{vertex(x, y),
+                               vertex(x, y + height),
                                vertex(x + width, y + height),
                                vertex(x + width, y)};
+  // clang-format on
 }
 
 levi::vertex levi::rect::get_center() const {

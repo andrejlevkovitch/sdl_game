@@ -20,6 +20,9 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 
+const GLuint pos{5};
+const GLuint tex_pos{3};
+
 namespace levi {
 inline std::string read_shader_code_from_file(const std::string &file) {
   std::ifstream fin;
@@ -170,6 +173,14 @@ levi::engine::engine()
   LEVI_CHECK();
   gl_functions.glAttachShader(shader_program_, fragment_shader);
   LEVI_CHECK();
+
+  // binding location of attributes
+  // have effect only past call linkprogram, and have to set past shader attach
+  gl_functions.glBindAttribLocation(shader_program_, pos, "pos");
+  LEVI_CHECK();
+  gl_functions.glBindAttribLocation(shader_program_, tex_pos, "tex_pos");
+  LEVI_CHECK();
+
   gl_functions.glLinkProgram(shader_program_);
   LEVI_CHECK();
   GLint link_status{};
@@ -307,8 +318,6 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
 
   GLuint vbo{};
   GLuint ebo{};
-  GLint pos{};
-  GLint tex_pos{};
 
   gl_functions.glGenBuffers(1, &vbo);
   LEVI_CHECK();
@@ -319,8 +328,8 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
 
   // always looks like this, because we draw rectangles
-  static const int default_number_of_ebo{6};
-  std::array<uint32_t, default_number_of_ebo> elements{0, 1, 2, 0, 2, 3};
+  static const int default_number_of_ebo{4};
+  std::array<uint32_t, default_number_of_ebo> elements{1, 0, 2, 3};
   gl_functions.glGenBuffers(1, &ebo);
   LEVI_CHECK();
   gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -331,16 +340,12 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
                             &elements[0], GL_STATIC_DRAW);
   LEVI_CHECK();
 
-  pos = gl_functions.glGetAttribLocation(shader_program_, "pos");
-  LEVI_CHECK();
   gl_functions.glVertexAttribPointer(pos, 3, GL_FLOAT, GL_FALSE,
                                      sizeof(vertex) * 2, nullptr);
   LEVI_CHECK();
   gl_functions.glEnableVertexAttribArray(pos);
   LEVI_CHECK();
 
-  tex_pos = gl_functions.glGetAttribLocation(shader_program_, "tex_pos");
-  LEVI_CHECK();
   gl_functions.glVertexAttribPointer(tex_pos, 2, GL_FLOAT, GL_FALSE,
                                      sizeof(vertex) * 2,
                                      reinterpret_cast<void *>(sizeof(vertex)));
@@ -375,7 +380,7 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   gl_functions.glUniform2f(uniform_tex_size, texture.width, texture.height);
   LEVI_CHECK();
 
-  ::glDrawElements(GL_TRIANGLES, default_number_of_ebo, GL_UNSIGNED_INT,
+  ::glDrawElements(GL_TRIANGLE_STRIP, default_number_of_ebo, GL_UNSIGNED_INT,
                    nullptr);
   LEVI_CHECK();
 

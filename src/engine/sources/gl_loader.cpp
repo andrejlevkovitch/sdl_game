@@ -38,6 +38,7 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glGetProgramInfoLog", glGetProgramInfoLog);
 
   ::load_gl_func("glGetAttribLocation", glGetAttribLocation);
+  ::load_gl_func("glBindAttribLocation", glBindAttribLocation);
   ::load_gl_func("glVertexAttribPointer", glVertexAttribPointer);
   ::load_gl_func("glEnableVertexAttribArray", glEnableVertexAttribArray);
   ::load_gl_func("glDisableVertexAttribArray", glDisableVertexAttribArray);

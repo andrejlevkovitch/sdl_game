@@ -9,8 +9,8 @@ varying vec2 v_tex_pos;
 
 void main() {
   mat3 transfer = mat3(1, 0, 0,
-                0, 1, 0,
-                -center_of_rotation, 1);
+                       0, 1, 0,
+                       -center_of_rotation, 1);
 
   float sin_angle = sin(radian_angle);
   float cos_angle = cos(radian_angle);
@@ -23,8 +23,7 @@ void main() {
                      -1, 1, 1);
 
   mat3 rezult = rotade * transfer;
-  transfer[2][0] = center_of_rotation.x;
-  transfer[2][1] = center_of_rotation.y;
+  transfer[2] = vec3(center_of_rotation, 1);
   rezult = transfer * rezult;
   rezult = to_ndc * rezult;
 
