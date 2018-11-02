@@ -5,7 +5,6 @@
 #include "input_handler.hpp"
 #include "object_manager.hpp"
 #include "objects_config.hpp"
-#include "player.hpp"
 #include "power.hpp"
 #include "scene.hpp"
 #include "time.hpp"
@@ -19,8 +18,6 @@ const levi::vector2d left{-1, 0};
 }; // namespace bombino
 
 // TODO this game dependes on fps - I have to fixed this!
-// TODO when gamer push 2 buttons, and relesed one, then character can see on
-// uncorrect side
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type,
                       std::function<void(void)> callback)
@@ -95,7 +92,7 @@ void bombino::gamer::update() {
           direction_.y = up.y;
           flip_ = levi::flip::none;
           set_frame_collection(back_frame_collection_);
-        } else {
+        } else if (direction_.y == up.y) {
           direction_.y = 0;
         }
         continue;
@@ -104,7 +101,7 @@ void bombino::gamer::update() {
           direction_.y = down.y;
           flip_ = levi::flip::none;
           set_frame_collection(front_frame_collection_);
-        } else {
+        } else if (direction_.y == down.y) {
           direction_.y = 0;
         }
         continue;
@@ -113,7 +110,7 @@ void bombino::gamer::update() {
           direction_.x = left.x;
           flip_ = levi::flip::horizontal;
           set_frame_collection(side_frame_collection_);
-        } else {
+        } else if (direction_.x == left.x) {
           direction_.x = 0;
         }
         continue;
@@ -122,7 +119,7 @@ void bombino::gamer::update() {
           direction_.x = right.x;
           flip_ = levi::flip::none;
           set_frame_collection(side_frame_collection_);
-        } else {
+        } else if (direction_.x == right.x) {
           direction_.x = 0;
         }
         continue;
@@ -166,14 +163,10 @@ void bombino::gamer::update() {
 }
 
 void bombino::gamer::motion() {
-  if (direction_ == levi::vector2d{0, 0}) {
-    // levi::player::instance().play("steps", 0);
-    return;
-  } else {
+  if (!(direction_ == levi::vector2d{0, 0})) {
     distance_ = velocity_ * direction_.get_norm();
     this->set_pos(this->get_pos() + distance_);
     next_frame();
-    // levi::player::instance().play("steps", 1);
   }
 }
 

@@ -27,7 +27,8 @@ void main() {
   rezult = transfer * rezult;
   rezult = to_ndc * rezult;
 
-  gl_Position = vec4(rezult * pos, 1);
+  vec3 a = rezult * pos;
+  gl_Position = vec4(a.xy, 0, 1);
 
   mat2 tex_to_ndc = mat2(1.0 / tex_size.x, 0,
                          0, 1.0 / tex_size.y);

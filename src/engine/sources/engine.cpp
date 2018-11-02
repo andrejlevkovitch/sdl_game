@@ -142,6 +142,8 @@ levi::engine::engine()
 
   ::glEnable(GL_BLEND);
   ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  ::glEnable(GL_DEPTH_TEST);
+  ::glDepthFunc(GL_LEQUAL);
   ::glClearColor(0, 0, 0, 1);
 
   auto &gl_functions = gl_loader::instance();
@@ -273,7 +275,7 @@ void levi::engine::render() {
 
   auto win_size = get_window_size();
   ::glViewport(0, 0, win_size.width, win_size.height);
-  ::glClear(GL_COLOR_BUFFER_BIT);
+  ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   levi::render(*this, *state_machine_);
 
