@@ -20,6 +20,8 @@
 #include "imgui_impl_opengl3.h"
 #include "imgui_impl_sdl.h"
 
+#include "menu_imgui.hpp"
+
 const GLuint pos{5};
 const GLuint tex_pos{3};
 
@@ -263,15 +265,12 @@ void levi::engine::render() {
 
   ::ImGui_ImplOpenGL3_NewFrame();
   ::ImGui_ImplSDL2_NewFrame(reinterpret_cast<SDL_Window *>(window_));
-  ::ImGui::NewFrame();
+  ImGui::NewFrame();
 
-  auto mouse_pos = ::ImGui::GetMousePos();
-  ::ImGui::Begin("My demo");
-  ::ImGui::Text("Hello");
-  ::ImGui::Text("%f %f", mouse_pos.x, mouse_pos.y);
-  ::ImGui::End();
+  static bool show_menu{true};
+  levi::show_menu_imgui(&show_menu);
 
-  ::ImGui::Render();
+  ImGui::Render();
 
   auto win_size = get_window_size();
   ::glViewport(0, 0, win_size.width, win_size.height);

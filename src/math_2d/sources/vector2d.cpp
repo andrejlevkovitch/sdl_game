@@ -55,6 +55,11 @@ float levi::get_angle_bitwin(vector2d lhs, vector2d rhs, vector2d begin_koord) {
   ;
 }
 
+float levi::get_distance_bitwin(vector2d lhs, vector2d rhs) {
+  auto dist = sqrt(std::pow(lhs.x - rhs.x, 2) + std::pow(lhs.x - rhs.x, 2));
+  return dist == NAN ? 0 : dist;
+}
+
 levi::vector2d levi::vector2d::operator*(float rhs) const {
   return vector2d{this->x * rhs, this->y * rhs};
 }
@@ -76,8 +81,6 @@ levi::vector2d levi::vector2d::get_norm() const {
   }
   return vector2d{this->x / length, this->y / length};
 }
-
-#include <iostream>
 
 levi::vector2d levi::vector2d::get_vec_from(float distance, float angle) const {
   return vector2d{distance * std::cos(to_radians(angle)),

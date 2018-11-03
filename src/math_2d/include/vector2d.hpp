@@ -43,6 +43,8 @@ public:
 
 float get_angle_bitwin(vector2d lhs, vector2d rhs,
                        vector2d begin_koord = vector2d{0, 0});
+/**\warning if values was be incorrect or too biger, return 0*/
+float get_distance_bitwin(vector2d lhs, vector2d rhs);
 
 float to_degrees(float radians);
 float to_radians(float degrees);
