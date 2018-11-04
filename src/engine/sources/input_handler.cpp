@@ -50,7 +50,8 @@ void levi::input_handler::read_input() {
       {::SDL_SCANCODE_RIGHT, bind{button_code::right}()},
       {::SDL_SCANCODE_D, bind{button_code::right_dop}()},
       {::SDL_SCANCODE_LEFT, bind{button_code::left}()},
-      {::SDL_SCANCODE_A, bind{button_code::left_dop}()}};
+      {::SDL_SCANCODE_A, bind{button_code::left_dop}()},
+      {::SDL_SCANCODE_F1, bind{button_code::show_info}()}};
 
   levi::event event{};
   ::SDL_Event sdl_event{};

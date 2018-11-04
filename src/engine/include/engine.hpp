@@ -24,8 +24,8 @@ public:
   ~engine();
   class state_machine &state_machine();
   class texture_manager &texture_manager();
-  void update();
-  void render();
+  void update(unsigned int delta_t_ms);
+  void render(unsigned int delta_t_ms);
   /**\return size of the window in pixels*/
   levi::size get_window_size() const;
   /**\param angle in degrees*/
@@ -43,5 +43,9 @@ private:
   class state_machine *state_machine_;
   class texture_manager *texture_manager_;
   uint32_t shader_program_;
+  unsigned int fps_;
+  unsigned int ups_;
+  unsigned int update_interval_;
+  unsigned int render_interval_;
 };
 }; // namespace levi

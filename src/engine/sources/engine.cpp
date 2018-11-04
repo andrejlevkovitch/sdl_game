@@ -3,9 +3,15 @@
 #include "engine.hpp"
 #include "event.hpp"
 #include "gl_loader.hpp"
+#include "imgui.h"
+#include "imgui_impl_opengl3.h"
+#include "imgui_impl_sdl.h"
+#include "input_handler.hpp"
+#include "menu_imgui.hpp"
 #include "shaders_config.hpp"
 #include "state_machine.hpp"
 #include "texture_manager.hpp"
+#include "time.hpp"
 #include "vector2d.hpp"
 #include "vertex.hpp"
 #include <SDL2/SDL.h>
@@ -16,14 +22,12 @@
 #include <stdexcept>
 #include <string>
 
-#include "imgui.h"
-#include "imgui_impl_opengl3.h"
-#include "imgui_impl_sdl.h"
-
-#include "menu_imgui.hpp"
-
+// values for binding shader attributes
 const GLuint pos{5};
 const GLuint tex_pos{3};
+
+// current update interval
+static unsigned int delta_ups{};
 
 namespace levi {
 inline std::string read_shader_code_from_file(const std::string &file) {
@@ -86,7 +90,8 @@ levi::engine &levi::engine::instance() {
 
 levi::engine::engine()
     : window_{nullptr}, gl_context_{}, state_machine_{new levi::state_machine},
-      texture_manager_{new levi::texture_manager{}}, shader_program_{} {
+      texture_manager_{new levi::texture_manager{}}, shader_program_{}, fps_{},
+      ups_{}, update_interval_{30}, render_interval_{40} {
   if (::SDL_Init(SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0) {
     throw std::runtime_error{::SDL_GetError()};
   }
@@ -257,30 +262,58 @@ levi::texture_manager &levi::engine::texture_manager() {
   return *texture_manager_;
 }
 
-void levi::engine::update() { state_machine_->update(); }
+void levi::engine::update(unsigned int delta_t_ms) {
+  ups_ += delta_t_ms;
+  if (ups_ >= update_interval_) {
+    static auto last_ups_time = levi::get_time();
 
-void levi::engine::render() {
-  auto &io = ::ImGui::GetIO();
-  io.MousePos = ::ImVec2{50, 50};
+    input_handler::instance().update();
+    for (auto &i : input_handler::instance().get_event_list()) {
+      if (i.type == event_type::button_event &&
+          i.button.code == button_code::show_info &&
+          i.button.state == button_state::pressed) {
+        menu_imgui::instance() = !menu_imgui::instance();
+      }
+    }
+    state_machine_->update();
 
-  ::ImGui_ImplOpenGL3_NewFrame();
-  ::ImGui_ImplSDL2_NewFrame(reinterpret_cast<SDL_Window *>(window_));
-  ImGui::NewFrame();
+    delta_ups = levi::get_time() - last_ups_time;
+    last_ups_time = levi::get_time();
+    ups_ = 0;
+  }
+}
 
-  static bool show_menu{true};
-  levi::show_menu_imgui(&show_menu);
+void levi::engine::render(unsigned int delta_t_ms) {
+  fps_ += delta_t_ms;
+  if (fps_ >= render_interval_) {
+    auto win_size = get_window_size();
+    ::glViewport(0, 0, win_size.width, win_size.height);
+    ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  ImGui::Render();
+    ::ImGui_ImplOpenGL3_NewFrame();
+    ::ImGui_ImplSDL2_NewFrame(reinterpret_cast<SDL_Window *>(window_));
+    ImGui::NewFrame();
 
-  auto win_size = get_window_size();
-  ::glViewport(0, 0, win_size.width, win_size.height);
-  ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (menu_imgui::instance()) {
+      ImGui::Begin("Game Menu");
+      static auto last_fps_time{get_time()};
+      ImGui::Text("time form start:\n %i", get_time() / 1000);
+      ImGui::Separator();
+      ImGui::Text("ups:\n %.1f", 1000. / delta_ups);
+      ImGui::Text("fps:\n %.1f", 1000. / (get_time() - last_fps_time));
+      last_fps_time = get_time();
+      ImGui::End();
+    }
 
-  levi::render(*this, *state_machine_);
+    levi::render(*this, *state_machine_);
 
-  ::ImGui_ImplOpenGL3_RenderDrawData(::ImGui::GetDrawData());
+    ImGui::Render();
 
-  ::SDL_GL_SwapWindow(reinterpret_cast<SDL_Window *>(window_));
+    ::ImGui_ImplOpenGL3_RenderDrawData(::ImGui::GetDrawData());
+
+    ::SDL_GL_SwapWindow(reinterpret_cast<SDL_Window *>(window_));
+    fps_ = 0;
+  }
 }
 
 levi::size levi::engine::get_window_size() const {

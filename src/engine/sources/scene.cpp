@@ -41,7 +41,7 @@ levi::id_state levi::scene::get_id() const { return id_state::none; }
 void levi::render(engine &engine, const scene &scene) {
   auto &item_list = scene.get_item_list();
   for (auto &item : item_list) {
-    levi::draw(engine, *item.get());
+    item->draw(engine);
   }
 }
 

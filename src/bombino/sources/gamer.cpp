@@ -2,7 +2,9 @@
 
 #include "gamer.hpp"
 #include "bomb.hpp"
+#include "imgui.h"
 #include "input_handler.hpp"
+#include "menu_imgui.hpp"
 #include "object_manager.hpp"
 #include "objects_config.hpp"
 #include "power.hpp"
@@ -138,7 +140,8 @@ void bombino::gamer::update() {
                   collision->get_rectangle().is_intake_pos(center_gamer)) {
                 auto &bomb_params =
                     object_manager::instance().get_obj_params("bomb");
-                // bomb size and tile size can (read as have to) be difference!
+                // bomb size and tile size can (read as have to) be
+                // difference!
                 levi::vector2d bomb_pos = collision->get_pos();
                 bomb_pos.x += (collision->get_size().width -
                                bomb_params.object_size.width) /
@@ -225,4 +228,27 @@ void bombino::gamer::kill() {
   if (callback_ != nullptr) {
     callback_();
   }
+}
+
+void bombino::gamer::draw(levi::engine &engine) const {
+  if (levi::menu_imgui::instance()) {
+    if (type_ == gamer1) {
+      ImGui::Begin("gamer1");
+    } else {
+      ImGui::Begin("gamer2");
+    }
+    ImGui::Text("current position:\n %i %i", dst_rect_.x, dst_rect_.y);
+    ImGui::Text("velocity:\n %.0f", velocity_);
+    ImGui::Text("last_distance:\n %.1f", distance_.get_length());
+    ImGui::Text("direction:\n %.0f %.0f", direction_.x, direction_.y);
+    ImGui::Separator();
+    ImGui::Text("time to new bomb:\n %i", time_to_new_bomb_);
+    auto new_bomb_to = levi::get_time() - time_last_bomb_;
+    new_bomb_to =
+        (new_bomb_to < time_to_new_bomb_) ? time_to_new_bomb_ - new_bomb_to : 0;
+    ImGui::Text("new bomb to:\n %ims", new_bomb_to);
+    ImGui::Text("explosition_power:\n %i", explosition_power_);
+    ImGui::End();
+  }
+  abstract_object::draw(engine);
 }
