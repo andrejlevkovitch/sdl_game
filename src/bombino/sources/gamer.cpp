@@ -10,6 +10,7 @@
 #include "power.hpp"
 #include "scene.hpp"
 #include "time.hpp"
+#include <cmath>
 #include <memory>
 
 namespace bombino {
@@ -234,6 +235,12 @@ void bombino::gamer::collision_handler() {
   }
   if (go_back) {
     auto to_center = (center_tile - center_gamer).get_norm();
+    if (std::abs(distance_.x) > 0) {
+      to_center.x = 0;
+    }
+    if (std::abs(distance_.y) > 0) {
+      to_center.y = 0;
+    }
     this->set_pos(get_pos() - distance_ + to_center * 2);
     distance_ = levi::vector2d{0, 0};
   }
