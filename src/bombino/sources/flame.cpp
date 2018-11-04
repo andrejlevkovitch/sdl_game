@@ -8,7 +8,9 @@ const unsigned frame_time{100};
 bombino::flame::flame(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, uint8_t frame_count)
     : levi::abstract_object{texture_id, size, pos},
-      last_time_{levi::get_time()}, frame_count_{frame_count} {}
+      last_time_{levi::get_time()}, frame_count_{frame_count} {
+  depth_ = levi::depth::midle_ground;
+}
 
 void bombino::flame::update() {
   if (levi::get_time() > last_time_ + frame_time) {

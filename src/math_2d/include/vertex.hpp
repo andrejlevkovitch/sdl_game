@@ -8,7 +8,7 @@ namespace levi {
 class vertex {
 public:
   vertex();
-  vertex(float x, float y, float z = 1);
+  vertex(float x, float y, float z);
 
 public:
   float x;

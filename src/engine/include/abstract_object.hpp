@@ -74,6 +74,8 @@ protected:
   /**\brief angle in degrees*/
   float angle_;
   flip flip_;
+  /**\brief z-value, by default pre_front_ground (firstest ground)*/
+  depth depth_;
   bool wait_delete_;
 };
 }; // namespace levi

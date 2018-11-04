@@ -46,4 +46,6 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glGetUniformLocation", glGetUniformLocation);
   ::load_gl_func("glUniform2f", glUniform2f);
   ::load_gl_func("glUniform1f", glUniform1f);
+
+  ::load_gl_func("glBlendFuncSeparate", glBlendFuncSeparate);
 }

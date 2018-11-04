@@ -56,8 +56,8 @@ float levi::get_angle_bitwin(vector2d lhs, vector2d rhs, vector2d begin_koord) {
 }
 
 float levi::get_distance_bitwin(vector2d lhs, vector2d rhs) {
-  auto dist = sqrt(std::pow(lhs.x - rhs.x, 2) + std::pow(lhs.x - rhs.x, 2));
-  return dist == NAN ? 0 : dist;
+  auto dist = sqrt(std::pow(lhs.x - rhs.x, 2) + std::pow(lhs.y - rhs.y, 2));
+  return dist;
 }
 
 levi::vector2d levi::vector2d::operator*(float rhs) const {

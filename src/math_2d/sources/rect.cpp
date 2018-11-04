@@ -9,17 +9,17 @@ levi::rect::rect() : x{}, y{}, width{}, height{} {}
 levi::rect::rect(int x_, int y_, int width_, int height_)
     : x{x_}, y{y_}, width{width_}, height{height_} {}
 
-std::array<levi::vertex, 4> levi::rect::get_vertices() const {
+std::array<levi::vertex, 4> levi::rect::get_vertices(float z_value) const {
   // clang-format off
-  return std::array<vertex, 4>{vertex(x, y),
-                               vertex(x, y + height),
-                               vertex(x + width, y + height),
-                               vertex(x + width, y)};
+  return std::array<vertex, 4>{vertex(x, y, z_value),
+                               vertex(x, y + height, z_value),
+                               vertex(x + width, y + height, z_value),
+                               vertex(x + width, y, z_value)};
   // clang-format on
 }
 
 levi::vertex levi::rect::get_center() const {
-  return vertex(x + width / 2.0, y + height / 2.0);
+  return vertex(x + width / 2.0, y + height / 2.0, 0);
 }
 
 bool levi::is_crossing(const rect &lhs, const rect &rhs) {

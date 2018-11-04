@@ -64,7 +64,9 @@ inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
 bombino::bomb::bomb(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, uint8_t power)
     : levi::abstract_object{texture_id, size, pos},
-      creating_time_{levi::get_time()}, power_{power} {}
+      creating_time_{levi::get_time()}, power_{power} {
+  depth_ = levi::depth::midle_ground;
+}
 
 bombino::bomb::~bomb() {}
 

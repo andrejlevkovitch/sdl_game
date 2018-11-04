@@ -1,3 +1,5 @@
+#version 130
+
 varying vec2 v_tex_pos;
 uniform sampler2D tex;
 void main() {

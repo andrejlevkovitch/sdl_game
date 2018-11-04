@@ -74,6 +74,8 @@ public:
   ::PFNGLUNIFORM2FPROC glUniform2f;
   ::PFNGLUNIFORM1FPROC glUniform1f;
 
+  ::PFNGLBLENDFUNCSEPARATEPROC glBlendFuncSeparate;
+
 private:
   gl_loader();
   gl_loader(const gl_loader &) = delete;

@@ -30,6 +30,7 @@ bombino::gamer::gamer(const std::string &texture_id, levi::size size,
       ,
       time_to_new_bomb_{4000}, type_{type}, cur_frame_{}, explosition_power_{
                                                               1} {
+  depth_ = levi::depth::front_ground;
   active_buttons_.clear();
   switch (type) {
   case object_type::gamer1:

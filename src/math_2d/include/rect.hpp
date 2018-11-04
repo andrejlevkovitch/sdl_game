@@ -14,8 +14,9 @@ public:
   rect();
   rect(int x, int y, int width, int height);
   /**\return return array of vertices of rectangle, begin from left-top corner
-   * oposit-clock-wise. [0,0] in top-left corner*/
-  std::array<vertex, 4> get_vertices() const;
+   * oposit-clock-wise. [0,0] in top-left corner.
+   * \param z_value z koord for vertices, by default = 0*/
+  std::array<vertex, 4> get_vertices(float z_value = 0) const;
   vertex get_center() const;
   friend bool is_crossing(const rect &lhs, const rect &rhs);
   /**\return true, if pos is in rectangle, or is on left or top side*/

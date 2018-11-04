@@ -30,7 +30,7 @@ public:
   levi::size get_window_size() const;
   /**\param angle in degrees*/
   void draw(const texture &texture, const rect &src_rect, const rect &dst_rect,
-            double angle, flip flip);
+            double angle, flip flip, depth depth);
 
 private:
   engine();

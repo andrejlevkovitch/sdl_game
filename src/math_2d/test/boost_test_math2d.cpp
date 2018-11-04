@@ -74,6 +74,17 @@ BOOST_AUTO_TEST_CASE(test_get_angle) {
                              0.001);
 }
 
+BOOST_AUTO_TEST_CASE(test_get_distance) {
+  levi::vector2d vec1{0, 50};
+  levi::vector2d vec2{0, 0};
+
+  BOOST_CHECK_CLOSE_FRACTION(levi::get_distance_bitwin(vec1, vec2), 50, 0.01);
+
+  vec2 = levi::vector2d{25, 25};
+  BOOST_CHECK_CLOSE_FRACTION(levi::get_distance_bitwin(vec1, vec2), 35.355,
+                             0.01);
+}
+
 BOOST_AUTO_TEST_CASE(test_multiplication_on_scalar) {
   levi::vector2d vec{5, 3};
 
@@ -106,7 +117,7 @@ BOOST_AUTO_TEST_CASE(test_multiplication_matrix_on_vertex) {
   matrix[5] = -1;
   matrix[8] = 1;
 
-  levi::vertex vertex{5, 8};
+  levi::vertex vertex{5, 8, 1};
   auto rezult = matrix * vertex;
   BOOST_CHECK_CLOSE_FRACTION(rezult.x, 2.8, 0.001);
   BOOST_CHECK_CLOSE_FRACTION(rezult.y, 15, 0.001);

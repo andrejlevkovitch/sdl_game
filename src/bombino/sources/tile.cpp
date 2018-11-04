@@ -10,6 +10,7 @@ bombino::tile::tile(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, object_type type, unsigned frame)
     : levi::abstract_object{texture_id, size, pos}, type_{type}, power_shance_{
                                                                      5} {
+  depth_ = levi::depth::back_ground;
   src_rect_.x += src_rect_.width * frame;
 }
 

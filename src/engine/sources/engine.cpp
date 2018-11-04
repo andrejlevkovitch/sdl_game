@@ -36,15 +36,10 @@ inline std::string read_shader_code_from_file(const std::string &file) {
     std::string retval;
     retval.resize(size);
     fin.read(&retval[0], retval.size());
-    for (auto &i : retval) {
-      if (i == '\n') {
-        i = ' ';
-      }
-    }
     fin.close();
     return retval;
   } else {
-    throw std::runtime_error{"couldn't load vertex shader from file"};
+    return "";
   }
 }
 
@@ -142,24 +137,24 @@ levi::engine::engine()
     throw std::runtime_error{"couldn't created right gl_context"};
   }
 
-  ::glEnable(GL_BLEND);
-  ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  ::glEnable(GL_DEPTH_TEST);
-  ::glDepthFunc(GL_LEQUAL);
-  ::glClearColor(0, 0, 0, 1);
-
   auto &gl_functions = gl_loader::instance();
 
-  std::string vertex_shader_code;
-  std::string fragment_shader_code;
-  try {
-    vertex_shader_code =
-        read_shader_code_from_file(levi::way_to_shaders + "vertex_shader.glsl");
-    fragment_shader_code = read_shader_code_from_file(levi::way_to_shaders +
-                                                      "fragment_shader.glsl");
-  } catch (std::exception &) {
-    throw;
-  }
+  ::glEnable(GL_BLEND);
+  ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  ::glEnable(GL_ALPHA_TEST);
+  // don't draw transparency!
+  ::glAlphaFunc(GL_GREATER, 0);
+
+  ::glEnable(GL_DEPTH_TEST);
+  ::glDepthFunc(GL_LEQUAL);
+  ::glEnable(GL_POLYGON_OFFSET_FILL);
+  ::glPolygonOffset(-1.0, -2.0);
+  ::glClearColor(0, 0, 0, 0);
+
+  std::string vertex_shader_code =
+      read_shader_code_from_file(levi::way_to_shaders + "vertex_shader.glsl");
+  std::string fragment_shader_code =
+      read_shader_code_from_file(levi::way_to_shaders + "fragment_shader.glsl");
 
   GLuint vertex_shader{};
   GLuint fragment_shader{};
@@ -291,8 +286,9 @@ levi::size levi::engine::get_window_size() const {
 }
 
 void levi::engine::draw(const texture &texture, const rect &src_rect,
-                        const rect &dst_rect, double angle, flip flip_) {
-  auto global_vertices = dst_rect.get_vertices();
+                        const rect &dst_rect, double angle, flip flip_,
+                        depth depth_) {
+  auto global_vertices = dst_rect.get_vertices(depth_ / 10.);
 
   auto win_size = get_window_size();
   auto center = dst_rect.get_center();

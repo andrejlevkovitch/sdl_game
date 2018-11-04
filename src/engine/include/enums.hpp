@@ -12,7 +12,16 @@ enum flip { none = 0, horizontal = 1, vertical = 2 };
 
 enum class id_state { none, menu, playing, pause, over, user_id = 100 };
 
-const float back_plane{0.9};
-const float midle_plane{0.5};
-const float front_plane{0};
+enum depth {
+  pre_front_ground = 0,
+  front_ground = 1,
+  post_front_ground = 2,
+  pre_midle_ground = 3,
+  midle_ground = 4,
+  post_midle_ground = 5,
+  pre_back_ground = 6,
+  back_ground = 7,
+  post_back_ground = 8,
+  fon_ground = 9
+};
 }; // namespace levi
