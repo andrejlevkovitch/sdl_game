@@ -40,6 +40,7 @@ public:
   void collision_handler();
   /**\brief call seted callback*/
   void kill();
+  void draw(levi::engine &engine) const override;
 
 private:
   std::function<void(void)> callback_;

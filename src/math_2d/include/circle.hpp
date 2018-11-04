@@ -4,6 +4,7 @@
 
 namespace levi {
 class circle;
+class rect;
 
 bool is_crossing(const circle &lhs, const circle &rhs);
 

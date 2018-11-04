@@ -18,7 +18,8 @@ enum class button_code : uint8_t {
   right_dop,
   up_dop,
   down_dop,
-  select_dop
+  select_dop,
+  show_info
 };
 enum class button_state : uint8_t { none, pressed, released };
 

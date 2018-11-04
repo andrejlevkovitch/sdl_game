@@ -12,14 +12,13 @@
 #include <iostream>
 #include <memory>
 
-const int fixedFPS{24};
-
 int main(int argc, char *argv[]) {
   auto &engine = levi::engine::instance();
   engine.texture_manager().parse_textures(levi::way_to_menu_textures +
                                           "menus_textures.xml");
   auto not_loaded = engine.texture_manager().get_not_load_textures();
   if (!not_loaded.empty()) {
+    std::cerr << "problem, not all menu_textures loaded\n";
     for (auto &i : not_loaded) {
       std::cerr << i << std::endl;
     }
@@ -38,21 +37,14 @@ int main(int argc, char *argv[]) {
 
   bool game_stop = false;
 
+  unsigned int last_tick_update{levi::get_time()};
+  unsigned int last_tick_render{levi::get_time()};
   while (!game_stop) {
-    auto last_tick = levi::get_time();
-
-    input_handler.update();
+    engine.update(levi::get_time() - last_tick_update);
+    last_tick_update = levi::get_time();
     game_stop = input_handler.is_quit();
-    //  for (const auto &i : input_handler.get_event_list()) {
-    //    std::cerr << i << std::endl;
-    //  }
-    engine.update();
-    engine.render();
-
-    auto dif_time = levi::get_time() - last_tick;
-    if (dif_time < 1000 / fixedFPS) {
-      levi::delay(1000 / fixedFPS - dif_time);
-    }
+    engine.render(levi::get_time() - last_tick_render);
+    last_tick_render = levi::get_time();
   }
 
   return EXIT_SUCCESS;

@@ -15,7 +15,6 @@ namespace levi {
 class engine;
 class scene;
 class abstract_object;
-void draw(engine &engine, const abstract_object &obj);
 
 /**\brief abstract base class for all objects*/
 class abstract_object {
@@ -52,7 +51,6 @@ public:
   float get_angle() const;
   void set_flip(flip f);
   flip get_flip() const;
-  friend void draw(engine &engine, const abstract_object &obj);
   /**\return by default this function return dst_rect_, but, if you need onother
    * value, just redefine it
    * \brief this function use for find collisions.*/
@@ -61,6 +59,7 @@ public:
    * \warning this method call only if object loaded by add_item, otherwise,
    * pointer to scene will be nullptr */
   virtual void set_scene(scene *scene);
+  virtual void draw(engine &engine) const;
 
 protected:
   scene *scene_;

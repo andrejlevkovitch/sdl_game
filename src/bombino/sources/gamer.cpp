@@ -2,7 +2,9 @@
 
 #include "gamer.hpp"
 #include "bomb.hpp"
+#include "imgui.h"
 #include "input_handler.hpp"
+#include "menu_imgui.hpp"
 #include "object_manager.hpp"
 #include "objects_config.hpp"
 #include "power.hpp"
@@ -139,7 +141,8 @@ void bombino::gamer::update() {
                   collision->get_rectangle().is_intake_pos(center_gamer)) {
                 auto &bomb_params =
                     object_manager::instance().get_obj_params("bomb");
-                // bomb size and tile size can (read as have to) be difference!
+                // bomb size and tile size can (read as have to) be
+                // difference!
                 levi::vector2d bomb_pos = collision->get_pos();
                 bomb_pos.x += (collision->get_size().width -
                                bomb_params.object_size.width) /
@@ -186,12 +189,22 @@ levi::rect bombino::gamer::get_rectangle() const {
 }
 
 void bombino::gamer::collision_handler() {
+  levi::vector2d center_gamer{
+      get_pos() - distance_ +
+      levi::vector2d{get_size().width / 2.f, get_size().height / 2.f}};
+  levi::vector2d center_tile{};
+  bool go_back{false};
   for (const auto &i : scene_->get_collisions_for(get_rectangle())) {
     switch (static_cast<object_type>(i->type())) {
+    case object_type::void_block:
+      if (i->get_rectangle().is_intake_pos(center_gamer)) {
+        center_tile = i->get_pos() + levi::vector2d{i->get_size().width / 2.f,
+                                                    i->get_size().height / 2.f};
+      }
+      break;
     case object_type::soft_block:
     case object_type::solid_block:
-      this->set_pos(this->get_pos() - distance_);
-      distance_ = levi::vector2d{0, 0};
+      go_back = true;
       break;
     case object_type::bomb:
       if (!reinterpret_cast<class bomb *>(i)->can_walk(this)) {
@@ -219,6 +232,11 @@ void bombino::gamer::collision_handler() {
       break;
     }
   }
+  if (go_back) {
+    auto to_center = (center_tile - center_gamer).get_norm();
+    this->set_pos(get_pos() - distance_ + to_center * 2);
+    distance_ = levi::vector2d{0, 0};
+  }
 }
 
 void bombino::gamer::kill() {
@@ -226,4 +244,27 @@ void bombino::gamer::kill() {
   if (callback_ != nullptr) {
     callback_();
   }
+}
+
+void bombino::gamer::draw(levi::engine &engine) const {
+  if (levi::menu_imgui::instance()) {
+    if (type_ == gamer1) {
+      ImGui::Begin("gamer1");
+    } else {
+      ImGui::Begin("gamer2");
+    }
+    ImGui::Text("current position:\n %i %i", dst_rect_.x, dst_rect_.y);
+    ImGui::Text("velocity:\n %.0f", velocity_);
+    ImGui::Text("last_distance:\n %.1f", distance_.get_length());
+    ImGui::Text("direction:\n %.0f %.0f", direction_.x, direction_.y);
+    ImGui::Separator();
+    ImGui::Text("time to new bomb:\n %i", time_to_new_bomb_);
+    auto new_bomb_to = levi::get_time() - time_last_bomb_;
+    new_bomb_to =
+        (new_bomb_to < time_to_new_bomb_) ? time_to_new_bomb_ - new_bomb_to : 0;
+    ImGui::Text("new bomb to:\n %ims", new_bomb_to);
+    ImGui::Text("explosition_power:\n %i", explosition_power_);
+    ImGui::End();
+  }
+  abstract_object::draw(engine);
 }

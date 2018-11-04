@@ -3,14 +3,16 @@
 #include "menu_imgui.hpp"
 #include "imgui.h"
 
-void levi::show_menu_imgui(bool *show) {
-  if (*show) {
-    auto mouse_pos = ImGui::GetMousePos();
-    ImGui::Begin("Menu");
-
-    ImGui::Text("current mouse position:\n %.0f %.0f", mouse_pos.x,
-                mouse_pos.y);
-
-    ImGui::End();
-  }
+levi::menu_imgui &levi::menu_imgui::instance() {
+  static menu_imgui retval{};
+  return retval;
 }
+
+levi::menu_imgui::operator bool() { return show_; }
+
+levi::menu_imgui &levi::menu_imgui::operator=(bool b) {
+  show_ = b;
+  return *this;
+}
+
+levi::menu_imgui::menu_imgui() : show_{false} {};

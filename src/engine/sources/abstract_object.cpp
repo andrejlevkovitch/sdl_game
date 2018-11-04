@@ -63,15 +63,14 @@ void levi::abstract_object::set_flip(flip f) { flip_ = f; }
 
 levi::flip levi::abstract_object::get_flip() const { return flip_; }
 
-void levi::draw(levi::engine &engine, const abstract_object &obj) {
+void levi::abstract_object::draw(levi::engine &engine) const {
   texture texture;
   try {
-    texture = engine.texture_manager().get_texture(obj.texture_id_);
+    texture = engine.texture_manager().get_texture(texture_id_);
   } catch (std::exception &) {
     return;
   }
-  engine.draw(texture, obj.src_rect_, obj.dst_rect_, obj.angle_, obj.flip_,
-              obj.depth_);
+  engine.draw(texture, src_rect_, dst_rect_, angle_, flip_, depth_);
 }
 
 levi::rect levi::abstract_object::get_rectangle() const { return dst_rect_; }
