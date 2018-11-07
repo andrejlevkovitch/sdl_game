@@ -13,6 +13,8 @@
 #include <cmath>
 #include <memory>
 
+#include "vertex.hpp"
+
 namespace bombino {
 const levi::vector2d up{0, -1};
 const levi::vector2d down{0, 1};

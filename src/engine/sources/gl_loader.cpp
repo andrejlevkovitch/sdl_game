@@ -20,6 +20,12 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glBufferData", glBufferData);
   ::load_gl_func("glDeleteBuffers", glDeleteBuffers);
 
+  ::load_gl_func("glGenFramebuffers", glGenFramebuffers);
+  ::load_gl_func("glBindFramebuffer", glBindFramebuffer);
+  ::load_gl_func("glCheckFramebufferStatus", glCheckFramebufferStatus);
+  ::load_gl_func("glFramebufferTexture2D", glFramebufferTexture2D);
+  ::load_gl_func("glDeleteFramebuffers", glDeleteFramebuffers);
+
   ::load_gl_func("glCreateShader", glCreateShader);
   ::load_gl_func("glShaderSource", glShaderSource);
   ::load_gl_func("glCompileShader", glCompileShader);
@@ -36,6 +42,7 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glValidateProgram", glValidateProgram);
   ::load_gl_func("glDeleteProgram", glDeleteProgram);
   ::load_gl_func("glGetProgramInfoLog", glGetProgramInfoLog);
+  ::load_gl_func("glGetAttachedShaders", glGetAttachedShaders);
 
   ::load_gl_func("glGetAttribLocation", glGetAttribLocation);
   ::load_gl_func("glBindAttribLocation", glBindAttribLocation);
@@ -44,8 +51,10 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glDisableVertexAttribArray", glDisableVertexAttribArray);
 
   ::load_gl_func("glGetUniformLocation", glGetUniformLocation);
-  ::load_gl_func("glUniform2f", glUniform2f);
   ::load_gl_func("glUniform1f", glUniform1f);
+  ::load_gl_func("glUniform2f", glUniform2f);
+  ::load_gl_func("glUniform3f", glUniform3f);
+  ::load_gl_func("glUniform1i", glUniform1i);
 
   ::load_gl_func("glBlendFuncSeparate", glBlendFuncSeparate);
 }

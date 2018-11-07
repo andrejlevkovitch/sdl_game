@@ -2,6 +2,9 @@
 
 #include "scene.hpp"
 #include "abstract_object.hpp"
+#include "engine.hpp"
+
+#include "vertex.hpp"
 
 levi::scene::scene() : is_visible_{true}, is_updateble_{true} {}
 
@@ -12,7 +15,16 @@ void levi::scene::add_item(std::shared_ptr<abstract_object> obj) {
   item_list_.push_back(obj);
 }
 
+void levi::scene::add_light(std::shared_ptr<abstract_object> obj) {
+  obj->set_scene(this);
+  light_list_.push_back(obj);
+}
+
 const levi::item_list &levi::scene::get_item_list() const { return item_list_; }
+
+const levi::item_list &levi::scene::get_light_list() const {
+  return item_list_;
+}
 
 void levi::scene::update() {
   for (auto item = item_list_.begin(); item != item_list_.end();) {
@@ -38,9 +50,14 @@ levi::scene::get_collisions_for(levi::rect rect) {
 
 levi::id_state levi::scene::get_id() const { return id_state::none; }
 
-void levi::render(engine &engine, const scene &scene) {
-  auto &item_list = scene.get_item_list();
-  for (auto &item : item_list) {
+void levi::scene::render(engine &engine) const {
+  for (auto &item : item_list_) {
+    item->draw(engine);
+  }
+}
+
+void levi::scene::calculate_light(engine &engine) const {
+  for (auto &item : light_list_) {
     item->draw(engine);
   }
 }

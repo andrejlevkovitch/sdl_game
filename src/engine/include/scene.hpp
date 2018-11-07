@@ -10,9 +10,6 @@
 namespace levi {
 class engine;
 class abstract_object;
-class scene;
-
-void render(engine &engine, const scene &scene);
 
 using item_list = std::list<std::shared_ptr<abstract_object>>;
 
@@ -24,7 +21,9 @@ public:
    * method have to call set_scene for every added object, otherwise in objects
    * you will have nullptr in scene_*/
   virtual void add_item(std::shared_ptr<abstract_object> obj);
+  virtual void add_light(std::shared_ptr<abstract_object> obj);
   const levi::item_list &get_item_list() const;
+  const levi::item_list &get_light_list() const;
   virtual void update();
   /**\return all coolisions for input rectengle*/
   virtual std::list<abstract_object *> get_collisions_for(rect rect);
@@ -43,9 +42,12 @@ public:
   void set_updatebility(bool value);
   /**\return true if scene can be update, and false if not*/
   bool is_updateble();
+  virtual void render(engine &engine) const;
+  virtual void calculate_light(engine &engine) const;
 
 protected:
   levi::item_list item_list_;
+  levi::item_list light_list_;
 
 private:
   bool is_visible_;

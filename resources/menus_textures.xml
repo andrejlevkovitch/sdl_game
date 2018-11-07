@@ -6,4 +6,5 @@
   <texture texture_id="t_restart" file="menus/restart.png"/>
   <texture texture_id="t_to_menu" file="menus/to_menu.png"/>
   <texture texture_id="t_game_over" file="menus/game_over.png"/>
+  <texture texture_id="circle" file="menus/circle.png"/>
 </textures>

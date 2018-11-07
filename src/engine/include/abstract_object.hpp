@@ -6,6 +6,7 @@
 #include "rect.hpp"
 #include "size.hpp"
 #include "vector2d.hpp"
+#include "vertex.hpp"
 #include <cstdint>
 #include <list>
 #include <string>
@@ -70,6 +71,8 @@ protected:
   /**\brief this rect store rectangle of current screen position in screen
    * coordinates (begin from [0, 0] in integer values)*/
   rect dst_rect_;
+  /**\brief on this value multiply texture koords. By default {1, 1, 1}*/
+  vertex color_;
   /**\brief angle in degrees*/
   float angle_;
   flip flip_;

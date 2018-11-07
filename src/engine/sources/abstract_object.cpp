@@ -11,8 +11,8 @@
 levi::abstract_object::abstract_object(const std::string &texture_id, size size,
                                        vector2d pos)
     : scene_{nullptr}, texture_id_{texture_id}, src_rect_{}, dst_rect_{},
-      angle_{}, flip_{flip::none}, depth_{depth::pre_front_ground},
-      wait_delete_{false} {
+      color_{1, 1, 1}, angle_{}, flip_{flip::none},
+      depth_{depth::pre_front_ground}, wait_delete_{false} {
   src_rect_.x = 0;
   src_rect_.y = 0;
   dst_rect_.x = pos.x;
@@ -70,7 +70,7 @@ void levi::abstract_object::draw(levi::engine &engine) const {
   } catch (std::exception &) {
     return;
   }
-  engine.draw(texture, src_rect_, dst_rect_, angle_, flip_, depth_);
+  engine.draw(texture, src_rect_, dst_rect_, angle_, flip_, depth_, color_);
 }
 
 levi::rect levi::abstract_object::get_rectangle() const { return dst_rect_; }
