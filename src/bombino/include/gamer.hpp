@@ -11,6 +11,8 @@
 #include <utility>
 #include <vector>
 
+#include "light.hpp"
+
 namespace levi {
 class scene;
 };
@@ -71,5 +73,7 @@ private:
   uint8_t cur_frame_;
 
   uint8_t explosition_power_;
+
+  class levi::light *my_light_;
 };
 }; // namespace bombino

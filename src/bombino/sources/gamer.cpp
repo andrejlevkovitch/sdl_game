@@ -33,8 +33,8 @@ bombino::gamer::gamer(const std::string &texture_id, levi::size size,
       time_last_bomb_(-4000) /*this value have to be < 0, otherwise, gamer will
                                 not push bomb firt time_to_new_bomb*/
       ,
-      time_to_new_bomb_{4000}, type_{type}, cur_frame_{}, explosition_power_{
-                                                              1} {
+      time_to_new_bomb_{4000}, type_{type}, cur_frame_{},
+      explosition_power_{1}, my_light_{nullptr} {
   depth_ = levi::depth::front_ground;
   active_buttons_.clear();
   switch (type) {
@@ -90,6 +90,17 @@ void bombino::gamer::set_texture_width(unsigned tex_width) {
 }
 
 void bombino::gamer::update() {
+  if (my_light_ != nullptr) {
+    my_light_->set_pos(levi::vector2d(dst_rect_.x + dst_rect_.width / 2,
+                                      dst_rect_.y + dst_rect_.height / 2));
+  } else {
+    auto light = std::make_shared<class levi::light>(
+        levi::vector2d(dst_rect_.x + dst_rect_.width / 2,
+                       dst_rect_.y + dst_rect_.height / 2),
+        100);
+    my_light_ = light.get();
+    scene_->add_light(light);
+  }
   auto &event_list = levi::input_handler::instance().get_event_list();
   for (auto &i : event_list) {
     if (i.type == levi::event_type::button_event) {

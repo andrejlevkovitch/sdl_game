@@ -3,6 +3,7 @@
 #pragma once
 
 #include "enums.hpp"
+#include "light.hpp"
 #include "rect.hpp"
 #include <list>
 #include <memory>
@@ -12,6 +13,7 @@ class engine;
 class abstract_object;
 
 using item_list = std::list<std::shared_ptr<abstract_object>>;
+using light_list = std::list<std::shared_ptr<class light>>;
 
 class scene {
 public:
@@ -21,9 +23,9 @@ public:
    * method have to call set_scene for every added object, otherwise in objects
    * you will have nullptr in scene_*/
   virtual void add_item(std::shared_ptr<abstract_object> obj);
-  virtual void add_light(std::shared_ptr<abstract_object> obj);
+  virtual void add_light(std::shared_ptr<class light> obj);
   const levi::item_list &get_item_list() const;
-  const levi::item_list &get_light_list() const;
+  const levi::light_list &get_light_list() const;
   virtual void update();
   /**\return all coolisions for input rectengle*/
   virtual std::list<abstract_object *> get_collisions_for(rect rect);
@@ -47,7 +49,7 @@ public:
 
 protected:
   levi::item_list item_list_;
-  levi::item_list light_list_;
+  levi::light_list light_list_;
 
 private:
   bool is_visible_;

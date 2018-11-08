@@ -4,8 +4,6 @@
 #include "abstract_object.hpp"
 #include "engine.hpp"
 
-#include "vertex.hpp"
-
 levi::scene::scene() : is_visible_{true}, is_updateble_{true} {}
 
 levi::scene::~scene() {}
@@ -15,15 +13,15 @@ void levi::scene::add_item(std::shared_ptr<abstract_object> obj) {
   item_list_.push_back(obj);
 }
 
-void levi::scene::add_light(std::shared_ptr<abstract_object> obj) {
+void levi::scene::add_light(std::shared_ptr<class light> obj) {
   obj->set_scene(this);
   light_list_.push_back(obj);
 }
 
 const levi::item_list &levi::scene::get_item_list() const { return item_list_; }
 
-const levi::item_list &levi::scene::get_light_list() const {
-  return item_list_;
+const levi::light_list &levi::scene::get_light_list() const {
+  return light_list_;
 }
 
 void levi::scene::update() {
@@ -33,6 +31,13 @@ void levi::scene::update() {
     } else {
       (*item)->update();
       ++item;
+    }
+  }
+  for (auto light = light_list_.begin(); light != light_list_.end();) {
+    if ((*light)->is_for_delete()) {
+      light = light_list_.erase(light);
+    } else {
+      ++light;
     }
   }
 }
@@ -57,8 +62,8 @@ void levi::scene::render(engine &engine) const {
 }
 
 void levi::scene::calculate_light(engine &engine) const {
-  for (auto &item : light_list_) {
-    item->draw(engine);
+  for (auto &light : light_list_) {
+    light->draw(engine);
   }
 }
 

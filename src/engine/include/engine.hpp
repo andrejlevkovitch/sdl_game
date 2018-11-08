@@ -32,7 +32,9 @@ public:
   /**\param angle in degrees
    * \param color on this value multyply texture color*/
   void draw(const texture &texture, const rect &src_rect, const rect &dst_rect,
-            float angle, flip flip, depth depth, vertex color);
+            float angle, flip flip, depth depth);
+  void draw_light(const texture &texture, const rect &src_rect,
+                  const rect &dst_rect);
   /**\brief set general light, by default it is {1, 1, 1, 1}*/
   void set_light(unsigned char r, unsigned char g, unsigned char b,
                  unsigned char a);
@@ -51,7 +53,7 @@ private:
   std::array<uint32_t, 3> shaders_;
   uint32_t framebuffer_light_;
   uint32_t texture_light_;
-  std::array<unsigned char, 4> general_light_;
+  std::array<float, 4> general_light_;
   unsigned int fps_;
   unsigned int ups_;
   unsigned int update_interval_;

@@ -222,11 +222,12 @@ levi::engine::engine()
   ::glBindTexture(GL_TEXTURE_2D, texture_light_);
   LEVI_CHECK();
   auto win_size = get_window_size();
-  ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, win_size.width, win_size.height, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+  ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, win_size.width, win_size.height, 0,
+                 GL_RGB, GL_UNSIGNED_BYTE, nullptr);
   ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  ::glBindTexture(GL_TEXTURE_2D, 0);
+  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   LEVI_CHECK();
 
   IMGUI_CHECKVERSION();
@@ -304,6 +305,7 @@ void levi::engine::render(unsigned int delta_t_ms) {
       ImGui::Text("ups:\n %.1f", 1000. / delta_ups);
       ImGui::Text("fps:\n %.1f", 1000. / (get_time() - last_fps_time));
       last_fps_time = get_time();
+      ImGui::ColorEdit4("light color", &general_light_[0]);
       ImGui::End();
     }
 
@@ -333,7 +335,11 @@ void levi::engine::render(unsigned int delta_t_ms) {
 
       ::glClearColor(general_light_[0], general_light_[1], general_light_[2],
                      general_light_[3]);
-      ::glClear(GL_COLOR_BUFFER_BIT);
+      ::glEnable(GL_DEPTH_TEST);
+      ::glDepthFunc(GL_LEQUAL);
+      ::glEnable(GL_BLEND);
+      ::glBlendFunc(GL_ONE, GL_ONE);
+      ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       state_machine_->calculate_light(*this);
 
@@ -379,7 +385,7 @@ levi::size levi::engine::get_window_size() const {
 
 void levi::engine::draw(const texture &texture, const rect &src_rect,
                         const rect &dst_rect, float angle, flip flip_,
-                        depth depth_, vertex color) {
+                        depth depth_) {
   auto global_vertices = dst_rect.get_vertices(depth_ / 10.);
 
   auto win_size = get_window_size();
@@ -449,6 +455,7 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
 
   gl_functions.glUniform1i(
       gl_functions.glGetUniformLocation(shader_program_, "tex"), 0);
+  LEVI_CHECK();
 
   ::glActiveTexture(GL_TEXTURE1);
   LEVI_CHECK();
@@ -456,6 +463,7 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
   gl_functions.glUniform1i(
       gl_functions.glGetUniformLocation(shader_program_, "light"), 1);
+  LEVI_CHECK();
 
   auto uniform_center =
       gl_functions.glGetUniformLocation(shader_program_, "center_of_rotation");
@@ -477,10 +485,90 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
   gl_functions.glUniform2f(uniform_tex_size, texture.width, texture.height);
   LEVI_CHECK();
-  auto uniform_color =
-      gl_functions.glGetUniformLocation(shader_program_, "color");
+
+  ::glDrawElements(GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_INT,
+                   nullptr);
   LEVI_CHECK();
-  gl_functions.glUniform3f(uniform_color, color.x, color.y, color.z);
+
+  gl_functions.glDisableVertexAttribArray(texture_position);
+  LEVI_CHECK();
+  gl_functions.glDisableVertexAttribArray(position);
+  LEVI_CHECK();
+  gl_functions.glDeleteBuffers(1, &ebo);
+  LEVI_CHECK();
+  gl_functions.glDeleteBuffers(1, &vbo);
+  LEVI_CHECK();
+}
+
+void levi::engine::draw_light(const texture &texture, const rect &src_rect,
+                              const rect &dst_rect) {
+  auto global_vertices = dst_rect.get_vertices(0);
+
+  auto win_size = get_window_size();
+
+  auto texture_vertices = src_rect.get_vertices();
+
+  std::array<vertex, 8> vertices;
+  for (unsigned i = 0; i < vertices.size() / 2; ++i) {
+    vertices[i * 2] = global_vertices[i];
+    vertices[i * 2 + 1] = texture_vertices[i];
+  }
+
+  auto &gl_functions = gl_loader::instance();
+
+  GLuint vbo{};
+  GLuint ebo{};
+
+  gl_functions.glGenBuffers(1, &vbo);
+  LEVI_CHECK();
+  gl_functions.glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  LEVI_CHECK();
+  gl_functions.glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertex),
+                            &vertices[0], GL_STATIC_DRAW);
+  LEVI_CHECK();
+
+  // always looks like this, because we draw rectangles
+  static const int default_number_of_ebo{4};
+  std::array<uint32_t, default_number_of_ebo> elements{1, 0, 2, 3};
+  gl_functions.glGenBuffers(1, &ebo);
+  LEVI_CHECK();
+  gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  LEVI_CHECK();
+  gl_functions.glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                            elements.size() *
+                                sizeof(decltype(elements)::value_type),
+                            &elements[0], GL_STATIC_DRAW);
+  LEVI_CHECK();
+
+  gl_functions.glVertexAttribPointer(position, 3, GL_FLOAT, GL_FALSE,
+                                     sizeof(vertex) * 2, nullptr);
+  LEVI_CHECK();
+  gl_functions.glEnableVertexAttribArray(position);
+  LEVI_CHECK();
+
+  gl_functions.glVertexAttribPointer(texture_position, 2, GL_FLOAT, GL_FALSE,
+                                     sizeof(vertex) * 2,
+                                     reinterpret_cast<void *>(sizeof(vertex)));
+  LEVI_CHECK();
+  gl_functions.glEnableVertexAttribArray(texture_position);
+  LEVI_CHECK();
+
+  // we use only one texture in shaders, so it always be GL_TEXTURE0
+  ::glActiveTexture(GL_TEXTURE0);
+  LEVI_CHECK();
+  ::glBindTexture(GL_TEXTURE_2D, texture.gl_tex);
+  LEVI_CHECK();
+
+  auto uniform_win_size =
+      gl_functions.glGetUniformLocation(shader_program_, "win_size");
+  LEVI_CHECK();
+  gl_functions.glUniform2f(uniform_win_size, win_size.width, win_size.height);
+  LEVI_CHECK();
+  auto uniform_tex_size =
+      gl_functions.glGetUniformLocation(shader_program_, "tex_size");
+  LEVI_CHECK();
+  gl_functions.glUniform2f(uniform_tex_size, texture.width, texture.height);
+  LEVI_CHECK();
 
   ::glDrawElements(GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_INT,
                    nullptr);

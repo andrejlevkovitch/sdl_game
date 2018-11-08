@@ -15,7 +15,6 @@
 namespace levi {
 class engine;
 class scene;
-class abstract_object;
 
 /**\brief abstract base class for all objects*/
 class abstract_object {
@@ -33,28 +32,28 @@ public:
   virtual object_type type() const;
   /**\brief call this method if you wannt to delete it.
    * \warning don't use destructor instead!*/
-  void delete_later();
+  virtual void delete_later();
   /**\brief return true, if for object was be called delete_later()*/
-  bool is_for_delete();
-  void set_size(levi::size size);
-  levi::size get_size() const;
+  virtual bool is_for_delete();
+  virtual void set_size(levi::size size);
+  virtual levi::size get_size() const;
   /**\brief set position of the top-left corner
    * \warning value of position store in int values, and when you set float pos,
    * this pos will be rounded!*/
-  void set_pos(vector2d pos);
+  virtual void set_pos(vector2d pos);
   /**\return current pixel position of the top-left corner*/
-  levi::vector2d get_pos() const;
+  virtual levi::vector2d get_pos() const;
   /**\breif add to current angle new value
    * \return angle past the operation*/
   virtual float rotate(float value);
   virtual void set_angle(float angle);
   /**\return current angle in degres [0, 360)*/
-  float get_angle() const;
-  void set_flip(flip f);
-  flip get_flip() const;
+  virtual float get_angle() const;
+  virtual void set_flip(flip f);
+  virtual flip get_flip() const;
   /**\return by default this function return dst_rect_, but, if you need onother
    * value, just redefine it
-   * \brief this function use for find collisions.*/
+   * \brief this function using for find collisions.*/
   virtual rect get_rectangle() const;
   /**\brief when scene intake object, it set pointer on it in the object
    * \warning this method call only if object loaded by add_item, otherwise,
@@ -71,8 +70,6 @@ protected:
   /**\brief this rect store rectangle of current screen position in screen
    * coordinates (begin from [0, 0] in integer values)*/
   rect dst_rect_;
-  /**\brief on this value multiply texture koords. By default {1, 1, 1}*/
-  vertex color_;
   /**\brief angle in degrees*/
   float angle_;
   flip flip_;
