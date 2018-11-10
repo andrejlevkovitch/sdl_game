@@ -7,6 +7,6 @@ varying vec2 v_tex_pos;
 varying vec2 light_tex_pos;
 
 void main() {
-  gl_FragColor = texture2D(tex, v_tex_pos) * texture2D(light, light_tex_pos);
+  gl_FragColor = texture2D(tex, v_tex_pos) * vec4(texture2D(light, light_tex_pos).rgb, 1);
   if (gl_FragColor.a == 0) discard;
 }

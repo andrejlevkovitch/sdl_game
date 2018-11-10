@@ -19,7 +19,8 @@ enum object_type {
   power
 };
 
-enum powers { energy, bombs, speed, size };
+enum powers { energy, bombs, speed, futball, size };
 
-const std::vector<std::string> powers_names{"energy", "bombs", "speed"};
+const std::vector<std::string> powers_names{"energy", "bombs", "speed",
+                                            "futball"};
 }; // namespace bombino

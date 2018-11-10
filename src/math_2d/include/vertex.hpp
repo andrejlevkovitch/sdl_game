@@ -12,6 +12,7 @@ public:
   vertex(float x, float y, float z);
   vertex(vector2d v, float z);
   vertex operator+(const vertex &rhs) const;
+  operator levi::vector2d() const;
 
 public:
   float x;

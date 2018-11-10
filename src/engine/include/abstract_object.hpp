@@ -59,7 +59,8 @@ public:
    * \warning this method call only if object loaded by add_item, otherwise,
    * pointer to scene will be nullptr */
   virtual void set_scene(scene *scene);
-  virtual void draw(engine &engine) const;
+  // TODO not const because uses imgui
+  virtual void draw(engine &engine);
 
 protected:
   scene *scene_;

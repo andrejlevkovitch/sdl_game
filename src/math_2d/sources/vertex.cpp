@@ -12,6 +12,8 @@ levi::vertex levi::vertex::operator+(const vertex &rhs) const {
   return vertex(x + rhs.x, y + rhs.y, z + rhs.z);
 }
 
+levi::vertex::operator vector2d() const { return vector2d{this->x, this->y}; }
+
 std::ostream &levi::operator<<(std::ostream &out, const vertex &vertex) {
   out << "x: " << vertex.x << " y: " << vertex.y << " z: " << vertex.z
       << std::endl;

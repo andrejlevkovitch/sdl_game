@@ -44,7 +44,7 @@ inline void explosion(levi::scene *scene, levi::abstract_object *obj) {
   default:
     break;
   }
-} // namespace bombino
+}
 
 /**\return false if meet on the way any solid or soft block
  * \brif in this function call func explosion for every collision*/
@@ -55,7 +55,9 @@ inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
         j->type() == static_cast<levi::object_type>(object_type::solid_block)) {
       retval = false;
     }
-    explosion(scene, j);
+    if (j->get_rectangle().is_intake_pos(rect.get_center())) {
+      explosion(scene, j);
+    }
   }
   return retval;
 }
@@ -64,7 +66,7 @@ inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
 bombino::bomb::bomb(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, uint8_t power)
     : levi::abstract_object{texture_id, size, pos},
-      creating_time_{levi::get_time()}, power_{power} {
+      creating_time_{levi::get_time()}, velocity_{0}, power_{power} {
   depth_ = levi::depth::midle_ground;
 }
 
@@ -74,6 +76,7 @@ void bombino::bomb::update() {
   if (levi::get_time() > creating_time_ + time_to_explosion) {
     blow_up();
   }
+  set_pos(get_pos() + direction_ * velocity_);
   collision_handler();
 }
 
@@ -127,22 +130,37 @@ levi::object_type bombino::bomb::type() const {
 }
 
 void bombino::bomb::collision_handler() {
-  if (!gamers_hwo_can_walk_.empty()) {
-    std::list<gamer *> cur_gamers;
-    for (auto &i : scene_->get_collisions_for(this->get_rectangle())) {
-      if (i->type() == static_cast<levi::object_type>(object_type::gamer1) ||
-          i->type() == static_cast<levi::object_type>(object_type::gamer2)) {
-        cur_gamers.push_back(reinterpret_cast<gamer *>(i));
+  std::list<gamer *> cur_gamers;
+  for (auto &i : scene_->get_collisions_for(this->get_rectangle())) {
+    switch (static_cast<bombino::object_type>(i->type())) {
+    case gamer1:
+    case gamer2:
+      cur_gamers.push_back(reinterpret_cast<gamer *>(i));
+      if (direction_.get_length() == 0) {
+        break;
       }
+    case solid_block:
+    case soft_block:
+      set_pos(get_pos() - direction_ * velocity_);
+      direction_ = levi::vector2d{};
+      break;
+    case bombino::object_type::bomb:
+      if (i != this) {
+        set_pos(get_pos() - direction_ * velocity_);
+        direction_ = levi::vector2d{};
+      }
+      break;
+    default:
+      break;
     }
-    for (auto i = gamers_hwo_can_walk_.begin();
-         i != gamers_hwo_can_walk_.end();) {
-      if (std::find(cur_gamers.begin(), cur_gamers.end(), *i) ==
-          cur_gamers.end()) {
-        i = gamers_hwo_can_walk_.erase(i);
-      } else {
-        ++i;
-      }
+  }
+  for (auto i = gamers_hwo_can_walk_.begin();
+       i != gamers_hwo_can_walk_.end();) {
+    if (std::find(cur_gamers.begin(), cur_gamers.end(), *i) ==
+        cur_gamers.end()) {
+      i = gamers_hwo_can_walk_.erase(i);
+    } else {
+      ++i;
     }
   }
 }
@@ -164,4 +182,9 @@ bool bombino::bomb::can_walk(gamer *gamer) {
     }
   }
   return false;
+}
+
+void bombino::bomb::kick(levi::vector2d direction, float velocity) {
+  direction_ = direction;
+  velocity_ = velocity;
 }

@@ -16,7 +16,7 @@ public:
   void delete_later() override;
   bool is_for_delete() override;
   void set_scene(scene *scene) override;
-  void draw(engine &engine) const override;
+  void draw(engine &engine) override;
 
 private:
   void update() override;

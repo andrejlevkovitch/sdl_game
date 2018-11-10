@@ -13,7 +13,7 @@
 #include <cmath>
 #include <memory>
 
-#include "vertex.hpp"
+const int max_speed = 10;
 
 namespace bombino {
 const levi::vector2d up{0, -1};
@@ -33,8 +33,8 @@ bombino::gamer::gamer(const std::string &texture_id, levi::size size,
       time_last_bomb_(-4000) /*this value have to be < 0, otherwise, gamer will
                                 not push bomb firt time_to_new_bomb*/
       ,
-      time_to_new_bomb_{4000}, type_{type}, cur_frame_{},
-      explosition_power_{1}, my_light_{nullptr} {
+      time_to_new_bomb_{4000}, type_{type}, cur_frame_{}, explosition_power_{1},
+      can_kick_ball_{false}, own_light_{nullptr} {
   depth_ = levi::depth::front_ground;
   active_buttons_.clear();
   switch (type) {
@@ -90,16 +90,13 @@ void bombino::gamer::set_texture_width(unsigned tex_width) {
 }
 
 void bombino::gamer::update() {
-  if (my_light_ != nullptr) {
-    my_light_->set_pos(levi::vector2d(dst_rect_.x + dst_rect_.width / 2,
-                                      dst_rect_.y + dst_rect_.height / 2));
-  } else {
-    auto light = std::make_shared<class levi::light>(
-        levi::vector2d(dst_rect_.x + dst_rect_.width / 2,
-                       dst_rect_.y + dst_rect_.height / 2),
-        100);
-    my_light_ = light.get();
+  if (own_light_ == nullptr) {
+    auto light =
+        std::make_shared<class levi::light>(dst_rect_.get_center(), 100);
+    own_light_ = light.get();
     scene_->add_light(light);
+  } else {
+    own_light_->set_pos(dst_rect_.get_center());
   }
   auto &event_list = levi::input_handler::instance().get_event_list();
   for (auto &i : event_list) {
@@ -142,7 +139,8 @@ void bombino::gamer::update() {
         continue;
       } else if (i.button.code == active_buttons_[4]) {
         if (i.button.state == levi::button_state::pressed) {
-          if (levi::get_time() > time_last_bomb_ + time_to_new_bomb_) {
+          if (levi::get_time() >
+              static_cast<unsigned>(time_last_bomb_ + time_to_new_bomb_)) {
             time_last_bomb_ = levi::get_time();
             // we have to find tile in which we set bomb
             levi::vector2d center_gamer{get_pos()};
@@ -224,6 +222,9 @@ void bombino::gamer::collision_handler() {
       if (!reinterpret_cast<class bomb *>(i)->can_walk(this)) {
         this->set_pos(this->get_pos() - distance_);
         distance_ = levi::vector2d{0, 0};
+        if (can_kick_ball_) {
+          reinterpret_cast<class bomb *>(i)->kick(direction_, velocity_ + 2);
+        }
       }
       break;
     case object_type::power:
@@ -235,7 +236,12 @@ void bombino::gamer::collision_handler() {
         time_to_new_bomb_ /= 2;
         break;
       case powers::speed:
-        velocity_ += 1;
+        if (velocity_ < max_speed) {
+          velocity_ += 1;
+        }
+        break;
+      case powers::futball:
+        can_kick_ball_ = true;
         break;
       default:
         break;
@@ -266,7 +272,7 @@ void bombino::gamer::kill() {
   }
 }
 
-void bombino::gamer::draw(levi::engine &engine) const {
+void bombino::gamer::draw(levi::engine &engine) {
   if (levi::menu_imgui::instance()) {
     if (type_ == gamer1) {
       ImGui::Begin("gamer1");
@@ -274,16 +280,25 @@ void bombino::gamer::draw(levi::engine &engine) const {
       ImGui::Begin("gamer2");
     }
     ImGui::Text("current position:\n %i %i", dst_rect_.x, dst_rect_.y);
-    ImGui::Text("velocity:\n %.0f", velocity_);
     ImGui::Text("last_distance:\n %.1f", distance_.get_length());
     ImGui::Text("direction:\n %.0f %.0f", direction_.x, direction_.y);
     ImGui::Separator();
-    ImGui::Text("time to new bomb:\n %i", time_to_new_bomb_);
-    auto new_bomb_to = levi::get_time() - time_last_bomb_;
+    ImGui::Text("velocity:");
+    ImGui::SliderInt("pix_per_ups", &velocity_, 0, max_speed);
+    ImGui::Separator();
+    ImGui::Text("angle:");
+    ImGui::SliderFloat("degrees", &angle_, -360, +360);
+    ImGui::Separator();
+    ImGui::Text("time bitwin bombs:");
+    ImGui::SliderInt("ms", &time_to_new_bomb_, 0, 10000);
+    int new_bomb_to = levi::get_time() - time_last_bomb_;
     new_bomb_to =
         (new_bomb_to < time_to_new_bomb_) ? time_to_new_bomb_ - new_bomb_to : 0;
-    ImGui::Text("new bomb to:\n %ims", new_bomb_to);
-    ImGui::Text("explosition_power:\n %i", explosition_power_);
+    ImGui::Text("to new bomb:\n %ims", new_bomb_to);
+    ImGui::Separator();
+    ImGui::Text("explosition power:");
+    ImGui::SliderInt("tiles", &explosition_power_, 1, 10);
+    ImGui::Checkbox("futball", &can_kick_ball_);
     ImGui::End();
   }
   abstract_object::draw(engine);

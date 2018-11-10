@@ -36,7 +36,7 @@ bool levi::light::is_for_delete() { return abstract_object::is_for_delete(); }
 
 void levi::light::set_scene(scene *scene) { abstract_object::set_scene(scene); }
 
-void levi::light::draw(engine &engine) const {
+void levi::light::draw(engine &engine) {
   texture texture;
   try {
     texture = engine.texture_manager().get_texture(texture_id_);

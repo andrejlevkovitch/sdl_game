@@ -63,7 +63,7 @@ void levi::abstract_object::set_flip(flip f) { flip_ = f; }
 
 levi::flip levi::abstract_object::get_flip() const { return flip_; }
 
-void levi::abstract_object::draw(levi::engine &engine) const {
+void levi::abstract_object::draw(levi::engine &engine) {
   texture texture;
   try {
     texture = engine.texture_manager().get_texture(texture_id_);

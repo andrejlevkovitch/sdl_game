@@ -25,10 +25,13 @@ public:
   /**\brief this function tell can or not gamer walk fru the bomb*/
   bool can_walk(gamer *gamer);
   virtual void set_scene(levi::scene *scene) override;
+  void kick(levi::vector2d direction, float velocity);
 
 private:
   std::list<gamer *> gamers_hwo_can_walk_;
   uint32_t creating_time_;
+  levi::vector2d direction_;
+  float velocity_;
   uint8_t power_;
 };
 }; // namespace bombino

@@ -222,12 +222,10 @@ levi::engine::engine()
   ::glBindTexture(GL_TEXTURE_2D, texture_light_);
   LEVI_CHECK();
   auto win_size = get_window_size();
-  ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, win_size.width, win_size.height, 0,
-                 GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+  ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, win_size.width, win_size.height, 0,
+                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
   ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   LEVI_CHECK();
 
   IMGUI_CHECKVERSION();
@@ -291,7 +289,6 @@ void levi::engine::render(unsigned int delta_t_ms) {
   fps_ += delta_t_ms;
   if (fps_ >= render_interval_) {
     auto win_size = get_window_size();
-    ::glViewport(0, 0, win_size.width, win_size.height);
 
     ::ImGui_ImplOpenGL3_NewFrame();
     ::ImGui_ImplSDL2_NewFrame(reinterpret_cast<SDL_Window *>(window_));
@@ -324,6 +321,11 @@ void levi::engine::render(unsigned int delta_t_ms) {
 
       gl_functions.glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_light_);
       LEVI_CHECK();
+      ::glViewport(0, 0, win_size.width, win_size.height);
+      ::glEnable(GL_BLEND);
+      ::glBlendFunc(GL_ONE, GL_ONE);
+
+      //::glBindTexture(GL_TEXTURE_2D, 0);
       gl_functions.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                           GL_TEXTURE_2D, texture_light_, 0);
       LEVI_CHECK();
@@ -335,13 +337,11 @@ void levi::engine::render(unsigned int delta_t_ms) {
 
       ::glClearColor(general_light_[0], general_light_[1], general_light_[2],
                      general_light_[3]);
-      ::glEnable(GL_DEPTH_TEST);
-      ::glDepthFunc(GL_LEQUAL);
-      ::glEnable(GL_BLEND);
-      ::glBlendFunc(GL_ONE, GL_ONE);
       ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
       state_machine_->calculate_light(*this);
+
+      ::glDisable(GL_BLEND);
 
       gl_functions.glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -356,16 +356,21 @@ void levi::engine::render(unsigned int delta_t_ms) {
       LEVI_CHECK();
     }
 
+    ::glViewport(0, 0, win_size.width, win_size.height);
     ::glEnable(GL_BLEND);
     ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     ::glEnable(GL_DEPTH_TEST);
     ::glDepthFunc(GL_LEQUAL);
-    ::glEnable(GL_POLYGON_OFFSET_FILL);
-    ::glPolygonOffset(-1.0, -2.0);
+    //::glEnable(GL_POLYGON_OFFSET_FILL);
+    //::glPolygonOffset(-1.0, -2.0);
+
     ::glClearColor(0, 0, 0, 1);
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     state_machine_->render(*this);
+
+    ::glDisable(GL_BLEND);
+    ::glDisable(GL_DEPTH_TEST);
 
     ImGui::Render();
 

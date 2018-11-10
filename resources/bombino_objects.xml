@@ -53,4 +53,7 @@
   <object alias="speed" width="32" height="32"
     texture_id="power"
     front_frame="2"/>
+  <object alias="futball" width="32" height="32"
+    texture_id="power"
+    front_frame="3"/>
 </objects>

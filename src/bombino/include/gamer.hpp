@@ -42,7 +42,7 @@ public:
   void collision_handler();
   /**\brief call seted callback*/
   void kill();
-  void draw(levi::engine &engine) const override;
+  void draw(levi::engine &engine) override;
 
 private:
   std::function<void(void)> callback_;
@@ -55,7 +55,7 @@ private:
   levi::vector2d direction_;
   /**\warning don't use values with .5 - becose it use round function!!! Better
    * use integer values*/
-  float velocity_;
+  int velocity_;
 
   /**\brief we can create two objects of this class for two gamers, and we have
    * to set different buttons for control*/
@@ -66,14 +66,14 @@ private:
   frames back_frame_collection_;
   frames cur_frame_collection_;
 
-  uint32_t time_last_bomb_;
-  uint32_t time_to_new_bomb_;
+  int time_last_bomb_;
+  int time_to_new_bomb_;
 
   object_type type_;
   uint8_t cur_frame_;
 
-  uint8_t explosition_power_;
-
-  class levi::light *my_light_;
+  int explosition_power_;
+  bool can_kick_ball_;
+  class levi::light *own_light_;
 };
 }; // namespace bombino
