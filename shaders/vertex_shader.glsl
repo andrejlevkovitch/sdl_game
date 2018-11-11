@@ -9,7 +9,6 @@ attribute vec3 pos;
 attribute vec2 tex_pos;
 
 varying vec2 v_tex_pos;
-varying vec2 light_tex_pos;
 
 void main() {
   mat4 transfer = mat4(1, 0, 0, 0,
@@ -40,5 +39,4 @@ void main() {
                          0, 1.0 / tex_size.y);
 
   v_tex_pos = tex_to_ndc * tex_pos;
-  light_tex_pos = vec2((gl_Position.x + 1) / 2, (gl_Position.y + 1) / 2);
 }

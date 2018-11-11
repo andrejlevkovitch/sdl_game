@@ -50,9 +50,7 @@ private:
   class state_machine *state_machine_;
   class texture_manager *texture_manager_;
   uint32_t shader_program_;
-  std::array<uint32_t, 3> shaders_;
-  uint32_t framebuffer_light_;
-  uint32_t texture_light_;
+  std::array<uint32_t, 6> shaders_;
   std::array<float, 4> general_light_;
   unsigned int fps_;
   unsigned int ups_;

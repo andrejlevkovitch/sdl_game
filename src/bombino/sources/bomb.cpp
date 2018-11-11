@@ -55,9 +55,7 @@ inline bool calculate_for_rect(levi::scene *scene, levi::rect rect) {
         j->type() == static_cast<levi::object_type>(object_type::solid_block)) {
       retval = false;
     }
-    if (j->get_rectangle().is_intake_pos(rect.get_center())) {
-      explosion(scene, j);
-    }
+    explosion(scene, j);
   }
   return retval;
 }
@@ -87,22 +85,34 @@ void bombino::bomb::blow_up() {
   levi::player::instance().play("explosion", true);
 
   auto tile_size =
-      object_manager::instance().get_obj_params("tile").object_size;
+      bombino::object_manager::instance().get_obj_params("tile").object_size;
 
   // here we destroy all in tile, there set bomb
-  calculate_for_rect(scene_, dst_rect_);
+  levi::rect calculate_rect{};
+  for (auto &i : scene_->get_collisions_for(dst_rect_)) {
+    if (i->type() == static_cast<levi::object_type>(object_type::void_block) &&
+        i->get_rectangle().is_intake_pos(dst_rect_.get_center())) {
+      calculate_rect = i->get_rectangle();
+      calculate_rect.x += (calculate_rect.width - dst_rect_.width) / 2;
+      calculate_rect.y += (calculate_rect.height - dst_rect_.height) / 2;
+      calculate_rect.width -= calculate_rect.width - dst_rect_.width;
+      calculate_rect.height -= calculate_rect.height - dst_rect_.height;
+      break;
+    }
+  }
+  calculate_for_rect(scene_, calculate_rect);
 
   bool side1{true};
   bool side2{true};
   for (int i{1}; i < power_ + 1; ++i) {
     if (side1) {
-      auto temp_rect = dst_rect_;
+      auto temp_rect = calculate_rect;
       temp_rect.x -= i * tile_size.width;
 
       side1 = calculate_for_rect(scene_, temp_rect);
     }
     if (side2) {
-      auto temp_rect = dst_rect_;
+      auto temp_rect = calculate_rect;
       temp_rect.x += i * tile_size.width;
 
       side2 = calculate_for_rect(scene_, temp_rect);
@@ -111,13 +121,13 @@ void bombino::bomb::blow_up() {
   side1 = side2 = true;
   for (int i{1}; i < power_ + 1; ++i) {
     if (side1) {
-      auto temp_rect = dst_rect_;
+      auto temp_rect = calculate_rect;
       temp_rect.y -= i * tile_size.height;
 
       side1 = calculate_for_rect(scene_, temp_rect);
     }
     if (side2) {
-      auto temp_rect = dst_rect_;
+      auto temp_rect = calculate_rect;
       temp_rect.y += i * tile_size.height;
 
       side2 = calculate_for_rect(scene_, temp_rect);

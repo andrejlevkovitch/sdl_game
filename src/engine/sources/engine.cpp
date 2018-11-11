@@ -23,8 +23,8 @@
 #include <string>
 
 // values for binding shader attributes
-const GLuint position{5};
-const GLuint texture_position{3};
+const GLuint position{1};
+const GLuint texture_position{2};
 
 // current update interval
 static unsigned int delta_ups{};
@@ -86,8 +86,8 @@ levi::engine &levi::engine::instance() {
 levi::engine::engine()
     : window_{nullptr}, gl_context_{}, state_machine_{new levi::state_machine},
       texture_manager_{new levi::texture_manager{}}, shader_program_{},
-      framebuffer_light_{}, texture_light_{}, general_light_{1, 1, 1, 1},
-      fps_{}, ups_{}, update_interval_{30}, render_interval_{30} {
+      general_light_{1, 1, 1, 1}, fps_{}, ups_{}, update_interval_{30},
+      render_interval_{30} {
   if (::SDL_Init(SDL_INIT_EVENTS | SDL_INIT_AUDIO) < 0) {
     throw std::runtime_error{::SDL_GetError()};
   }
@@ -154,6 +154,10 @@ levi::engine::engine()
   std::string texture_multiply_fragment_shader_code =
       read_shader_code_from_file(levi::way_to_shaders +
                                  "texture_multiply_fragment_shader.glsl");
+  std::string general_vertex_shader_code = read_shader_code_from_file(
+      levi::way_to_shaders + "general_vertex_shader.glsl");
+  std::string general_fragment_shader_code = read_shader_code_from_file(
+      levi::way_to_shaders + "general_fragment_shader.glsl");
 
   try {
     shaders_[0] = create_shader(GL_VERTEX_SHADER, vertex_shader_code);
@@ -162,71 +166,26 @@ levi::engine::engine()
         create_shader(GL_VERTEX_SHADER, texture_multiply_vertex_shader_code);
     shaders_[3] = create_shader(GL_FRAGMENT_SHADER,
                                 texture_multiply_fragment_shader_code);
+    shaders_[4] = create_shader(GL_VERTEX_SHADER, general_vertex_shader_code);
+    shaders_[5] =
+        create_shader(GL_FRAGMENT_SHADER, general_fragment_shader_code);
   } catch (std::exception &) {
     throw;
   }
 
   shader_program_ = gl_functions.glCreateProgram();
   LEVI_CHECK();
-  gl_functions.glAttachShader(shader_program_, shaders_[0]);
-  LEVI_CHECK();
-  gl_functions.glAttachShader(shader_program_, shaders_[1]);
-  LEVI_CHECK();
+  // gl_functions.glAttachShader(shader_program_, shaders_[0]);
+  // LEVI_CHECK();
+  // gl_functions.glAttachShader(shader_program_, shaders_[1]);
+  // LEVI_CHECK();
 
   // binding location of attributes
   // have effect only past call linkprogram, and have to set past shader attach
-  gl_functions.glBindAttribLocation(shader_program_, position, "pos");
-  LEVI_CHECK();
-  gl_functions.glBindAttribLocation(shader_program_, texture_position,
-                                    "tex_pos");
-  LEVI_CHECK();
-
-  gl_functions.glLinkProgram(shader_program_);
-  LEVI_CHECK();
-  GLint link_status{};
-  gl_functions.glGetProgramiv(shader_program_, GL_LINK_STATUS, &link_status);
-  LEVI_CHECK();
-  if (!link_status) {
-    gl_functions.glDeleteShader(shaders_[0]);
-    gl_functions.glDeleteShader(shaders_[1]);
-    GLint lenght;
-    gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH, &lenght);
-    std::string log;
-    log.resize(lenght);
-    gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
-                                     &log[0]);
-    throw std::runtime_error{"shader program couldn't be linked:\n" + log};
-  }
-  gl_functions.glValidateProgram(shader_program_);
-  GLint validate_status{};
-  gl_functions.glGetProgramiv(shader_program_, GL_VALIDATE_STATUS,
-                              &validate_status);
-  if (!validate_status) {
-    gl_functions.glDeleteShader(shaders_[0]);
-    gl_functions.glDeleteShader(shaders_[1]);
-    GLint lenght;
-    gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH, &lenght);
-    std::string log;
-    log.resize(lenght);
-    gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
-                                     &log[0]);
-    throw std::runtime_error{"shader program couldn't be validate:\n" + log};
-  }
-  gl_functions.glUseProgram(shader_program_);
-  LEVI_CHECK();
-
-  gl_functions.glGenFramebuffers(1, &framebuffer_light_);
-  LEVI_CHECK();
-  ::glGenTextures(1, &texture_light_);
-  LEVI_CHECK();
-  ::glBindTexture(GL_TEXTURE_2D, texture_light_);
-  LEVI_CHECK();
-  auto win_size = get_window_size();
-  ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, win_size.width, win_size.height, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  LEVI_CHECK();
+  // gl_functions.glDetachShader(shader_program_, shaders_[0]);
+  // LEVI_CHECK();
+  // gl_functions.glDetachShader(shader_program_, shaders_[1]);
+  // LEVI_CHECK();
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
@@ -242,8 +201,6 @@ levi::engine::~engine() {
   ::ImGui::DestroyContext();
 
   auto &gl_functions = gl_loader::instance();
-  ::glDeleteTextures(1, &texture_light_);
-  gl_functions.glDeleteFramebuffers(1, &framebuffer_light_);
   gl_functions.glDeleteProgram(shader_program_);
   for (auto &i : shaders_) {
     gl_functions.glDeleteShader(i);
@@ -306,29 +263,82 @@ void levi::engine::render(unsigned int delta_t_ms) {
       ImGui::End();
     }
 
+    auto &gl_functions = gl_loader::instance();
+
+    GLuint light_frame{};
+    GLuint light_texture{};
     {
-      auto &gl_functions = gl_loader::instance();
-
-      gl_functions.glDetachShader(shader_program_, shaders_[0]);
-      LEVI_CHECK();
-      gl_functions.glDetachShader(shader_program_, shaders_[1]);
-      LEVI_CHECK();
-
       gl_functions.glAttachShader(shader_program_, shaders_[2]);
       LEVI_CHECK();
       gl_functions.glAttachShader(shader_program_, shaders_[3]);
       LEVI_CHECK();
-
-      gl_functions.glBindFramebuffer(GL_FRAMEBUFFER, framebuffer_light_);
+      gl_functions.glBindAttribLocation(shader_program_, position, "pos");
       LEVI_CHECK();
+      gl_functions.glBindAttribLocation(shader_program_, texture_position,
+                                        "tex_pos");
+      LEVI_CHECK();
+
+      gl_functions.glLinkProgram(shader_program_);
+      LEVI_CHECK();
+      GLint link_status{};
+      gl_functions.glGetProgramiv(shader_program_, GL_LINK_STATUS,
+                                  &link_status);
+      LEVI_CHECK();
+      if (!link_status) {
+        GLint lenght;
+        gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH,
+                                    &lenght);
+        std::string log;
+        log.resize(lenght);
+        gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                         &log[0]);
+        throw std::runtime_error{"shader program couldn't be linked:\n" + log};
+      }
+      gl_functions.glValidateProgram(shader_program_);
+      GLint validate_status{};
+      gl_functions.glGetProgramiv(shader_program_, GL_VALIDATE_STATUS,
+                                  &validate_status);
+      if (!validate_status) {
+        GLint lenght;
+        gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH,
+                                    &lenght);
+        std::string log;
+        log.resize(lenght);
+        gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                         &log[0]);
+        throw std::runtime_error{"shader program couldn't be validate:\n" +
+                                 log};
+      }
+      gl_functions.glUseProgram(shader_program_);
+      LEVI_CHECK();
+
+      gl_functions.glGenFramebuffers(1, &light_frame);
+      LEVI_CHECK();
+      gl_functions.glBindFramebuffer(GL_FRAMEBUFFER, light_frame);
+      LEVI_CHECK();
+
+      ::glGenTextures(1, &light_texture);
+      LEVI_CHECK();
+      ::glBindTexture(GL_TEXTURE_2D, light_texture);
+      LEVI_CHECK();
+      ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, win_size.width, win_size.height,
+                     0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+      LEVI_CHECK();
+      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      LEVI_CHECK();
+      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      LEVI_CHECK();
+      ::glBindTexture(GL_TEXTURE_2D, 0);
+      LEVI_CHECK();
+
       ::glViewport(0, 0, win_size.width, win_size.height);
       ::glEnable(GL_BLEND);
-      ::glBlendFunc(GL_ONE, GL_ONE);
+      ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      //::glBindTexture(GL_TEXTURE_2D, 0);
       gl_functions.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                          GL_TEXTURE_2D, texture_light_, 0);
+                                          GL_TEXTURE_2D, light_texture, 0);
       LEVI_CHECK();
+
       if (gl_functions.glCheckFramebufferStatus(GL_FRAMEBUFFER) !=
           GL_FRAMEBUFFER_COMPLETE) {
         throw std::runtime_error{"framebuffer for light not complete"};
@@ -349,34 +359,247 @@ void levi::engine::render(unsigned int delta_t_ms) {
       LEVI_CHECK();
       gl_functions.glDetachShader(shader_program_, shaders_[3]);
       LEVI_CHECK();
+    }
 
+    GLuint render_frame{};
+    GLuint render_texture{};
+    {
       gl_functions.glAttachShader(shader_program_, shaders_[0]);
       LEVI_CHECK();
       gl_functions.glAttachShader(shader_program_, shaders_[1]);
       LEVI_CHECK();
+      gl_functions.glBindAttribLocation(shader_program_, position, "pos");
+      LEVI_CHECK();
+      gl_functions.glBindAttribLocation(shader_program_, texture_position,
+                                        "tex_pos");
+      LEVI_CHECK();
+
+      gl_functions.glLinkProgram(shader_program_);
+      LEVI_CHECK();
+      GLint link_status{};
+      gl_functions.glGetProgramiv(shader_program_, GL_LINK_STATUS,
+                                  &link_status);
+      LEVI_CHECK();
+      if (!link_status) {
+        GLint lenght;
+        gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH,
+                                    &lenght);
+        std::string log;
+        log.resize(lenght);
+        gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                         &log[0]);
+        throw std::runtime_error{"shader program couldn't be linked:\n" + log};
+      }
+      gl_functions.glValidateProgram(shader_program_);
+      GLint validate_status{};
+      gl_functions.glGetProgramiv(shader_program_, GL_VALIDATE_STATUS,
+                                  &validate_status);
+      if (!validate_status) {
+        GLint lenght;
+        gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH,
+                                    &lenght);
+        std::string log;
+        log.resize(lenght);
+        gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                         &log[0]);
+        throw std::runtime_error{"shader program couldn't be validate:\n" +
+                                 log};
+      }
+      gl_functions.glUseProgram(shader_program_);
+      LEVI_CHECK();
+
+      gl_functions.glGenFramebuffers(1, &render_frame);
+      LEVI_CHECK();
+      gl_functions.glBindFramebuffer(GL_FRAMEBUFFER, render_frame);
+      LEVI_CHECK();
+
+      ::glGenTextures(1, &render_texture);
+      LEVI_CHECK();
+      ::glBindTexture(GL_TEXTURE_2D, render_texture);
+      LEVI_CHECK();
+      ::glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, win_size.width, win_size.height,
+                     0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+      LEVI_CHECK();
+      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+      LEVI_CHECK();
+      ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      LEVI_CHECK();
+      ::glBindTexture(GL_TEXTURE_2D, 0);
+      LEVI_CHECK();
+
+      ::glViewport(0, 0, win_size.width, win_size.height);
+      ::glEnable(GL_BLEND);
+      ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      ::glEnable(GL_DEPTH_TEST);
+      ::glDepthFunc(GL_LEQUAL);
+      //::glEnable(GL_POLYGON_OFFSET_FILL);
+      //::glPolygonOffset(-1.0, -2.0);
+
+      gl_functions.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                          GL_TEXTURE_2D, render_texture, 0);
+      LEVI_CHECK();
+
+      if (gl_functions.glCheckFramebufferStatus(GL_FRAMEBUFFER) !=
+          GL_FRAMEBUFFER_COMPLETE) {
+        throw std::runtime_error{"framebuffer for light not complete"};
+      }
+      LEVI_CHECK();
+
+      ::glClearColor(0, 0, 0, 1);
+      ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+      state_machine_->render(*this);
+
+      ::glDisable(GL_BLEND);
+      ::glDisable(GL_DEPTH_TEST);
+
+      gl_functions.glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+      gl_functions.glDetachShader(shader_program_, shaders_[0]);
+      LEVI_CHECK();
+      gl_functions.glDetachShader(shader_program_, shaders_[1]);
+      LEVI_CHECK();
     }
 
-    ::glViewport(0, 0, win_size.width, win_size.height);
-    ::glEnable(GL_BLEND);
-    ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    ::glEnable(GL_DEPTH_TEST);
-    ::glDepthFunc(GL_LEQUAL);
-    //::glEnable(GL_POLYGON_OFFSET_FILL);
-    //::glPolygonOffset(-1.0, -2.0);
+    {
+      gl_functions.glAttachShader(shader_program_, shaders_[4]);
+      LEVI_CHECK();
+      gl_functions.glAttachShader(shader_program_, shaders_[5]);
+      LEVI_CHECK();
+      gl_functions.glBindAttribLocation(shader_program_, position, "pos");
+      LEVI_CHECK();
+      gl_functions.glBindAttribLocation(shader_program_, texture_position,
+                                        "tex_pos");
+      LEVI_CHECK();
 
-    ::glClearColor(0, 0, 0, 1);
-    ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      gl_functions.glLinkProgram(shader_program_);
+      LEVI_CHECK();
+      GLint link_status{};
+      gl_functions.glGetProgramiv(shader_program_, GL_LINK_STATUS,
+                                  &link_status);
+      LEVI_CHECK();
+      if (!link_status) {
+        GLint lenght;
+        gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH,
+                                    &lenght);
+        std::string log;
+        log.resize(lenght);
+        gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                         &log[0]);
+        throw std::runtime_error{"shader program couldn't be linked:\n" + log};
+      }
+      gl_functions.glValidateProgram(shader_program_);
+      GLint validate_status{};
+      gl_functions.glGetProgramiv(shader_program_, GL_VALIDATE_STATUS,
+                                  &validate_status);
+      if (!validate_status) {
+        GLint lenght;
+        gl_functions.glGetProgramiv(shader_program_, GL_INFO_LOG_LENGTH,
+                                    &lenght);
+        std::string log;
+        log.resize(lenght);
+        gl_functions.glGetProgramInfoLog(shader_program_, log.size(), nullptr,
+                                         &log[0]);
+        throw std::runtime_error{"shader program couldn't be validate:\n" +
+                                 log};
+      }
+      gl_functions.glUseProgram(shader_program_);
+      LEVI_CHECK();
 
-    state_machine_->render(*this);
+      gl_functions.glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    ::glDisable(GL_BLEND);
-    ::glDisable(GL_DEPTH_TEST);
+      GLuint vbo{};
+      GLuint ebo{};
+
+      std::array<vertex, 8> vertices{vertex{-1, 1, 0},  vertex{0, 1, 0},
+                                     vertex{-1, -1, 0}, vertex{0, 0, 0},
+                                     vertex(1, -1, 0),  vertex{1, 0, 0},
+                                     vertex{1, 1, 0},   vertex{1, 1, 0}};
+
+      gl_functions.glGenBuffers(1, &vbo);
+      LEVI_CHECK();
+      gl_functions.glBindBuffer(GL_ARRAY_BUFFER, vbo);
+      LEVI_CHECK();
+      gl_functions.glBufferData(GL_ARRAY_BUFFER,
+                                vertices.size() * sizeof(vertex), &vertices[0],
+                                GL_STATIC_DRAW);
+      LEVI_CHECK();
+
+      // always looks like this, because we draw rectangles
+      std::array<uint32_t, 4> elements{1, 0, 2, 3};
+      gl_functions.glGenBuffers(1, &ebo);
+      LEVI_CHECK();
+      gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+      LEVI_CHECK();
+      gl_functions.glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                                elements.size() *
+                                    sizeof(decltype(elements)::value_type),
+                                &elements[0], GL_STATIC_DRAW);
+      LEVI_CHECK();
+
+      gl_functions.glVertexAttribPointer(position, 2, GL_FLOAT, GL_FALSE,
+                                         sizeof(vertex) * 2, nullptr);
+      LEVI_CHECK();
+      gl_functions.glEnableVertexAttribArray(position);
+      LEVI_CHECK();
+
+      gl_functions.glGetAttribLocation(shader_program_, "pos");
+      gl_functions.glVertexAttribPointer(
+          texture_position, 2, GL_FLOAT, GL_FALSE, sizeof(vertex) * 2,
+          reinterpret_cast<void *>(sizeof(vertex)));
+      LEVI_CHECK();
+      gl_functions.glEnableVertexAttribArray(texture_position);
+      LEVI_CHECK();
+
+      ::glActiveTexture(GL_TEXTURE0);
+      LEVI_CHECK();
+      ::glBindTexture(GL_TEXTURE_2D, render_texture);
+      LEVI_CHECK();
+      gl_functions.glUniform1i(
+          gl_functions.glGetUniformLocation(shader_program_, "render_tex"), 0);
+      LEVI_CHECK();
+
+      ::glActiveTexture(GL_TEXTURE1);
+      LEVI_CHECK();
+      ::glBindTexture(GL_TEXTURE_2D, light_texture);
+      LEVI_CHECK();
+      gl_functions.glUniform1i(
+          gl_functions.glGetUniformLocation(shader_program_, "light_tex"), 1);
+      LEVI_CHECK();
+
+      ::glViewport(0, 0, win_size.width, win_size.height);
+      ::glClearColor(0, 0, 0, 1);
+      ::glClear(GL_COLOR_BUFFER_BIT);
+
+      glDrawElements(GL_TRIANGLE_STRIP, elements.size(), GL_UNSIGNED_INT,
+                     nullptr);
+
+      gl_functions.glDisableVertexAttribArray(texture_position);
+      LEVI_CHECK();
+      gl_functions.glDisableVertexAttribArray(position);
+      LEVI_CHECK();
+      gl_functions.glDeleteBuffers(1, &ebo);
+      LEVI_CHECK();
+      gl_functions.glDeleteBuffers(1, &vbo);
+      LEVI_CHECK();
+
+      gl_functions.glDetachShader(shader_program_, shaders_[4]);
+      LEVI_CHECK();
+      gl_functions.glDetachShader(shader_program_, shaders_[5]);
+      LEVI_CHECK();
+    }
 
     ImGui::Render();
 
     ::ImGui_ImplOpenGL3_RenderDrawData(::ImGui::GetDrawData());
 
     ::SDL_GL_SwapWindow(reinterpret_cast<SDL_Window *>(window_));
+
+    ::glDeleteTextures(1, &light_texture);
+    gl_functions.glDeleteFramebuffers(1, &light_frame);
+    ::glDeleteTextures(1, &render_texture);
+    gl_functions.glDeleteFramebuffers(1, &render_frame);
+
     fps_ = 0;
   }
 }
@@ -427,8 +650,7 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
 
   // always looks like this, because we draw rectangles
-  static const int default_number_of_ebo{4};
-  std::array<uint32_t, default_number_of_ebo> elements{1, 0, 2, 3};
+  std::array<uint32_t, 4> elements{1, 0, 2, 3};
   gl_functions.glGenBuffers(1, &ebo);
   LEVI_CHECK();
   gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
@@ -457,17 +679,8 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
   ::glBindTexture(GL_TEXTURE_2D, texture.gl_tex);
   LEVI_CHECK();
-
   gl_functions.glUniform1i(
       gl_functions.glGetUniformLocation(shader_program_, "tex"), 0);
-  LEVI_CHECK();
-
-  ::glActiveTexture(GL_TEXTURE1);
-  LEVI_CHECK();
-  ::glBindTexture(GL_TEXTURE_2D, texture_light_);
-  LEVI_CHECK();
-  gl_functions.glUniform1i(
-      gl_functions.glGetUniformLocation(shader_program_, "light"), 1);
   LEVI_CHECK();
 
   auto uniform_center =
@@ -533,8 +746,7 @@ void levi::engine::draw_light(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
 
   // always looks like this, because we draw rectangles
-  static const int default_number_of_ebo{4};
-  std::array<uint32_t, default_number_of_ebo> elements{1, 0, 2, 3};
+  std::array<uint32_t, 4> elements{1, 0, 2, 3};
   gl_functions.glGenBuffers(1, &ebo);
   LEVI_CHECK();
   gl_functions.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
