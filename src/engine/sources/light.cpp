@@ -4,9 +4,10 @@
 #include "engine.hpp"
 #include "texture_manager.hpp"
 
-levi::light::light(vector2d pos, unsigned short power)
+levi::light::light(vector2d pos, unsigned short power, vertex color)
     : abstract_object{"circle", size{64, 64},
-                      vector2d{pos.x - power, pos.y - power}} {
+                      vector2d{pos.x - power, pos.y - power}},
+      color_{color} {
   dst_rect_.width = power * 2;
   dst_rect_.height = power * 2;
 }
@@ -43,7 +44,10 @@ void levi::light::draw(engine &engine) {
   } catch (std::exception &) {
     return;
   }
-  engine.draw_light(texture, src_rect_, dst_rect_);
+  engine.draw_light(texture, src_rect_, dst_rect_, color_);
 }
 
 void levi::light::update() {}
+
+levi::vertex levi::light::get_color() const { return color_; }
+void levi::light::set_color(vertex color) { color_ = color; }

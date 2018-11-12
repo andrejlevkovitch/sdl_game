@@ -22,6 +22,6 @@
   </playing>
   <over>
     <object type="button" alias="game_over" x="450" y="400"
-      callback_id="to_menu"/>
+      callback_id="restart"/>
   </over>
 </states>

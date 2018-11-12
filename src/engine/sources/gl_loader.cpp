@@ -24,7 +24,13 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glBindFramebuffer", glBindFramebuffer);
   ::load_gl_func("glCheckFramebufferStatus", glCheckFramebufferStatus);
   ::load_gl_func("glFramebufferTexture2D", glFramebufferTexture2D);
+  ::load_gl_func("glFramebufferRenderbuffer", glFramebufferRenderbuffer);
   ::load_gl_func("glDeleteFramebuffers", glDeleteFramebuffers);
+
+  ::load_gl_func("glGenRenderbuffers", glGenRenderBuffers);
+  ::load_gl_func("glBindRenderbuffer", glBindRenderbuffer);
+  ::load_gl_func("glRenderbufferStorage", glRenderbufferStorage);
+  ::load_gl_func("glDeleteRenderbuffers", glDeleteRenderbuffers);
 
   ::load_gl_func("glCreateShader", glCreateShader);
   ::load_gl_func("glShaderSource", glShaderSource);

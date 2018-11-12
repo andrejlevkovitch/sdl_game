@@ -12,8 +12,6 @@
 #include <iostream>
 #include <memory>
 
-#include "game_state_machine.hpp"
-
 int main(int argc, char *argv[]) {
   auto &engine = levi::engine::instance();
   engine.texture_manager().parse_textures(levi::way_to_menu_textures +

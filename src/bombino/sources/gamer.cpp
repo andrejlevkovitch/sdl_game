@@ -299,6 +299,9 @@ void bombino::gamer::draw(levi::engine &engine) {
     ImGui::Text("explosition power:");
     ImGui::SliderInt("tiles", &explosition_power_, 1, 10);
     ImGui::Checkbox("futball", &can_kick_ball_);
+    levi::vertex color = own_light_->get_color();
+    ImGui::ColorEdit3("change light color", &color.x);
+    own_light_->set_color(color);
     ImGui::End();
   }
   abstract_object::draw(engine);

@@ -29,12 +29,12 @@ public:
   void render(unsigned int delta_t_ms);
   /**\return size of the window in pixels*/
   levi::size get_window_size() const;
-  /**\param angle in degrees
-   * \param color on this value multyply texture color*/
+  /**\param angle in degrees*/
   void draw(const texture &texture, const rect &src_rect, const rect &dst_rect,
             float angle, flip flip, depth depth);
+  /**\param color light color from 0 to 1*/
   void draw_light(const texture &texture, const rect &src_rect,
-                  const rect &dst_rect);
+                  const rect &dst_rect, vertex color);
   /**\brief set general light, by default it is {1, 1, 1, 1}*/
   void set_light(unsigned char r, unsigned char g, unsigned char b,
                  unsigned char a);
