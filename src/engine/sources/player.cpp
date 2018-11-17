@@ -1,17 +1,29 @@
 // player.cpp
 
 #include "player.hpp"
+#include "tinyxml2.h"
 #include <SDL2/SDL.h>
 #include <algorithm>
 #include <stdexcept>
-#include <tinyxml.h>
 
 namespace levi {
-// I create this struct before I don't want include sdl in header file
+// I create this struct becose I don't want include sdl in header file
 struct audio_settings {
   ::SDL_AudioSpec want_;
   ::SDL_AudioDeviceID device_;
 };
+
+struct audio_locker {
+  audio_locker(::SDL_AudioDeviceID &device);
+  ~audio_locker();
+  audio_locker(const audio_locker &) = delete;
+  audio_locker &operator=(const audio_locker &) = delete;
+
+private:
+  ::SDL_AudioDeviceID &device_;
+};
+
+void my_callback(void *data, Uint8 *stream, int length);
 }; // namespace levi
 
 levi::sound::sound()
@@ -21,42 +33,6 @@ levi::sound::sound()
 levi::sound::sound(uint8_t *buff_, int length_, float volume_, bool loop_)
     : buff{buff_}, cur_pos{buff_}, length{length_},
       cur_length{length}, volume{volume_}, loop{loop_}, for_playing{false} {}
-
-namespace levi {
-void my_callback(void *data, Uint8 *stream, int length) {
-  ::SDL_memset(stream, 0, length);
-  for (auto &i : *reinterpret_cast<sound_map *>(data)) {
-    if (i.second.for_playing) {
-      if (length > i.second.cur_length) {
-        i.second.cur_length = i.second.length;
-        i.second.cur_pos = i.second.buff;
-        if (!i.second.loop) {
-          i.second.for_playing = false;
-          continue;
-        }
-      }
-
-      ::SDL_MixAudioFormat(stream, i.second.cur_pos, AUDIO_FORMAT, length,
-                           SDL_MIX_MAXVOLUME * i.second.volume);
-
-      i.second.cur_length -= length;
-      i.second.cur_pos += length;
-    }
-  }
-}
-
-struct locker {
-  locker(::SDL_AudioDeviceID &device) : device_{device} {
-    ::SDL_LockAudioDevice(device_);
-  };
-  ~locker() { ::SDL_UnlockAudioDevice(device_); };
-  locker(const locker &) = delete;
-  locker &operator=(const locker &) = delete;
-
-private:
-  ::SDL_AudioDeviceID &device_;
-};
-}; // namespace levi
 
 levi::player &levi::player::instance() {
   try {
@@ -95,12 +71,11 @@ levi::player::~player() {
 size_t levi::player::parse_file(const std::string &file_with_sounds) {
   size_t count{};
 
-  std::string way_to_files = file_with_sounds;
-  auto last_slesh = std::find(way_to_files.rbegin(), way_to_files.rend(), '/');
-  way_to_files.erase(last_slesh.base(), way_to_files.rbegin().base());
+  std::string path_to_file =
+      file_with_sounds.substr(0, file_with_sounds.find_last_of("/\\") + 1);
 
-  ::TiXmlDocument doc;
-  if (!doc.LoadFile(file_with_sounds)) {
+  tinyxml2::XMLDocument doc;
+  if (doc.LoadFile(file_with_sounds.c_str()) != tinyxml2::XML_SUCCESS) {
     throw std::runtime_error{"couldn't load file: " + file_with_sounds};
   }
 
@@ -111,24 +86,14 @@ size_t levi::player::parse_file(const std::string &file_with_sounds) {
 
   for (auto i = root->FirstChildElement(); i != nullptr;
        i = i->NextSiblingElement()) {
-    const char *pointer_to_text{};
     std::string alias;
-    std::string file_name = way_to_files;
-    int loop{};
-    double volume{};
+    std::string file_name = path_to_file;
 
-    pointer_to_text = i->Attribute("alias");
-    if (pointer_to_text) {
-      alias = pointer_to_text;
-    }
+    alias = i->Attribute("alias");
+    file_name += i->Attribute("file_name");
 
-    pointer_to_text = i->Attribute("file_name");
-    if (pointer_to_text) {
-      file_name += pointer_to_text;
-    }
-
-    i->Attribute("loop", &loop);
-    i->Attribute("volume", &volume);
+    bool loop = i->BoolAttribute("loop", false);
+    float volume = i->FloatAttribute("volume");
 
     try {
       if (load_audio_in_storage(alias, file_name, volume, loop)) {
@@ -145,13 +110,12 @@ size_t levi::player::parse_file(const std::string &file_with_sounds) {
 bool levi::player::load_audio_in_storage(const std::string &alias,
                                          const std::string &file_name,
                                          float volume, bool loop) {
-  locker(audio_settings_->device_);
+  audio_locker(audio_settings_->device_);
   if (sound_map_.find(alias) == sound_map_.end()) {
     Uint32 length{};
     Uint8 *temp_buf{nullptr};
     if (SDL_LoadWAV(file_name.c_str(), &audio_settings_->want_, &temp_buf,
                     &length) == nullptr) {
-      std::cerr << ::SDL_GetError() << std::endl;
       return false;
     }
     sound_map_.insert(
@@ -162,7 +126,7 @@ bool levi::player::load_audio_in_storage(const std::string &alias,
 }
 
 bool levi::player::play(const std::string &alias, bool status) {
-  locker(audio_settings_->device_);
+  audio_locker(audio_settings_->device_);
   auto iter = sound_map_.find(alias);
   if (iter == sound_map_.end()) {
     return false;
@@ -175,3 +139,33 @@ bool levi::player::play(const std::string &alias, bool status) {
 void levi::player::pause(bool status) {
   ::SDL_PauseAudioDevice(audio_settings_->device_, status);
 }
+
+namespace levi {
+void my_callback(void *data, Uint8 *stream, int length) {
+  ::SDL_memset(stream, 0, length);
+  for (auto &i : *reinterpret_cast<sound_map *>(data)) {
+    if (i.second.for_playing) {
+      if (length > i.second.cur_length) {
+        i.second.cur_length = i.second.length;
+        i.second.cur_pos = i.second.buff;
+        if (!i.second.loop) {
+          i.second.for_playing = false;
+          continue;
+        }
+      }
+
+      ::SDL_MixAudioFormat(stream, i.second.cur_pos, AUDIO_FORMAT, length,
+                           SDL_MIX_MAXVOLUME * i.second.volume);
+
+      i.second.cur_length -= length;
+      i.second.cur_pos += length;
+    }
+  }
+}
+
+audio_locker::audio_locker(::SDL_AudioDeviceID &device) : device_{device} {
+  ::SDL_LockAudioDevice(device_);
+};
+audio_locker::~audio_locker() { ::SDL_UnlockAudioDevice(device_); };
+}; // namespace levi
+

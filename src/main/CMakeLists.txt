@@ -1,11 +1,13 @@
 # main
 
-set(MAIN_SRC "main.cpp")
+cmake_minimum_required(VERSION "3.10")
 
-add_executable(${PROJECT_NAME} ${MAIN_SRC})
+project(sdl_game)
 
-foreach(SOME_TARGET ${LIST_TARGETS})
-  target_link_libraries(${PROJECT_NAME} ${SOME_TARGET})
-endforeach()
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_compile_options(${PROJECT_NAME} PRIVATE "-std=c++11")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR})
+
+target_link_libraries(${PROJECT_NAME} PRIVATE engine bombino)

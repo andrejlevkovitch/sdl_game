@@ -32,51 +32,8 @@ static unsigned int delta_ups{};
 namespace levi {
 class shader_attacher {
 public:
-  shader_attacher(uint32_t program, uint32_t shader1, uint32_t shader2)
-      : program_{program}, shader1_{shader1}, shader2_{shader2} {
-
-    auto &gl_functions = gl_loader::instance();
-    gl_functions.glAttachShader(program_, shader1_);
-    LEVI_CHECK();
-    gl_functions.glAttachShader(program_, shader2_);
-    LEVI_CHECK();
-    gl_functions.glBindAttribLocation(program_, position, "pos");
-    LEVI_CHECK();
-    gl_functions.glBindAttribLocation(program_, texture_position, "tex_pos");
-    LEVI_CHECK();
-
-    gl_functions.glLinkProgram(program_);
-    LEVI_CHECK();
-    GLint link_status{};
-    gl_functions.glGetProgramiv(program_, GL_LINK_STATUS, &link_status);
-    LEVI_CHECK();
-    if (!link_status) {
-      GLint lenght;
-      gl_functions.glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &lenght);
-      std::string log;
-      log.resize(lenght);
-      gl_functions.glGetProgramInfoLog(program_, log.size(), nullptr, &log[0]);
-      throw std::runtime_error{"shader program couldn't be linked:\n" + log};
-    }
-    gl_functions.glValidateProgram(program_);
-    GLint validate_status{};
-    gl_functions.glGetProgramiv(program_, GL_VALIDATE_STATUS, &validate_status);
-    if (!validate_status) {
-      GLint lenght;
-      gl_functions.glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &lenght);
-      std::string log;
-      log.resize(lenght);
-      gl_functions.glGetProgramInfoLog(program_, log.size(), nullptr, &log[0]);
-      throw std::runtime_error{"shader program couldn't be validate:\n" + log};
-    }
-    gl_functions.glUseProgram(program_);
-    LEVI_CHECK();
-  };
-  ~shader_attacher() {
-    auto &gl_functions = gl_loader::instance();
-    gl_functions.glDetachShader(program_, shader1_);
-    gl_functions.glDetachShader(program_, shader2_);
-  }
+  shader_attacher(uint32_t program, uint32_t shader1, uint32_t shader2);
+  ~shader_attacher();
 
 private:
   uint32_t program_;
@@ -84,48 +41,9 @@ private:
   uint32_t shader2_;
 };
 
-inline std::string read_shader_code_from_file(const std::string &file) {
-  std::ifstream fin;
-  fin.open(file);
-  if (fin.is_open()) {
-    fin.seekg(0, std::ios_base::end);
-    auto size = fin.tellg();
-    fin.seekg(0, std::ios_base::beg);
-    std::string retval;
-    retval.resize(size);
-    fin.read(&retval[0], retval.size());
-    fin.close();
-    return retval;
-  } else {
-    return "";
-  }
-}
+std::string read_shader_code_from_file(const std::string &file);
+uint32_t create_shader(uint32_t type, const std::string &shader_code);
 
-inline uint32_t create_shader(uint32_t type, const std::string &shader_code) {
-  const char *code{nullptr};
-  auto &gl_functions = levi::gl_loader::instance();
-  auto shader = gl_functions.glCreateShader(type);
-  LEVI_CHECK();
-  code = &shader_code[0];
-  gl_functions.glShaderSource(shader, 1, &code, nullptr);
-  LEVI_CHECK();
-  gl_functions.glCompileShader(shader);
-  LEVI_CHECK();
-  GLint compile_status{};
-  gl_functions.glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
-  LEVI_CHECK();
-  if (!compile_status) {
-    GLint length_of_info{};
-    gl_functions.glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length_of_info);
-    std::string info_log{};
-    info_log.resize(length_of_info);
-    gl_functions.glGetShaderInfoLog(shader, length_of_info, nullptr,
-                                    &info_log[0]);
-    gl_functions.glDeleteShader(shader);
-    throw std::runtime_error{"error while compile shader:\n" + info_log};
-  }
-  return shader;
-}
 } // namespace levi
 
 levi::engine &levi::engine::instance() {
@@ -740,3 +658,96 @@ void levi::engine::set_light(unsigned char r, unsigned char g, unsigned char b,
   general_light_[2] = b;
   general_light_[3] = a;
 }
+
+namespace levi {
+shader_attacher::shader_attacher(uint32_t program, uint32_t shader1,
+                                 uint32_t shader2)
+    : program_{program}, shader1_{shader1}, shader2_{shader2} {
+
+  auto &gl_functions = gl_loader::instance();
+  gl_functions.glAttachShader(program_, shader1_);
+  LEVI_CHECK();
+  gl_functions.glAttachShader(program_, shader2_);
+  LEVI_CHECK();
+  gl_functions.glBindAttribLocation(program_, position, "pos");
+  LEVI_CHECK();
+  gl_functions.glBindAttribLocation(program_, texture_position, "tex_pos");
+  LEVI_CHECK();
+
+  gl_functions.glLinkProgram(program_);
+  LEVI_CHECK();
+  GLint link_status{};
+  gl_functions.glGetProgramiv(program_, GL_LINK_STATUS, &link_status);
+  LEVI_CHECK();
+  if (!link_status) {
+    GLint lenght;
+    gl_functions.glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &lenght);
+    std::string log;
+    log.resize(lenght);
+    gl_functions.glGetProgramInfoLog(program_, log.size(), nullptr, &log[0]);
+    throw std::runtime_error{"shader program couldn't be linked:\n" + log};
+  }
+  gl_functions.glValidateProgram(program_);
+  GLint validate_status{};
+  gl_functions.glGetProgramiv(program_, GL_VALIDATE_STATUS, &validate_status);
+  if (!validate_status) {
+    GLint lenght;
+    gl_functions.glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &lenght);
+    std::string log;
+    log.resize(lenght);
+    gl_functions.glGetProgramInfoLog(program_, log.size(), nullptr, &log[0]);
+    throw std::runtime_error{"shader program couldn't be validate:\n" + log};
+  }
+  gl_functions.glUseProgram(program_);
+  LEVI_CHECK();
+};
+
+shader_attacher::~shader_attacher() {
+  auto &gl_functions = gl_loader::instance();
+  gl_functions.glDetachShader(program_, shader1_);
+  gl_functions.glDetachShader(program_, shader2_);
+}
+
+std::string read_shader_code_from_file(const std::string &file) {
+  std::ifstream fin;
+  fin.open(file);
+  if (fin.is_open()) {
+    fin.seekg(0, std::ios_base::end);
+    auto size = fin.tellg();
+    fin.seekg(0, std::ios_base::beg);
+    std::string retval;
+    retval.resize(size);
+    fin.read(&retval[0], retval.size());
+    fin.close();
+    return retval;
+  } else {
+    return "";
+  }
+}
+
+uint32_t create_shader(uint32_t type, const std::string &shader_code) {
+  const char *code{nullptr};
+  auto &gl_functions = levi::gl_loader::instance();
+  auto shader = gl_functions.glCreateShader(type);
+  LEVI_CHECK();
+  code = &shader_code[0];
+  gl_functions.glShaderSource(shader, 1, &code, nullptr);
+  LEVI_CHECK();
+  gl_functions.glCompileShader(shader);
+  LEVI_CHECK();
+  GLint compile_status{};
+  gl_functions.glGetShaderiv(shader, GL_COMPILE_STATUS, &compile_status);
+  LEVI_CHECK();
+  if (!compile_status) {
+    GLint length_of_info{};
+    gl_functions.glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length_of_info);
+    std::string info_log{};
+    info_log.resize(length_of_info);
+    gl_functions.glGetShaderInfoLog(shader, length_of_info, nullptr,
+                                    &info_log[0]);
+    gl_functions.glDeleteShader(shader);
+    throw std::runtime_error{"error while compile shader:\n" + info_log};
+  }
+  return shader;
+}
+} // namespace levi

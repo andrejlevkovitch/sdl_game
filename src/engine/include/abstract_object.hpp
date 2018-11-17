@@ -16,6 +16,7 @@ namespace levi {
 class engine;
 class scene;
 
+// TODO divide object on drawable and physical
 /**\brief abstract base class for all objects*/
 class abstract_object {
 public:

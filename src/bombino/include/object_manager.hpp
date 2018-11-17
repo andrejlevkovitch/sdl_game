@@ -27,6 +27,7 @@ struct object_params {
 /**\brief first param - objects alias, second - objects params*/
 using object_map = std::map<std::string, bombino::object_params>;
 
+// TODO I have to improve parser
 class object_manager {
 public:
   static object_manager &instance();

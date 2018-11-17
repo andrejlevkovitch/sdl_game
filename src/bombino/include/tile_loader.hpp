@@ -8,14 +8,15 @@
 #include <string>
 #include <vector>
 
-class TiXmlElement;
+namespace tinyxml2 {
+class XMLElement;
+}
 
 namespace bombino {
 class tile;
 
-/**\brief this class load special .tmx files created by Tiled program
- * \TODO nowadays it work only if map created by one png file, with zero
- * margin*/
+// TODO nowadays it work only if map created by one png file, with zero margin
+/**\brief this class load special .tmx files created by Tiled program*/
 class tile_loader {
 public:
   /**\except throw std::exception, read output for more information*/
@@ -23,8 +24,8 @@ public:
   const std::list<std::shared_ptr<tile>> get_tiles() const;
 
 private:
-  void read_tileset(const TiXmlElement *tileset);
-  void read_layer(const TiXmlElement *layer);
+  void read_tileset(const tinyxml2::XMLElement *tileset);
+  void read_layer(const tinyxml2::XMLElement *layer);
   void create_tiles();
 
 private:

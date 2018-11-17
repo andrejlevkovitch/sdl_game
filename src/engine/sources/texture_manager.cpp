@@ -3,11 +3,17 @@
 #include "texture_manager.hpp"
 #include "engine.hpp"
 #include "gl_loader.hpp"
-#include "load_png.hpp"
+#include "picopng.hpp"
+#include "tinyxml2.h"
 #include <SDL2/SDL.h>
 #include <algorithm>
 #include <stdexcept>
-#include <tinyxml.h>
+
+struct image {
+  std::vector<unsigned char> data;
+  size_t width;
+  size_t height;
+};
 
 levi::texture_manager::texture_manager() {}
 
@@ -18,8 +24,8 @@ levi::texture_manager::~texture_manager() {
 }
 
 size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
-  ::TiXmlDocument xml_doc;
-  if (!xml_doc.LoadFile(texture_file.c_str())) {
+  tinyxml2::XMLDocument xml_doc;
+  if (xml_doc.LoadFile(texture_file.c_str()) != tinyxml2::XML_SUCCESS) {
     throw std::runtime_error{"parser can't load file " + texture_file};
   }
 
@@ -29,27 +35,21 @@ size_t levi::texture_manager::parse_textures(const std::string &texture_file) {
                              texture_file};
   }
 
-  std::string way_to_files = texture_file;
-  auto last_slesh = std::find(way_to_files.rbegin(), way_to_files.rend(), '/');
-  way_to_files.erase(last_slesh.base(), way_to_files.rbegin().base());
+  std::string path_to_file =
+      texture_file.substr(0, texture_file.find_last_of("/\\") + 1);
 
   size_t capacity{};
   for (auto i = root->FirstChildElement(); i != nullptr;
        i = i->NextSiblingElement()) {
-    const char *pointer{};
     std::string texture_id;
     std::string texture_file;
 
-    if ((pointer = i->Attribute("texture_id"))) {
-      texture_id = pointer;
-    }
+    texture_id = i->Attribute("texture_id");
 
-    if ((pointer = i->Attribute("file"))) {
-      texture_file = way_to_files + pointer;
-    }
+    texture_file = i->Attribute("file");
 
     if (texture_map_.find(texture_id) == texture_map_.end()) {
-      if (create_texture(texture_id, texture_file)) {
+      if (create_texture(texture_id, path_to_file + texture_file)) {
         ++capacity;
       }
     }
@@ -77,12 +77,11 @@ bool levi::texture_manager::create_texture(const std::string &texture_id,
                                            const std::string &texture_file) {
   if (!texture_id.empty() && !texture_file.empty()) {
     image image{};
-    try {
-      image = load_png_as_rgba(texture_file);
-    } catch (std::exception &except) {
-      not_loaded_.push_back("texture " + texture_id + " from file " +
-                            texture_file + " because: " + except.what());
-      return false;
+    std::vector<unsigned char> buffer;
+    loadFile(buffer, texture_file);
+    if (decodePNG(image.data, image.width, image.height, &buffer[0],
+                  buffer.size(), true) != 0) {
+      goto fail;
     }
 
     GLuint gl_tex{};
@@ -104,6 +103,7 @@ bool levi::texture_manager::create_texture(const std::string &texture_id,
     texture_map_[texture_id] = texture{gl_tex, image.width, image.height};
     return true;
   }
+fail:
   not_loaded_.push_back("texture " + texture_id + " from file " + texture_file +
                         " because: unkorrect id or name");
   return false;

@@ -9,6 +9,8 @@ namespace levi {
 class vertex;
 class vector2d;
 
+// TODO use floats. x and y have to be vector2d, and width and height have to be
+// size
 class rect {
 public:
   rect();

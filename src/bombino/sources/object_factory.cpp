@@ -5,25 +5,17 @@
 #include "callback_map.hpp"
 #include "gamer.hpp"
 #include "object_manager.hpp"
+#include "tinyxml2.h"
 #include <algorithm>
 #include <stdexcept>
-#include <tinyxml.h>
 
 levi::item_list bombino::parse_state(const std::string &state_file,
                                      const std::string &state_name,
                                      callback_map *callback_map) {
   levi::item_list item_list;
-  ::TiXmlDocument xml_doc;
-  if (!xml_doc.LoadFile(state_file)) {
+  tinyxml2::XMLDocument xml_doc;
+  if (xml_doc.LoadFile(state_file.c_str()) != tinyxml2::XML_SUCCESS) {
     throw std::runtime_error{"xml file " + state_file + " not load"};
-  }
-
-  std::string way_to_files{state_file};
-  auto last_slesh = std::find(way_to_files.rbegin(), way_to_files.rend(), '/');
-  if (last_slesh == way_to_files.rend()) {
-    way_to_files.clear();
-  } else {
-    way_to_files.erase(last_slesh.base(), way_to_files.rbegin().base());
   }
 
   auto root_element = xml_doc.RootElement();
@@ -33,7 +25,7 @@ levi::item_list bombino::parse_state(const std::string &state_file,
                              state_file};
   }
 
-  ::TiXmlElement *state{nullptr};
+  tinyxml2::XMLElement *state{nullptr};
 
   for (auto i = root_element->FirstChildElement(); i != nullptr;
        i = i->NextSiblingElement()) {
@@ -50,34 +42,15 @@ levi::item_list bombino::parse_state(const std::string &state_file,
 
   for (auto i = state->FirstChildElement(); i != nullptr;
        i = i->NextSiblingElement()) {
-    const char *attribute_pointer{};
 
-    std::string type;
-    if ((attribute_pointer = i->Attribute("type"))) {
-      type = attribute_pointer;
-    } else {
-      throw std::domain_error{"attribute type for object in state " +
-                              state_name + " not founded"};
-    }
+    std::string type = i->Attribute("type");
 
-    std::string alias;
-    attribute_pointer = i->Attribute("alias");
-    if (!attribute_pointer) {
-      throw std::domain_error{"attribute alias for object with type " + type +
-                              " in state " + state_name + " not founded"};
-    } else {
-      alias = attribute_pointer;
-    }
+    std::string alias = i->Attribute("alias");
 
-    int x{};
-    int y{};
-    i->Attribute("x", &x);
-    i->Attribute("y", &y);
+    int x = i->IntAttribute("x");
+    int y = i->IntAttribute("y");
 
-    std::string callback_id;
-    if ((attribute_pointer = i->Attribute("callback_id"))) {
-      callback_id = attribute_pointer;
-    }
+    std::string callback_id = i->Attribute("callback_id");
 
     std::function<void(void)> callback = nullptr;
     if (callback_map && !callback_id.empty()) {

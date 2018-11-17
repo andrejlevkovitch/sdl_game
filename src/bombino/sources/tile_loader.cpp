@@ -3,14 +3,13 @@
 #include "tile_loader.hpp"
 #include "base64.h"
 #include "tile.hpp"
+#include "tinyxml2.h"
 #include <stdexcept>
-#include <tinyxml.h>
 #include <vector>
 #include <zlib.h>
 
-bool check_tile_map(const ::TiXmlElement *root) {
-  int version{};
-  root->Attribute("version", &version);
+bool check_tile_map(const tinyxml2::XMLElement *root) {
+  int version = root->IntAttribute("version");
   if (version != 1) {
     return false;
   }
@@ -32,8 +31,8 @@ bool check_tile_map(const ::TiXmlElement *root) {
 }
 
 void bombino::tile_loader::parse_tile_map(const std::string &file_name) {
-  ::TiXmlDocument doc;
-  if (!doc.LoadFile(file_name)) {
+  tinyxml2::XMLDocument doc;
+  if (doc.LoadFile(file_name.c_str()) != tinyxml2::XML_SUCCESS) {
     throw std::runtime_error{"tile_map file " + file_name +
                              " couldn't be load"};
   }
@@ -47,17 +46,11 @@ void bombino::tile_loader::parse_tile_map(const std::string &file_name) {
     throw std::runtime_error{"unsupported tile_map"};
   }
 
-  int width{};
-  int height{};
-  root->Attribute("width", &width);
-  root->Attribute("height", &height);
-  map_size_.width = width;
-  map_size_.height = height;
+  map_size_.width = root->IntAttribute("width");
+  map_size_.height = root->IntAttribute("height");
 
-  root->Attribute("tilewidth", &width);
-  root->Attribute("tileheight", &height);
-  tile_size_.width = width;
-  tile_size_.height = height;
+  tile_size_.width = root->IntAttribute("tilewidth");
+  tile_size_.height = root->IntAttribute("tileheight");
 
   auto tileset = root->FirstChildElement();
   if (!tileset) {
@@ -92,7 +85,7 @@ void bombino::tile_loader::parse_tile_map(const std::string &file_name) {
   create_tiles();
 }
 
-void bombino::tile_loader::read_tileset(const TiXmlElement *tileset) {
+void bombino::tile_loader::read_tileset(const tinyxml2::XMLElement *tileset) {
   image_id_ = tileset->Attribute("name");
   auto image = tileset->FirstChildElement();
   if (!image) {
@@ -101,7 +94,7 @@ void bombino::tile_loader::read_tileset(const TiXmlElement *tileset) {
   image_file_name_ = image->Attribute("source");
 }
 
-void bombino::tile_loader::read_layer(const TiXmlElement *layer) {
+void bombino::tile_loader::read_layer(const tinyxml2::XMLElement *layer) {
   auto data = layer->FirstChildElement();
   if (!data) {
     throw std::runtime_error{"data not found"};
@@ -112,18 +105,24 @@ void bombino::tile_loader::read_layer(const TiXmlElement *layer) {
     throw std::runtime_error{"unrecognized options encoding | compression"};
   }
 
-  auto encoding_data = data->GetText();
-  if (!encoding_data) {
+  std::string temp = data->GetText();
+  auto first = temp.find_first_not_of(" \n");
+  auto last = temp.find_last_not_of(" \n");
+  auto encoding_data = temp.substr(first, last - first + 1);
+  if (encoding_data.empty()) {
     throw std::runtime_error{"data not founded"};
   }
 
   std::string decoding_data = base64_decode(encoding_data);
+  if (decoding_data.empty()) {
+    throw std::runtime_error{"fail of decode data"};
+  }
   layout_.resize(map_size_.width * map_size_.height, 0);
   size_t size = layout_.size() * sizeof(int);
   if (::uncompress(reinterpret_cast<Bytef *>(&layout_[0]), &size,
                    reinterpret_cast<Bytef *>(&decoding_data[0]),
                    decoding_data.size()) != Z_OK) {
-    throw std::runtime_error{"fail of decode data"};
+    throw std::runtime_error{"fail of unpack data"};
   }
 }
 

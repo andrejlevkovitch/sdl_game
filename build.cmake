@@ -7,6 +7,10 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 enable_testing()
 include(CTest)
 
+add_subdirectory(src/third_party/Catch2)
+include(src/third_party/Catch2/contrib/Catch.cmake)
+include(src/third_party/Catch2/contrib/ParseAndAddCatchTests.cmake)
+
 option(leak_check "set leak_check" 0)
 option(profiling "set profiling" 0)
 
@@ -29,10 +33,9 @@ message(STATUS "cxx compiler " ${CMAKE_CXX_COMPILER})
 message(STATUS "build tests  " ${BUILD_TESTING})
 message(STATUS "build shared " ${BUILD_SHARED_LIBS})
 
-set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g -Wextra")
 
-foreach(DIR ${LIST_SUBDIRS})
-  add_subdirectory("src/${DIR}")
-endforeach()
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/lib")

@@ -8,6 +8,7 @@
 namespace levi {
 class vertex;
 
+// TODO change order like in opengl
 /**\brief row-order matrix in one-dimensional array*/
 class mat33 : public std::array<float, 9> {
 public:

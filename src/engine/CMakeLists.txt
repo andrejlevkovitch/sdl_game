@@ -1,29 +1,40 @@
 # engine
 
+cmake_minimum_required(VERSION "3.10")
+
+project(engine)
+
 find_package(SDL2 REQUIRED)
-
-find_library(TinyXML_LIBRARY tinyxml)
-if (TinyXML_LIBRARY STREQUAL "TinyXML_LIBRARY-NOTFOUND")
-  message(FATAL_ERROR "tinyxml library not founded")
-endif()
-
-find_library(PNG_LIBRARY png)
-if (PNG_LIBRARY STREQUAL "PNG_LIBRARY-NOTFOUND")
-  message(FATAL_ERROR "png library not founded")
-endif()
-
 find_package(OpenGL REQUIRED)
 
 configure_file("shaders_config.hpp.cmake" "${CMAKE_BINARY_DIR}/shaders_config.hpp")
 
-set(ENGINE_LBR "engine")
-file(GLOB ENGINE_SRC "sources/*.cpp")
-set(LIST_TARGETS "${LIST_TARGETS};${ENGINE_LBR}" CACHE STRING "add target" FORCE)
+set(ENGINE_SRC
+  "sources/abstract_object.cpp"
+  "sources/button.cpp"
+  "sources/engine.cpp"
+  "sources/event.cpp"
+  "sources/game_state_machine.cpp"
+  "sources/gl_loader.cpp"
+  "sources/input_handler.cpp"
+  "sources/light.cpp"
+  "sources/menu_imgui.cpp"
+  "sources/player.cpp"
+  "sources/scene.cpp"
+  "sources/state_machine.cpp"
+  "sources/texture.cpp"
+  "sources/texture_manager.cpp"
+  "sources/time.cpp"
+  )
 
-add_library(${ENGINE_LBR} ${ENGINE_SRC})
-target_link_libraries(${ENGINE_LBR} ${SDL2_LIBRARY} ${TinyXML_LIBRARY} ${PNG_LIBRARY} ${OPENGL_gl_LIBRARY})
+add_library(${PROJECT_NAME} ${ENGINE_SRC})
 
-target_include_directories(${ENGINE_LBR} PUBLIC "include")
-target_include_directories(${ENGINE_LBR} PRIVATE "../math_2d/include")
-target_include_directories(${ENGINE_LBR} PRIVATE "${CMAKE_BINARY_DIR}")
-target_include_directories(${ENGINE_LBR} PRIVATE "../imgui/include")
+# because in lyambda I use auto
+target_compile_options(${PROJECT_NAME} PUBLIC "-std=c++14")
+
+target_include_directories(${PROJECT_NAME} PUBLIC "include")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}")
+target_include_directories(${PROJECT_NAME} PUBLIC "../third_party")
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARY} ${OPENGL_gl_LIBRARY})
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui math2d tinyxml2)
