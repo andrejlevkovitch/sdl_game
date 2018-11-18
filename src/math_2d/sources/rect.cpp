@@ -6,7 +6,7 @@
 
 levi::rect::rect() : x{}, y{}, width{}, height{} {}
 
-levi::rect::rect(int x_, int y_, int width_, int height_)
+levi::rect::rect(float x_, float y_, float width_, float height_)
     : x{x_}, y{y_}, width{width_}, height{height_} {}
 
 std::array<levi::vertex, 4> levi::rect::get_vertices(float z_value) const {

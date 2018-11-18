@@ -7,5 +7,4 @@ project(miniz)
 set(miniz_SOURCE miniz.c miniz_zip.c miniz_tinfl.c miniz_tdef.c)
 
 add_library(miniz ${miniz_SOURCE})
-target_compile_options(miniz PRIVATE "-std=c++11")
 target_include_directories(miniz PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

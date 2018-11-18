@@ -37,12 +37,12 @@ void levi::abstract_object::set_size(levi::size size) {
 }
 
 levi::size levi::abstract_object::get_size() const {
-  return levi::size{dst_rect_.width, dst_rect_.height};
+  return levi::size(dst_rect_.width, dst_rect_.height);
 }
 
 void levi::abstract_object::set_pos(vector2d pos) {
-  dst_rect_.x = std::round(pos.x);
-  dst_rect_.y = std::round(pos.y);
+  dst_rect_.x = pos.x;
+  dst_rect_.y = pos.y;
 }
 
 levi::vector2d levi::abstract_object::get_pos() const {

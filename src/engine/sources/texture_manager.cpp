@@ -10,6 +10,7 @@
 #include <stdexcept>
 
 struct image {
+  image() : width{}, height{} {};
   std::vector<unsigned char> data;
   size_t width;
   size_t height;

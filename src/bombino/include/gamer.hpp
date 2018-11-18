@@ -53,9 +53,7 @@ private:
    * we calculate destination point, then we can get normalize vector
    * from this, but we havn't to change the vector!*/
   levi::vector2d direction_;
-  /**\warning don't use values with .5 - becose it use round function!!! Better
-   * use integer values*/
-  int velocity_;
+  float velocity_;
 
   /**\brief we can create two objects of this class for two gamers, and we have
    * to set different buttons for control*/

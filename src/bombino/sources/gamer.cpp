@@ -22,7 +22,6 @@ const levi::vector2d right{1, 0};
 const levi::vector2d left{-1, 0};
 }; // namespace bombino
 
-// TODO this game dependes on fps - I have to fixed this!
 bombino::gamer::gamer(const std::string &texture_id, levi::size size,
                       levi::vector2d pos, object_type type,
                       std::function<void(void)> callback)
@@ -279,15 +278,15 @@ void bombino::gamer::draw(levi::engine &engine) {
     } else {
       ImGui::Begin("gamer2");
     }
-    ImGui::Text("current position:\n %i %i", dst_rect_.x, dst_rect_.y);
+    ImGui::Text("current position:\n %.0f %.0f", dst_rect_.x, dst_rect_.y);
     ImGui::Text("last_distance:\n %.1f", distance_.get_length());
     ImGui::Text("direction:\n %.0f %.0f", direction_.x, direction_.y);
     ImGui::Separator();
     ImGui::Text("velocity:");
-    ImGui::SliderInt("pix_per_ups", &velocity_, 0, max_speed);
+    ImGui::SliderFloat("pix_per_ups", &velocity_, 0, max_speed, "%.1f", 0.5);
     ImGui::Separator();
     ImGui::Text("angle:");
-    ImGui::SliderFloat("degrees", &angle_, -360, +360);
+    ImGui::SliderFloat("degrees", &angle_, -360, +360, "%.0f", 1);
     ImGui::Separator();
     ImGui::Text("time bitwin bombs:");
     ImGui::SliderInt("ms", &time_to_new_bomb_, 0, 10000);
@@ -299,9 +298,12 @@ void bombino::gamer::draw(levi::engine &engine) {
     ImGui::Text("explosition power:");
     ImGui::SliderInt("tiles", &explosition_power_, 1, 10);
     ImGui::Checkbox("futball", &can_kick_ball_);
-    levi::vertex color = own_light_->get_color();
-    ImGui::ColorEdit3("change light color", &color.x);
-    own_light_->set_color(color);
+    levi::vertex light_color = own_light_->get_color();
+    ImGui::ColorEdit3("change light color", &light_color.x);
+    own_light_->set_color(light_color);
+    int light_power = own_light_->get_power();
+    ImGui::SliderInt("change light power", &light_power, 0, 1000);
+    own_light_->set_power(light_power);
     ImGui::End();
   }
   abstract_object::draw(engine);
