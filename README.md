@@ -11,11 +11,11 @@ For Linux you can simply install it by
 
 For mingw you can download repository:
 [sdl2-mingw](https://github.com/tonymagro/sdl2-mingw). All what you have to
-do after: in file Makefile change variable
+do after: in file Makefile change variable like here
 
 - CROSS_PATH := /usr
 
-and run it by
+and run it as
 
 - sudo make cross
 
