@@ -40,3 +40,7 @@ Build by mingw (on Linux):
 - cmake -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ ..
 
 - cmake --build .
+
+And for running you have to add WINEPATH variable:
+
+- export WINEPATH="/usr/i686-w64-mingw32/lib;/usr/i686-w64-mingw32/bin;/usr/lib/gcc/i686-w64-mingw32/5.3-win32/"
