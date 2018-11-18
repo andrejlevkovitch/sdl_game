@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION "3.10")
 
 project(third_party)
 
+add_subdirectory(gl3w)
 add_subdirectory(imgui)
 
 add_library(base64 "base64/base64.cpp")

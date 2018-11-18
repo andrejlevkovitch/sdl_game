@@ -14,7 +14,6 @@ set(ENGINE_SRC
   "sources/button.cpp"
   "sources/engine.cpp"
   "sources/event.cpp"
-  "sources/game_state_machine.cpp"
   "sources/gl_loader.cpp"
   "sources/input_handler.cpp"
   "sources/light.cpp"

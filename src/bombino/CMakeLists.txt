@@ -30,6 +30,8 @@ set(GAME_SRC
 
 add_library(${PROJECT_NAME} ${GAME_SRC})
 
+target_compile_options(${PROJECT_NAME} PUBLIC "-std=c++11")
+
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 target_include_directories(${PROJECT_NAME} PRIVATE "../engine/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_BINARY_DIR}")

@@ -3,7 +3,6 @@
 cmake_minimum_required(VERSION "3.10")
 
 set(IMGUI_SRC
-  "sources/gl3w.c"
   "sources/imgui.cpp"
   "sources/imgui_demo.cpp"
   "sources/imgui_draw.cpp"
@@ -13,5 +12,6 @@ set(IMGUI_SRC
   )
 
 add_library(imgui SHARED ${IMGUI_SRC})
-
+target_compile_options(imgui PRIVATE "-std=c++11")
 target_include_directories(imgui PUBLIC "include")
+target_link_libraries(imgui PRIVATE gl3w)
