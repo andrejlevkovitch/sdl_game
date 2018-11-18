@@ -2,23 +2,25 @@
 
 [Build Status](https://hub.docker.com/r/andrejlevkovitch/sdl_game/builds/)
 
-For build required:
+Build on Linux and by mingw (check on Linux!).
+For byild you have to have installing sdl2.
 
-- sdl2
+For Linux you can simply install it by
 
-- cmake
+- sudo apt install libsdl2-dev
 
-- libpng
+For mingw you can download repository:
+[sdl2-mingw](https://github.com/tonymagro/sdl2-mingw). All what you have to
+do after: in file Makefile change variable
 
-- tynixml
+- CROSS_PATH := /usr
 
-- zlib
+and run it by
 
-- std=c++14 or newer
+- sudo make cross
 
 
-
-How build:
+Build on Linux:
 
 - mkdir build
 
@@ -27,3 +29,14 @@ How build:
 - cmake ..
 
 - cmake --build
+
+
+Build by mingw (on Linux):
+
+- mkdir build
+
+- cd build
+
+- cmake -DCMAKE_C_COMPILER=i686-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=i686-w64-mingw32-g++ ..
+
+- cmake --build .

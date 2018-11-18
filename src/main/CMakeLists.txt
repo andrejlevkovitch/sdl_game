@@ -10,4 +10,4 @@ target_compile_options(${PROJECT_NAME} PRIVATE "-std=c++11")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE engine bombino)
+target_link_libraries(${PROJECT_NAME} PRIVATE bombino engine)

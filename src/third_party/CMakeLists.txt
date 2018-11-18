@@ -6,6 +6,7 @@ project(third_party)
 
 add_subdirectory(gl3w)
 add_subdirectory(imgui)
+add_subdirectory(miniz)
 
 add_library(base64 "base64/base64.cpp")
 target_compile_options(base64 PRIVATE "-std=c++11")

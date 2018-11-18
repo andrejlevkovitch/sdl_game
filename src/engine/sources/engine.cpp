@@ -401,7 +401,7 @@ void levi::engine::render(unsigned int delta_t_ms) {
       gl_functions.glEnableVertexAttribArray(texture_position);
       LEVI_CHECK();
 
-      ::glActiveTexture(GL_TEXTURE0);
+      gl_functions.glActiveTexture(GL_TEXTURE0);
       LEVI_CHECK();
       ::glBindTexture(GL_TEXTURE_2D, render_texture);
       LEVI_CHECK();
@@ -409,7 +409,7 @@ void levi::engine::render(unsigned int delta_t_ms) {
           gl_functions.glGetUniformLocation(shader_program_, "render_tex"), 0);
       LEVI_CHECK();
 
-      ::glActiveTexture(GL_TEXTURE1);
+      gl_functions.glActiveTexture(GL_TEXTURE1);
       LEVI_CHECK();
       ::glBindTexture(GL_TEXTURE_2D, light_texture);
       LEVI_CHECK();
@@ -520,7 +520,7 @@ void levi::engine::draw(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
 
   // we use only one texture in shaders, so it always be GL_TEXTURE0
-  ::glActiveTexture(GL_TEXTURE0);
+  gl_functions.glActiveTexture(GL_TEXTURE0);
   LEVI_CHECK();
   ::glBindTexture(GL_TEXTURE_2D, texture.gl_tex);
   LEVI_CHECK();
@@ -616,7 +616,7 @@ void levi::engine::draw_light(const texture &texture, const rect &src_rect,
   LEVI_CHECK();
 
   // we use only one texture in shaders, so it always be GL_TEXTURE0
-  ::glActiveTexture(GL_TEXTURE0);
+  gl_functions.glActiveTexture(GL_TEXTURE0);
   LEVI_CHECK();
   ::glBindTexture(GL_TEXTURE_2D, texture.gl_tex);
   LEVI_CHECK();

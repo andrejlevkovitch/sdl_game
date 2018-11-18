@@ -63,4 +63,6 @@ levi::gl_loader::gl_loader() {
   ::load_gl_func("glUniform1i", glUniform1i);
 
   ::load_gl_func("glBlendFuncSeparate", glBlendFuncSeparate);
+
+  ::load_gl_func("glActiveTexture", glActiveTexture);
 }

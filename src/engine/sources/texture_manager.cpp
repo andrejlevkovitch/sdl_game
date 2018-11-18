@@ -79,13 +79,18 @@ bool levi::texture_manager::create_texture(const std::string &texture_id,
     image image{};
     std::vector<unsigned char> buffer;
     loadFile(buffer, texture_file);
-    if (decodePNG(image.data, image.width, image.height, &buffer[0],
-                  buffer.size(), true) != 0) {
+    // here if I set in function image.width and image.height mingw report about
+    // error
+    unsigned long w{}, h{};
+    if (decodePNG(image.data, w, h, &buffer[0], buffer.size(), true) != 0) {
       goto fail;
     }
 
+    image.width = w;
+    image.height = h;
+
     GLuint gl_tex{};
-    ::glActiveTexture(GL_TEXTURE7);
+    gl_loader::instance().glActiveTexture(GL_TEXTURE7);
     LEVI_CHECK();
     ::glGenTextures(1, &gl_tex);
     LEVI_CHECK();

@@ -6,6 +6,10 @@
 #include "scene.hpp"
 #include <random>
 
+#ifdef _WIN32
+#include <chrono>
+#endif
+
 bombino::tile::tile(const std::string &texture_id, levi::size size,
                     levi::vector2d pos, object_type type, unsigned frame)
     : levi::abstract_object{texture_id, size, pos}, type_{type}, power_shance_{
@@ -26,9 +30,14 @@ void bombino::tile::destroy() {
     src_rect_.y = 0;
     type_ = object_type::void_block;
 
+#ifdef __linux__
     std::random_device rd{};
-    // TODO problem for windows
     std::default_random_engine re{rd()};
+#elif _WIN32
+    // on windows not work random generators
+    static std::default_random_engine re{
+        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())};
+#endif
     std::uniform_int_distribution<int> dist{0, power_shance_ - 1};
 
     if (!dist(re)) {

@@ -91,6 +91,8 @@ public:
 
   ::PFNGLBLENDFUNCSEPARATEPROC glBlendFuncSeparate;
 
+  ::PFNGLACTIVETEXTUREPROC glActiveTexture;
+
 private:
   gl_loader();
   gl_loader(const gl_loader &) = delete;

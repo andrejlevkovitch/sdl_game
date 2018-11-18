@@ -2,11 +2,11 @@
 
 #include "tile_loader.hpp"
 #include "base64.h"
+#include "miniz.h"
 #include "tile.hpp"
 #include "tinyxml2.h"
 #include <stdexcept>
 #include <vector>
-#include <zlib.h>
 
 bool check_tile_map(const tinyxml2::XMLElement *root) {
   int version = root->IntAttribute("version");
@@ -118,7 +118,7 @@ void bombino::tile_loader::read_layer(const tinyxml2::XMLElement *layer) {
     throw std::runtime_error{"fail of decode data"};
   }
   layout_.resize(map_size_.width * map_size_.height, 0);
-  size_t size = layout_.size() * sizeof(int);
+  mz_ulong size = layout_.size() * sizeof(int);
   if (::uncompress(reinterpret_cast<Bytef *>(&layout_[0]), &size,
                    reinterpret_cast<Bytef *>(&decoding_data[0]),
                    decoding_data.size()) != Z_OK) {

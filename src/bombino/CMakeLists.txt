@@ -4,11 +4,6 @@ cmake_minimum_required(VERSION "3.10")
 
 project(bombino)
 
-find_library(Z_LIBRARY z)
-if (Z_LIBRARY STREQUAL "Z_LIBRARY_LIBRARY-NOTFOUND")
-  message(FATAL_ERROR "zlib library not founded")
-endif()
-
 configure_file("objects_config.hpp.cmake" "${CMAKE_BINARY_DIR}/objects_config.hpp")
 
 set(GAME_LBR "my_game")
@@ -36,5 +31,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC "include")
 target_include_directories(${PROJECT_NAME} PRIVATE "../engine/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_BINARY_DIR}")
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${Z_LIBRARY})
-target_link_libraries(${PROJECT_NAME} PUBLIC imgui base64 tinyxml2 math2d)
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui base64 miniz tinyxml2 math2d)
