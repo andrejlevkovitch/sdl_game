@@ -4,10 +4,12 @@ cmake_minimum_required(VERSION "3.10")
 
 project(engine)
 
-if(CMAKE_CXX_COMPILER MATCHES "mingw" AND UNIX)
+include(GenerateExportHeader)
+
+if(CMAKE_CXX_COMPILER MATCHES "mingw")
   set(SDL2_LIBRARY "/usr/i686-w64-mingw32/bin/SDL2.dll")
   set(OPENGL_gl_LIBRARY "/usr/i686-w64-mingw32/lib/libopengl32.a")
-elseif(UNIX)
+elseif()
   find_package(SDL2 REQUIRED)
   find_package(OpenGL REQUIRED)
 endif()
@@ -38,6 +40,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC "-std=c++14")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_BINARY_DIR}")
 target_include_directories(${PROJECT_NAME} PUBLIC "../third_party")
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${SDL2_LIBRARY} ${OPENGL_gl_LIBRARY})

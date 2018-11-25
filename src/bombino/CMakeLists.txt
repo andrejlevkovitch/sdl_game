@@ -25,10 +25,12 @@ set(GAME_SRC
 
 add_library(${PROJECT_NAME} ${GAME_SRC})
 
+add_dependencies(${PROJECT_NAME} engine)
+
 target_compile_options(${PROJECT_NAME} PUBLIC "-std=c++11")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
-target_include_directories(${PROJECT_NAME} PRIVATE "../engine/include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_BINARY_DIR}")
+target_include_directories(${PROJECT_NAME} PUBLIC "$<TARGET_PROPERTY:engine,INCLUDE_DIRECTORIES>")
 
-target_link_libraries(${PROJECT_NAME} PUBLIC imgui base64 miniz tinyxml2 math2d)
+target_link_libraries(${PROJECT_NAME} PUBLIC imgui base64 miniz tinyxml2 math2d engine)
