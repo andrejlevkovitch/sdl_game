@@ -10,5 +10,9 @@ public:
   playing_state();
   void update() override;
   levi::id_state get_id() const override;
+  void reload() override;
+
+private:
+  int n_start_;
 };
 }; // namespace bombino

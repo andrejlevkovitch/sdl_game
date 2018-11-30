@@ -71,3 +71,4 @@ void levi::scene::set_visibility(bool value) { is_visible_ = value; }
 bool levi::scene::is_visible() { return is_visible_; }
 void levi::scene::set_updatebility(bool value) { is_updateble_ = value; }
 bool levi::scene::is_updateble() { return is_updateble_; }
+void levi::scene::reload() {}

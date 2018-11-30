@@ -88,9 +88,11 @@ bombino::callback_map::callback_map() {
 
   auto callback_restart = []() {
     levi::engine::instance().state_machine().pop_state();
-    levi::engine::instance().state_machine().pop_state();
-    levi::engine::instance().state_machine().push_state(
-        std::make_shared<playing_state>());
+    levi::engine::instance().state_machine().current_state()->reload();
+    levi::engine::instance().state_machine().current_state()->set_updatebility(
+        true);
+    levi::engine::instance().state_machine().current_state()->set_visibility(
+        true);
   };
 
   auto callback_to_game_over = []() {

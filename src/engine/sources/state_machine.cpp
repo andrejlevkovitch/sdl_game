@@ -45,7 +45,7 @@ levi::state_machine::get_states_list() const {
 
 void levi::state_machine::render(engine &engine) const {
   std::for_each(states_list_.rbegin(), states_list_.rend(),
-                [&](const auto &item) {
+                [&](const std::shared_ptr<scene> &item) {
                   if (item->is_visible()) {
                     item->render(engine);
                   }
@@ -54,7 +54,7 @@ void levi::state_machine::render(engine &engine) const {
 
 void levi::state_machine::calculate_light(engine &engine) const {
   std::for_each(states_list_.rbegin(), states_list_.rend(),
-                [&](const auto &item) {
+                [&](const std::shared_ptr<scene> &item) {
                   if (item->is_visible()) {
                     item->calculate_light(engine);
                   }

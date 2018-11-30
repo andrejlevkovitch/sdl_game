@@ -46,6 +46,8 @@ public:
   bool is_updateble();
   virtual void render(engine &engine) const;
   virtual void calculate_light(engine &engine) const;
+  /**\brief uses for bring to initial state. By default do nothing*/
+  virtual void reload();
 
 protected:
   levi::item_list item_list_;
