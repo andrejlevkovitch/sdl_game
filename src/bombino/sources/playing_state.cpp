@@ -13,11 +13,17 @@
 #include "tile.hpp"
 #include "tile_loader.hpp"
 
+#include <iostream>
+
 bombino::playing_state::playing_state() : n_start_{} {
   // load textures for objects
   levi::engine::instance().texture_manager().parse_textures(
       bombino::way_to_objects + "bombino_textures.xml");
-  reload();
+  try {
+    reload();
+  } catch (std::runtime_error &error) {
+    std::cerr << error.what() << std::endl;
+  }
 }
 
 void bombino::playing_state::update() {
@@ -40,7 +46,17 @@ void bombino::playing_state::reload() {
   item_list_.clear();
   // tile_loading
   tile_loader t_loader;
-  t_loader.parse_tile_map(bombino::way_to_objects + "map0.tmx");
+  try {
+    maps_ = t_loader.parse_maps_file(bombino::way_to_objects + "maps.xml");
+  } catch (std::runtime_error) {
+    throw;
+  }
+  if (maps_.empty()) {
+    std::string error{"from maps.xml no one map loaded"};
+    throw std::runtime_error{error.c_str()};
+  }
+  t_loader.parse_tile_map(bombino::way_to_objects +
+                          maps_[n_start_ % maps_.size()]);
   levi::engine::instance().texture_manager().create_texture(
       t_loader.image_id_, bombino::way_to_objects + t_loader.image_file_name_);
   for (const auto &i : t_loader.get_tiles()) {

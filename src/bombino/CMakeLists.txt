@@ -27,7 +27,7 @@ add_library(${PROJECT_NAME} ${GAME_SRC})
 
 add_dependencies(${PROJECT_NAME} engine)
 
-target_compile_options(${PROJECT_NAME} PUBLIC "-std=c++11")
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 target_include_directories(${PROJECT_NAME} PRIVATE "${CMAKE_BINARY_DIR}")

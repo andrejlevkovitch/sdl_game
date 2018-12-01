@@ -146,3 +146,32 @@ const std::list<std::shared_ptr<bombino::tile>>
 bombino::tile_loader::get_tiles() const {
   return tile_list_;
 }
+
+std::vector<std::string>
+bombino::tile_loader::parse_maps_file(const std::string &file_name) {
+  std::vector<std::string> retval;
+  tinyxml2::XMLDocument doc;
+  if (doc.LoadFile(file_name.c_str()) != tinyxml2::XML_SUCCESS) {
+    std::string error = "couldn't open xml file: " + file_name;
+    throw std::runtime_error{error.c_str()};
+  }
+
+  auto root = doc.RootElement();
+  if (!root) {
+    std::string error{"file: " + file_name + " have not root element"};
+    throw std::runtime_error{error.c_str()};
+  } else if (root->Value() != std::string{"maps"}) {
+    std::string error{"in file: " + file_name + " root have invalid name"};
+    throw std::runtime_error{error.c_str()};
+  }
+
+  for (auto i = root->FirstChildElement(); i != nullptr;
+       i = i->NextSiblingElement()) {
+    const char *name = i->GetText();
+    if (name) {
+      retval.push_back(name);
+    }
+  }
+
+  return retval;
+}

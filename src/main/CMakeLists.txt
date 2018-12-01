@@ -6,7 +6,7 @@ project(sdl_game)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
-target_compile_options(${PROJECT_NAME} PRIVATE "-std=c++11")
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_BINARY_DIR})
 

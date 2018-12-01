@@ -19,8 +19,11 @@ class tile;
 /**\brief this class load special .tmx files created by Tiled program*/
 class tile_loader {
 public:
-  /**\except throw std::exception, read output for more information*/
+  /**\except throw std::exception if couldn't open file, or file is invalid*/
   void parse_tile_map(const std::string &file_name);
+  /**\brief parse when is all maps
+   * \except throw std::exception if couldn't open file, or file is invalid*/
+  std::vector<std::string> parse_maps_file(const std::string &file_name);
   const std::list<std::shared_ptr<tile>> get_tiles() const;
 
 private:

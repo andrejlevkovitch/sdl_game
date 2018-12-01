@@ -35,7 +35,7 @@ set(ENGINE_SRC
 
 add_library(${PROJECT_NAME} ${ENGINE_SRC})
 
-target_compile_options(${PROJECT_NAME} PUBLIC "-std=c++11")
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_11)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_BINARY_DIR}")

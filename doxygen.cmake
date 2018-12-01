@@ -34,10 +34,10 @@ if(DOXYGEN_FOUND)
   doxygen_add_docs(doxygen ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "generate doxygen documentation by cmake")
 
-  add_custom_target(copy_doxyfile_in_src_dir ALL
+  add_custom_target(generate_documentation ALL
     COMMAND doxygen "Doxyfile.doxygen"
-    DEPENDS ${PROJECT_NAME}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     COMMENT "Generate doxygen documentation"
     )
+  set_property(TARGET generate_documentation PROPERTY EXCLUDE_FROM_ALL ON)
 endif()
